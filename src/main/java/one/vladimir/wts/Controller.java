@@ -1,13 +1,7 @@
 package one.vladimir.wts;
 
-import java.util.List;
-import java.util.LinkedList;
-
 import java.util.concurrent.atomic.AtomicInteger;
 
-import one.vladimir.wts.entity.Point;
-import one.vladimir.wts.entity.UserRequest;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class Controller {
 
-    @Autowired
-    private RequestRepo requestRepo;
+//    @Autowired
+//    private RequestRepo requestRepo;
 
     private final AtomicInteger counter = new AtomicInteger();
 
@@ -28,7 +22,7 @@ public class Controller {
             @RequestParam(name = "description", defaultValue = "empty") String description,
             @RequestParam(name = "weight", defaultValue = "0.0") String strWeight,
             @RequestParam(name = "volume", defaultValue = "0.0") String strVolume) {
-        try {
+        /*try {
             UserRequest userRequest = new UserRequest();
             userRequest.setWeight(Double.valueOf(strWeight));
             userRequest.setVolume(Double.valueOf(strVolume));
@@ -40,10 +34,11 @@ public class Controller {
 
         } catch (NumberFormatException e) {
             return "False";
-        }
+        }*/
+        return "True";
     }
 
-    @RequestMapping("/request/all")
+  /*  @RequestMapping("/request/all")
     public Iterable<UserRequest> getRequest() {
         return requestRepo.findAll();
     }
@@ -55,6 +50,6 @@ public class Controller {
         } catch (NumberFormatException e) {
             return new UserRequest();
         }
-    }
+    }*/
 
 }
