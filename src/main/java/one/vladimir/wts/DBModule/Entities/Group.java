@@ -10,15 +10,15 @@ import javax.persistence.Table;
 public class Group {
     @Id
     @GeneratedValue
-    private Long GroupId;
+    private Integer GroupId;
 
     private Integer Koef;
 
-    public Long getGroupId() {
+    public Integer getGroupId() {
         return GroupId;
     }
 
-    public void setGroupId(Long groupId) {
+    public void setGroupId(Integer groupId) {
         GroupId = groupId;
     }
 

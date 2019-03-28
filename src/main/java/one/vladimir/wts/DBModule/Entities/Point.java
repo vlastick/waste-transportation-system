@@ -1,40 +1,40 @@
 package one.vladimir.wts.DBModule.Entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Point {
     @Id
     @GeneratedValue
-    private Long PointId;
+    private Integer PointId;
 
-    private Long CreatorId;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "CreatorId")
+    private User Creator;
 
-    private Long GroupId;
+    private Integer GroupId;
 
-    public Long getPointId() {
+    public Integer getPointId() {
         return PointId;
     }
 
-    public void setPointId(Long pointId) {
+    public void setPointId(Integer pointId) {
         PointId = pointId;
     }
 
-    public Long getCreatorId() {
-        return CreatorId;
+    public User getCreator() {
+        return Creator;
     }
 
-    public void setCreatorId(Long creatorId) {
-        CreatorId = creatorId;
+    public void setCreator(User creator) {
+        Creator = creator;
     }
 
-    public Long getGroupId() {
+    public Integer getGroupId() {
         return GroupId;
     }
 
-    public void setGroupId(Long groupId) {
+    public void setGroupId(Integer groupId) {
         GroupId = groupId;
     }
 }

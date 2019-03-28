@@ -1,24 +1,26 @@
 package one.vladimir.wts.DBModule.Entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Collection;
 
 @Entity
 public class User {
     @Id
     @GeneratedValue
-    private Long UserId;
+    private Integer UserId;
 
     private String Role;
 
     private String Login;
 
-    public Long getUserId() {
+    @OneToMany(mappedBy = "Creator", cascade = CascadeType.ALL)
+    private Collection<Point> points;
+
+    public Integer getUserId() {
         return UserId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(Integer userId) {
         UserId = userId;
     }
 
