@@ -2,6 +2,11 @@ package one.vladimir.wts;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import one.vladimir.wts.DBModule.DBModule;
+import one.vladimir.wts.DBModule.Entities.Group;
+import one.vladimir.wts.DBModule.Entities.Point;
+import one.vladimir.wts.DBModule.Entities.User;
+import one.vladimir.wts.DBModule.Repositories.PointRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,6 +18,8 @@ public class Controller {
 
 //    @Autowired
 //    private RequestRepo requestRepo;
+    @Autowired
+    DBModule db = new DBModule();
 
     private final AtomicInteger counter = new AtomicInteger();
 
@@ -35,6 +42,50 @@ public class Controller {
         } catch (NumberFormatException e) {
             return "False";
         }*/
+        return "True";
+    }
+
+
+    @RequestMapping("/add/user/")
+    public String addUser(
+            @RequestParam(name = "login", defaultValue = "DeafaultUser") String strLogin,
+            @RequestParam(name = "role", defaultValue = "User") String strRole){
+
+        User user = new User();
+        user.setLogin(strLogin);
+        user.setRole(strRole);
+        db.addUser(user);
+        return "User added";
+    }
+
+    @RequestMapping("/get/user/")
+    public User getUser(
+            @RequestParam(name = "id", defaultValue = "1") String strId){
+        Integer id = Integer.valueOf(strId);
+        User user = db.getUserById(id);
+        return user;
+    }
+
+    @RequestMapping("/get/point/")
+    public Point getPoint(
+            @RequestParam(name = "id", defaultValue = "1") String strId){
+        Integer id = Integer.valueOf(strId);
+        Point point = db.getPointById(id);
+        return point;
+    }
+
+    @RequestMapping("/add/point/")
+    public String addPoint(
+            @RequestParam(name = "creatorId", defaultValue = "1") String strCreatorId,
+            @RequestParam(name = "groupId", defaultValue = "1") String strGroupId){
+        Integer creatorId = Integer.valueOf(strCreatorId);
+        Integer groupId = Integer.valueOf(strGroupId);
+        User creator = db.getUserById(creatorId);
+        Group group = db.getGroupById(groupId);
+        Point point = new Point();
+        point.setGroup(group);
+        point.setCreator(creator);
+        db.addPoint(point);
         return "True";
     }
 

@@ -1,7 +1,6 @@
 package one.vladimir.wts.DBModule;
 
-import one.vladimir.wts.DBModule.Entities.Point;
-import one.vladimir.wts.DBModule.Entities.User;
+import one.vladimir.wts.DBModule.Entities.*;
 import one.vladimir.wts.DBModule.Repositories.DumpRepository;
 import one.vladimir.wts.DBModule.Repositories.GroupRepository;
 import one.vladimir.wts.DBModule.Repositories.PointRepository;
@@ -40,6 +39,15 @@ public class DBModule {
     public Point getPointById(Integer id){
         Point point = pointRepo.findById(id).get();
         return point;
+    }
+
+    public void addGroup(Group group){
+        groupRepo.save(group);
+    }
+
+    public Group getGroupById(Integer id){
+        Group group = groupRepo.findById(id).get();
+        return group;
     }
 
     public Integer testQuery(){
