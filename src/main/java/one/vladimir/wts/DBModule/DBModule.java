@@ -8,6 +8,8 @@ import one.vladimir.wts.DBModule.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
+
 @Service
 public class DBModule {
     @Autowired
@@ -22,35 +24,51 @@ public class DBModule {
 
 //    Basic Queries
 
-    public void addUser(User user){
+    public void addUser(User user) {
         userRepo.save(user);
     }
 
-    public User getUserById(Integer id){
-        User user = userRepo.findById(id).get();
+    public User getUserById(Integer id) {
+        User user;
+        try {
+            user = userRepo.findById(id).get();
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException("user not found");
+        }
+
         return user;
     }
 
-    public void addPoint(Point point){
+    public void addPoint(Point point) {
         User user = point.getCreator();
         pointRepo.save(point);
     }
 
-    public Point getPointById(Integer id){
-        Point point = pointRepo.findById(id).get();
+    public Point getPointById(Integer id) {
+        Point point;
+        try {
+            point = pointRepo.findById(id).get();
+        } catch (NoSuchElementException e){
+            throw new NoSuchElementException("point not found");
+        }
         return point;
     }
 
-    public void addGroup(Group group){
+    public void addGroup(Group group) {
         groupRepo.save(group);
     }
 
-    public Group getGroupById(Integer id){
-        Group group = groupRepo.findById(id).get();
+    public Group getGroupById(Integer id) {
+        Group group;
+        try {
+            group = groupRepo.findById(id).get();
+        } catch (NoSuchElementException e){
+            throw new NoSuchElementException("group not found");
+        }
         return group;
     }
 
-    public Integer testQuery(){
+    public Integer testQuery() {
         /*User u = new User();
         u.setLogin("User1");
         u.setRole("Admin");

@@ -1,5 +1,6 @@
 package one.vladimir.wts;
 
+import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import one.vladimir.wts.DBModule.DBModule;
@@ -59,11 +60,16 @@ public class Controller {
     }
 
     @RequestMapping("/get/user/")
-    public User getUser(
+    public String getUser(
             @RequestParam(name = "id", defaultValue = "1") String strId){
         Integer id = Integer.valueOf(strId);
-        User user = db.getUserById(id);
-        return user;
+        User user;
+        try{
+            user = db.getUserById(id);
+        } catch (NoSuchElementException e){
+            return e.getMessage();
+        }
+        return user.getLogin();
     }
 
     @RequestMapping("/get/point/")
