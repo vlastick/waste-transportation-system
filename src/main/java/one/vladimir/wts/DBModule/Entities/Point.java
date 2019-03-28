@@ -1,40 +1,53 @@
 package one.vladimir.wts.DBModule.Entities;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 @Entity
 public class Point {
     @Id
     @GeneratedValue
-    private Integer PointId;
+    private Integer pointId;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "CreatorId")
-    private User Creator;
+    private User creator;
 
-    private Integer GroupId;
+    @ManyToOne
+    @JoinColumn(name = "GroupId")
+    private Group group;
+
+    @OneToOne(mappedBy = "point", cascade = CascadeType.ALL)
+    private Dump dump;
+
+    @OneToOne(mappedBy = "point", cascade = CascadeType.ALL)
+    private Base base;
+
+    @OneToMany(mappedBy = "point", cascade = CascadeType.ALL)
+    private Collection<RoutePoint> routePoints;
+
 
     public Integer getPointId() {
-        return PointId;
+        return pointId;
     }
 
     public void setPointId(Integer pointId) {
-        PointId = pointId;
+        this.pointId = pointId;
     }
 
     public User getCreator() {
-        return Creator;
+        return creator;
     }
 
     public void setCreator(User creator) {
-        Creator = creator;
+        this.creator = creator;
     }
 
-    public Integer getGroupId() {
-        return GroupId;
+    public Group getGroup() {
+        return group;
     }
 
-    public void setGroupId(Integer groupId) {
-        GroupId = groupId;
+    public void setGroup(Group group) {
+        this.group = group;
     }
 }

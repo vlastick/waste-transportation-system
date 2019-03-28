@@ -7,36 +7,39 @@ import java.util.Collection;
 public class User {
     @Id
     @GeneratedValue
-    private Integer UserId;
+    private Integer userId;
 
-    private String Role;
+    private String role;
 
-    private String Login;
+    private String login;
 
-    @OneToMany(mappedBy = "Creator", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
     private Collection<Point> points;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Crewman crewmans;
+
     public Integer getUserId() {
-        return UserId;
+        return userId;
     }
 
     public void setUserId(Integer userId) {
-        UserId = userId;
+        this.userId = userId;
     }
 
     public String getRole() {
-        return Role;
+        return role;
     }
 
     public void setRole(String role) {
-        Role = role;
+        this.role = role;
     }
 
     public String getLogin() {
-        return Login;
+        return login;
     }
 
     public void setLogin(String login) {
-        Login = login;
+        this.login = login;
     }
 }

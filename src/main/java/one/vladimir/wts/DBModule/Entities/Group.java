@@ -1,9 +1,7 @@
 package one.vladimir.wts.DBModule.Entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Collection;
 
 @Entity
 @Table(name = "group_")
@@ -13,6 +11,9 @@ public class Group {
     private Integer GroupId;
 
     private Integer Koef;
+
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
+    private Collection<Point> points;
 
     public Integer getGroupId() {
         return GroupId;
