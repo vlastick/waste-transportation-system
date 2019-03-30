@@ -1,23 +1,18 @@
 package one.vladimir.wts.Service;
 
-import one.vladimir.wts.DBModule.DBModule;
+import one.vladimir.wts.DBModule.DBServiceImplementation;
 import one.vladimir.wts.DBModule.Entities.Group;
 import one.vladimir.wts.DBModule.Entities.Point;
 import one.vladimir.wts.DBModule.Entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
 public class Service {
 
     @Autowired
-    static DBModule db = new DBModule();
+    static DBServiceImplementation db = new DBServiceImplementation();
     private final AtomicInteger counter = new AtomicInteger();
 
 

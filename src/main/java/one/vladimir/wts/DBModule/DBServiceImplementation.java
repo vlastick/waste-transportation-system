@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.NoSuchElementException;
 
 @Service
-public class DBModule {
+public class DBServiceImplementation implements DBServiceInterface{
     @Autowired
     private PointRepository pointRepo;
     @Autowired
