@@ -1,24 +1,26 @@
 package one.vladimir.wts.RestModule;
 
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import one.vladimir.wts.Service.POJO.Base;
 import one.vladimir.wts.Service.POJO.Dump;
 import one.vladimir.wts.Service.POJO.Point;
 import one.vladimir.wts.Service.Service;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 
 import java.util.List;
 
 import static com.fasterxml.jackson.databind.node.JsonNodeType.ARRAY;
 import static com.fasterxml.jackson.databind.node.JsonNodeType.OBJECT;
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
+
 
 @RestController
 public class RestImplementation implements RestInterface {
@@ -70,19 +72,22 @@ public class RestImplementation implements RestInterface {
                 switch (type) {
 
                     case "point":
-                        List<Point> pointList = mapper.readValue(configJSON, new TypeReference<List<Point>>(){});
+                        List<Point> pointList = mapper.readValue(configJSON, new TypeReference<List<Point>>() {
+                        });
                         answerJSON = Service.postPoints(pointList);
                         status = CREATED;
                         break;
 
                     case "dump":
-                        List<Dump> dumpList = mapper.readValue(configJSON, new TypeReference<List<Dump>>(){});
+                        List<Dump> dumpList = mapper.readValue(configJSON, new TypeReference<List<Dump>>() {
+                        });
                         answerJSON = Service.postDumps(dumpList);
                         status = CREATED;
                         break;
 
                     case "base":
-                        List<Base> baseList = mapper.readValue(configJSON, new TypeReference<List<Base>>(){});
+                        List<Base> baseList = mapper.readValue(configJSON, new TypeReference<List<Base>>() {
+                        });
                         answerJSON = Service.postBases(baseList);
                         status = CREATED;
                         break;
@@ -94,12 +99,73 @@ public class RestImplementation implements RestInterface {
             }
 
         } catch (com.fasterxml.jackson.core.JsonParseException e) {
+
             System.out.println("JSON parsing exception: can't read JSON structure - there are some errors!");
             e.printStackTrace();
+
         } catch (com.fasterxml.jackson.databind.JsonMappingException e) {
+
             System.out.println("JSON incorrect value exception: class has not value in JSON!");
             e.printStackTrace();
+
         } catch (java.io.IOException e) {
+
+            System.out.println("Java IO Exception");
+            e.printStackTrace();
+        }
+
+        return new ResponseEntity<>(answerJSON, status);
+    }
+
+    @Override
+    @RequestMapping(method = GET, value = "/point/")
+    @ResponseBody
+    public ResponseEntity<String> getPoint(
+            @RequestParam(name = "type", defaultValue = "not given") String type,
+            @RequestBody String filterJSON) {
+
+        String answerJSON = "Error";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        try {
+
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode filterArray = mapper.readValue(filterJSON, JsonNode.class);
+
+            switch (type) {
+
+                case "point":
+                    //TODO call new function
+                    status = OK;
+                    break;
+
+                case "dump":
+                    answerJSON = Service.getDumps(filterArray);
+                    status = OK;
+                    break;
+
+                case "base":
+                    //TODO call new function
+                    status = OK;
+                    break;
+
+                default:
+                    answerJSON = "Unsupported type: " + type;
+                    break;
+            }
+
+
+        } catch (com.fasterxml.jackson.core.JsonParseException e) {
+
+            System.out.println("JSON parsing exception: can't read JSON structure - there are some errors!");
+            e.printStackTrace();
+
+        } catch (com.fasterxml.jackson.databind.JsonMappingException e) {
+
+            System.out.println("JSON incorrect value exception: class has not value in JSON!");
+            e.printStackTrace();
+
+        } catch (java.io.IOException e) {
+
             System.out.println("Java IO Exception");
             e.printStackTrace();
         }

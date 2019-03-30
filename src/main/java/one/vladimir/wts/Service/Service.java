@@ -1,9 +1,10 @@
 package one.vladimir.wts.Service;
 
-import one.vladimir.wts.Service.POJO.Base;
-import one.vladimir.wts.Service.POJO.Dump;
-import one.vladimir.wts.Service.POJO.Point;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import one.vladimir.wts.Service.POJO.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -18,34 +19,55 @@ import java.util.concurrent.atomic.AtomicInteger;*/
 public class Service {
 
 
-
-    public static String postPoint(Point point){
-        return  "Point was posted";
+    public static String postPoint(Point point) {
+        return "Point was posted";
     }
 
-    public static String postDump(Dump dump){
-        return  "Dump was posted";
+    public static String postDump(Dump dump) {
+        return "Dump was posted";
     }
 
-    public static String postBase(Base base){
+    public static String postBase(Base base) {
         return "Base was posted";
     }
 
-    public static String postPoints(List <Point> point){
-        return  "Points list was posted";
+    public static String postPoints(List<Point> point) {
+        return "Points list was posted";
     }
 
-    public static String postDumps(List <Dump> dump){
-        return  "Dumps list  was posted";
+    public static String postDumps(List<Dump> dump) {
+        return "Dumps list  was posted";
     }
 
-    public static String postBases(List <Base> base){
+    public static String postBases(List<Base> base) {
         return "Bases list  was posted";
     }
 
+    // TODO - write more functions to get all types of entities.
+    // There is and example below. How to parse JsonNode you can see in RestImplementation
+    public static String getDumps(JsonNode filter) {
 
+        List<Dump> dumpList = new ArrayList<>();
+        Dump testDump = new Dump();
+        testDump.setPriority(99);
+        testDump.setStatus(DumpStatus.REMOVED);
+        testDump.setType(DumpType.LIQUID);
 
-   // @Autowired
+        for (int i = 0; i < 10; i++) {
+            dumpList.add(testDump);
+        }
+
+        String answerJson = "Error";
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            answerJson = mapper.writeValueAsString(dumpList);
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return answerJson;
+    }
+
+    // @Autowired
     //static DBServiceImplementation db = new DBServiceImplementation();
 
     /*
