@@ -1,6 +1,6 @@
 package one.vladimir.wts.Service.POJO;
 
-public class RoutePoint{
+public class RoutePoint {
 
     private Point containedPoint;
 
@@ -8,4 +8,29 @@ public class RoutePoint{
 
     private Integer number;
 
+
+    //    getters and setters
+    public Point getContainedPoint() {
+        return containedPoint;
+    }
+
+    public void setContainedPoint(Point containedPoint) {
+        this.containedPoint = containedPoint;
+    }
+
+    public RoutePointStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(RoutePointStatus status) {
+        this.status = status;
+    }
+
+    public Integer getNumber() {
+        return number;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
+    }
 }

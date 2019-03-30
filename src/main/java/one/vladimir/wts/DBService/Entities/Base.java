@@ -12,6 +12,8 @@ public class Base {
     @JoinColumn(name = "PointId")
     private Point point;
 
+
+    //    getters and setters
     public Integer getBaseId() {
         return baseId;
     }

@@ -27,6 +27,7 @@ public class Point {
     private Collection<RoutePoint> routePoints;
 
 
+    //    getters and setters
     public Integer getPointId() {
         return pointId;
     }

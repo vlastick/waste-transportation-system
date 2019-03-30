@@ -17,6 +17,8 @@ public class Vessel {
     @OneToOne(mappedBy = "vessel", cascade = CascadeType.ALL)
     private Route route;
 
+
+    //    getters and setters
     public Integer getVesselId() {
         return vesselId;
     }

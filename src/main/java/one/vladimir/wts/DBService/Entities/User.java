@@ -19,6 +19,8 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Crewman crewmans;
 
+
+    //    getters and setters
     public Integer getUserId() {
         return userId;
     }
