@@ -8,4 +8,21 @@ public class Route {
 
     private RouteStatus status;
 
+
+    //    getters and setters
+    public Set<RoutePoint> getRoutePoints() {
+        return routePoints;
+    }
+
+    public void setRoutePoints(Set<RoutePoint> routePoints) {
+        this.routePoints = routePoints;
+    }
+
+    public RouteStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(RouteStatus status) {
+        this.status = status;
+    }
 }

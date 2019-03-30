@@ -16,6 +16,8 @@ public class Route {
     @OneToMany(mappedBy = "route", cascade = CascadeType.ALL)
     private Collection<RoutePoint> routePoints;
 
+
+    //    getters and setters
     public Integer getRouteId() {
         return routeId;
     }

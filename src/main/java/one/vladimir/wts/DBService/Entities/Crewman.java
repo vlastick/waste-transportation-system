@@ -16,6 +16,8 @@ public class Crewman {
     @JoinColumn(name = "VesselId")
     private Vessel vessel;
 
+
+    //    getters and setters
     public Integer getCrewmanId() {
         return crewmanId;
     }

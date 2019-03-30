@@ -18,6 +18,8 @@ public class RoutePoint {
     @JoinColumn(name = "RouteId")
     private Route route;
 
+
+    //    getters and setters
     public Integer getRoutePointId() {
         return routePointId;
     }

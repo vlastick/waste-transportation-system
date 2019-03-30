@@ -15,6 +15,8 @@ public class Group {
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
     private Collection<Point> points;
 
+
+    //    getters and setters
     public Integer getGroupId() {
         return GroupId;
     }

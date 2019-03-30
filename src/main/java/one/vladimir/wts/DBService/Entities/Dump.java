@@ -12,6 +12,8 @@ public class Dump {
     @JoinColumn(name = "PointId")
     private Point point;
 
+
+    //    getters and setters
     public Integer getDumpId() {
         return dumpId;
     }
