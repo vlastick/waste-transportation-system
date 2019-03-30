@@ -1,14 +1,15 @@
 package one.vladimir.wts.RestModule;
 
-import one.vladimir.wts.Service.POJO.Base;
-import one.vladimir.wts.Service.POJO.Dump;
-import one.vladimir.wts.Service.POJO.Point;
-import one.vladimir.wts.Service.Service;
+import one.vladimir.wts.BusinessLogic.POJO.Base;
+import one.vladimir.wts.BusinessLogic.POJO.Dump;
+import one.vladimir.wts.BusinessLogic.POJO.Point;
+import one.vladimir.wts.BusinessLogic.BusinessLogic;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 public class RestImplementation implements RestInterface {
+
+    @Autowired
+    private BusinessLogic businessLogic = new BusinessLogic();
 
     @Override
     @RequestMapping(method = POST, value = "/point/")
@@ -46,19 +50,19 @@ public class RestImplementation implements RestInterface {
 
                     case "point":
                         Point point = mapper.readValue(configJSON, Point.class);
-                        answerJSON = Service.postPoint(point);
+                        answerJSON = businessLogic.postPoint(point);
                         status = CREATED;
                         break;
 
                     case "dump":
                         Dump dump = mapper.readValue(configJSON, Dump.class);
-                        answerJSON = Service.postDump(dump);
+                        answerJSON = businessLogic.postDump(dump);
                         status = CREATED;
                         break;
 
                     case "base":
                         Base base = mapper.readValue(configJSON, Base.class);
-                        answerJSON = Service.postBase(base);
+                        answerJSON = businessLogic.postBase(base);
                         status = CREATED;
                         break;
 
@@ -74,21 +78,21 @@ public class RestImplementation implements RestInterface {
                     case "point":
                         List<Point> pointList = mapper.readValue(configJSON, new TypeReference<List<Point>>() {
                         });
-                        answerJSON = Service.postPoints(pointList);
+                        answerJSON = businessLogic.postPoints(pointList);
                         status = CREATED;
                         break;
 
                     case "dump":
                         List<Dump> dumpList = mapper.readValue(configJSON, new TypeReference<List<Dump>>() {
                         });
-                        answerJSON = Service.postDumps(dumpList);
+                        answerJSON = businessLogic.postDumps(dumpList);
                         status = CREATED;
                         break;
 
                     case "base":
                         List<Base> baseList = mapper.readValue(configJSON, new TypeReference<List<Base>>() {
                         });
-                        answerJSON = Service.postBases(baseList);
+                        answerJSON = businessLogic.postBases(baseList);
                         status = CREATED;
                         break;
 
@@ -126,6 +130,7 @@ public class RestImplementation implements RestInterface {
 
         String answerJSON = "Error";
         HttpStatus status = HttpStatus.BAD_REQUEST;
+
         try {
 
             ObjectMapper mapper = new ObjectMapper();
@@ -139,7 +144,7 @@ public class RestImplementation implements RestInterface {
                     break;
 
                 case "dump":
-                    answerJSON = Service.getDumps(filterArray);
+                    answerJSON = businessLogic.getDumps(filterArray);
                     status = OK;
                     break;
 
@@ -171,5 +176,22 @@ public class RestImplementation implements RestInterface {
         }
 
         return new ResponseEntity<>(answerJSON, status);
+    }
+
+    // Test DB methods
+
+    @Override
+    @RequestMapping(method = GET, value = "/add_user/")
+    public ResponseEntity<String> addUser(){
+        String result = businessLogic.addUser("MyleneFarmer", "User");
+        return new ResponseEntity<>(result, OK);
+    }
+
+    @Override
+    @RequestMapping(method = GET, value = "/get_user/")
+    public ResponseEntity<String> getUser(){
+        // It works but you should chose correct ID
+        String result = businessLogic.getUser("1");
+        return new ResponseEntity<>(result, OK);
     }
 }

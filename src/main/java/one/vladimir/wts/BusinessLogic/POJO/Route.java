@@ -1,4 +1,4 @@
-package one.vladimir.wts.Service.POJO;
+package one.vladimir.wts.BusinessLogic.POJO;
 
 import java.util.Set;
 

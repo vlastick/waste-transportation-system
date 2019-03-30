@@ -8,4 +8,8 @@ public interface RestInterface {
 
     ResponseEntity<String> getPoint(String type, String filterJSON);
 
+    // Just test methods
+    ResponseEntity<String> addUser();
+
+    ResponseEntity<String> getUser();
 }
