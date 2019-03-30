@@ -1,5 +1,4 @@
 package one.vladimir.wts.RestModule;
-import one.vladimir.wts.DBModule.Entities.Point;
 
 public interface RestInterface {
 

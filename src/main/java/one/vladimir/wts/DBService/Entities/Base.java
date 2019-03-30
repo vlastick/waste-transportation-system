@@ -1,23 +1,23 @@
-package one.vladimir.wts.DBModule.Entities;
+package one.vladimir.wts.DBService.Entities;
 
 import javax.persistence.*;
 
 @Entity
-public class Dump {
+public class Base {
     @Id
     @GeneratedValue
-    private Integer dumpId;
+    private Integer baseId;
 
     @OneToOne
     @JoinColumn(name = "PointId")
     private Point point;
 
-    public Integer getDumpId() {
-        return dumpId;
+    public Integer getBaseId() {
+        return baseId;
     }
 
-    public void setDumpId(Integer dumpId) {
-        this.dumpId = dumpId;
+    public void setBaseId(Integer baseId) {
+        this.baseId = baseId;
     }
 
     public Point getPoint() {

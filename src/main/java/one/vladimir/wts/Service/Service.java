@@ -1,9 +1,9 @@
 package one.vladimir.wts.Service;
 
-import one.vladimir.wts.DBModule.DBServiceImplementation;
-import one.vladimir.wts.DBModule.Entities.Group;
-import one.vladimir.wts.DBModule.Entities.Point;
-import one.vladimir.wts.DBModule.Entities.User;
+import one.vladimir.wts.DBService.DBServiceImplementation;
+import one.vladimir.wts.DBService.Entities.Group;
+import one.vladimir.wts.DBService.Entities.Point;
+import one.vladimir.wts.DBService.Entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.NoSuchElementException;

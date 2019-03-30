@@ -1,10 +1,10 @@
-package one.vladimir.wts.DBModule;
+package one.vladimir.wts.DBService;
 
-import one.vladimir.wts.DBModule.Entities.*;
-import one.vladimir.wts.DBModule.Repositories.DumpRepository;
-import one.vladimir.wts.DBModule.Repositories.GroupRepository;
-import one.vladimir.wts.DBModule.Repositories.PointRepository;
-import one.vladimir.wts.DBModule.Repositories.UserRepository;
+import one.vladimir.wts.DBService.Entities.*;
+import one.vladimir.wts.DBService.Repositories.DumpRepository;
+import one.vladimir.wts.DBService.Repositories.GroupRepository;
+import one.vladimir.wts.DBService.Repositories.PointRepository;
+import one.vladimir.wts.DBService.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

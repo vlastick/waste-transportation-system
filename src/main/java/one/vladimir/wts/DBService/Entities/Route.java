@@ -1,4 +1,4 @@
-package one.vladimir.wts.DBModule.Entities;
+package one.vladimir.wts.DBService.Entities;
 
 import javax.persistence.*;
 import java.util.Collection;

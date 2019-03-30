@@ -1,6 +1,6 @@
-package one.vladimir.wts.DBModule.Repositories;
+package one.vladimir.wts.DBService.Repositories;
 
-import one.vladimir.wts.DBModule.Entities.User;
+import one.vladimir.wts.DBService.Entities.User;
 import org.springframework.data.repository.CrudRepository;
 
 public interface UserRepository extends CrudRepository<User, Integer> {
