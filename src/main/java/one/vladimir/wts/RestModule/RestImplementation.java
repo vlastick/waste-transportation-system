@@ -14,6 +14,70 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 public class RestImplementation implements RestInterface {
 
     @Override
+    @RequestMapping(method=GET, value = "/point/")
+    public String getPoint(
+            @RequestParam (name = "data",   defaultValue = "") String configJson) {
+        return "SMT";
+    }
+
+    @Override
+    @RequestMapping(method=POST, value = "/point/")
+    public String postPoint(
+            @RequestParam (name = "data",   defaultValue = "") String configJson) {
+        return "SMT";
+    }
+
+    @Override
+    @RequestMapping(method=DELETE, value = "/point/")
+    public String deletePoint(
+            @RequestParam (name = "data",   defaultValue = "") String configJson) {
+        return "SMT";
+    }
+
+    @Override
+    @RequestMapping(method=GET, value = "/route/")
+    public String getRoute(
+            @RequestParam (name = "data",   defaultValue = "") String configJson) {
+        return "SMT";
+    }
+
+
+
+
+
+    //s
+    @Override
+    @RequestMapping(method=GET, value = "/points/")
+    public String getPoints(
+            @RequestParam (name = "data",   defaultValue = "") String configJson) {
+        return "SMT";
+    }
+
+    @Override
+    @RequestMapping(method=POST, value = "/points/")
+    public String postPoints(
+            @RequestParam (name = "data",   defaultValue = "") String configJson) {
+        return "SMT";
+    }
+
+    @Override
+    @RequestMapping(method=DELETE, value = "/points/")
+    public String deletePoints(
+            @RequestParam (name = "data",   defaultValue = "") String configJson) {
+        return "SMT";
+    }
+
+    @Override
+    @RequestMapping(method=GET, value = "/routes/")
+    public String getRoutes(
+            @RequestParam (name = "data",   defaultValue = "") String configJson) {
+        return "SMT";
+    }
+
+
+
+    /*
+    @Override
     @RequestMapping(method=GET, value = "/orders/list/")
     public String getOrdersList() {
         return Service.getOrdersList();
@@ -91,5 +155,5 @@ public class RestImplementation implements RestInterface {
             @RequestParam(name = "creatorId", defaultValue = "1") String strCreatorId,
             @RequestParam(name = "groupId", defaultValue = "1") String strGroupId){
         return Service.addPoint(strCreatorId, strGroupId);
-    }
+    }*/
 }

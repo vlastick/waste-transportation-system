@@ -3,8 +3,17 @@ import one.vladimir.wts.DBModule.Entities.Point;
 
 public interface RestInterface {
 
-    // Orders interface
+    String getPoint(String configJson);
+    String postPoint(String configJson);
+    String deletePoint(String configJson);
+    String getRoute(String configJson);
 
+    String getPoints(String configJson);
+    String postPoints(String configJson);
+    String deletePoints(String configJson);
+    String getRoutes(String configJson);
+
+    /*
     String getOrdersList();
 
     String getOrders(String ownerId, String statusId, String typeId);
@@ -31,5 +40,5 @@ public interface RestInterface {
 
     String addPoint(String strCreatorId, String strGroupId);
 
-    Point getPoint(String strId);
+    Point getPoint(String strId);*/
 }
