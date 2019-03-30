@@ -1,157 +1,109 @@
 package one.vladimir.wts.RestModule;
 
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import one.vladimir.wts.Service.POJO.Base;
+import one.vladimir.wts.Service.POJO.Dump;
+import one.vladimir.wts.Service.POJO.Point;
+import one.vladimir.wts.Service.Service;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 
+import java.util.List;
+
+import static com.fasterxml.jackson.databind.node.JsonNodeType.ARRAY;
+import static com.fasterxml.jackson.databind.node.JsonNodeType.OBJECT;
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 public class RestImplementation implements RestInterface {
 
     @Override
-    @RequestMapping(method=GET, value = "/point/")
-    public String getPoint(
-            @RequestParam (name = "data",   defaultValue = "") String configJson) {
-        return "SMT";
+    @RequestMapping(method = POST, value = "/point/")
+    @ResponseBody
+    public ResponseEntity<String> postPoint(
+            @RequestParam(name = "type", defaultValue = "not given") String type,
+            @RequestBody String configJSON) {
+
+        String answerJSON = "Error";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        try {
+
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode array = mapper.readValue(configJSON, JsonNode.class);
+
+            if (array.getNodeType() == OBJECT) {
+
+                switch (type) {
+
+                    case "point":
+                        Point point = mapper.readValue(configJSON, Point.class);
+                        answerJSON = Service.postPoint(point);
+                        status = CREATED;
+                        break;
+
+                    case "dump":
+                        Dump dump = mapper.readValue(configJSON, Dump.class);
+                        answerJSON = Service.postDump(dump);
+                        status = CREATED;
+                        break;
+
+                    case "base":
+                        Base base = mapper.readValue(configJSON, Base.class);
+                        answerJSON = Service.postBase(base);
+                        status = CREATED;
+                        break;
+
+                    default:
+                        answerJSON = "Unsupported type: " + type;
+                        break;
+                }
+
+            } else if (array.getNodeType() == ARRAY) {
+
+                switch (type) {
+
+                    case "point":
+                        List<Point> pointList = mapper.readValue(configJSON, new TypeReference<List<Point>>(){});
+                        answerJSON = Service.postPoints(pointList);
+                        status = CREATED;
+                        break;
+
+                    case "dump":
+                        List<Dump> dumpList = mapper.readValue(configJSON, new TypeReference<List<Dump>>(){});
+                        answerJSON = Service.postDumps(dumpList);
+                        status = CREATED;
+                        break;
+
+                    case "base":
+                        List<Base> baseList = mapper.readValue(configJSON, new TypeReference<List<Base>>(){});
+                        answerJSON = Service.postBases(baseList);
+                        status = CREATED;
+                        break;
+
+                    default:
+                        answerJSON = "Unsupported type: " + type;
+                        break;
+                }
+            }
+
+        } catch (com.fasterxml.jackson.core.JsonParseException e) {
+            System.out.println("JSON parsing exception: can't read JSON structure - there are some errors!");
+            e.printStackTrace();
+        } catch (com.fasterxml.jackson.databind.JsonMappingException e) {
+            System.out.println("JSON incorrect value exception: class has not value in JSON!");
+            e.printStackTrace();
+        } catch (java.io.IOException e) {
+            System.out.println("Java IO Exception");
+            e.printStackTrace();
+        }
+
+        return new ResponseEntity<>(answerJSON, status);
     }
-
-    @Override
-    @RequestMapping(method=POST, value = "/point/")
-    public String postPoint(
-            @RequestParam (name = "data",   defaultValue = "") String configJson) {
-        return "SMT";
-    }
-
-    @Override
-    @RequestMapping(method=DELETE, value = "/point/")
-    public String deletePoint(
-            @RequestParam (name = "data",   defaultValue = "") String configJson) {
-        return "SMT";
-    }
-
-    @Override
-    @RequestMapping(method=GET, value = "/route/")
-    public String getRoute(
-            @RequestParam (name = "data",   defaultValue = "") String configJson) {
-        return "SMT";
-    }
-
-
-
-
-
-    //s
-    @Override
-    @RequestMapping(method=GET, value = "/points/")
-    public String getPoints(
-            @RequestParam (name = "data",   defaultValue = "") String configJson) {
-        return "SMT";
-    }
-
-    @Override
-    @RequestMapping(method=POST, value = "/points/")
-    public String postPoints(
-            @RequestParam (name = "data",   defaultValue = "") String configJson) {
-        return "SMT";
-    }
-
-    @Override
-    @RequestMapping(method=DELETE, value = "/points/")
-    public String deletePoints(
-            @RequestParam (name = "data",   defaultValue = "") String configJson) {
-        return "SMT";
-    }
-
-    @Override
-    @RequestMapping(method=GET, value = "/routes/")
-    public String getRoutes(
-            @RequestParam (name = "data",   defaultValue = "") String configJson) {
-        return "SMT";
-    }
-
-
-
-    /*
-    @Override
-    @RequestMapping(method=GET, value = "/orders/list/")
-    public String getOrdersList() {
-        return Service.getOrdersList();
-    }
-
-    @Override
-    @RequestMapping(method=GET, value = "/orders/")
-    public String getOrders(
-            @RequestParam (name = "owner_id",   defaultValue = "") String ownerId,
-            @RequestParam (name = "status_id",  defaultValue = "") String statusId,
-            @RequestParam (name = "type_id",    defaultValue = "") String typeId) {
-        return Service.getOrders(ownerId, statusId, typeId);
-    }
-
-    @Override
-    @RequestMapping(method=GET, value = "/orders/current/")
-    public String getOrdersCurrent() {
-        return Service.getOrdersCurrent();
-    }
-
-    @Override
-    @RequestMapping(method=POST, value = "/orders/")
-    public String postOrders(String latitude, String longtitude, String typeId, String size, String weight, String description) {
-        return null;
-    }
-
-    @Override
-    @RequestMapping(method=PUT, value = "/orders/")
-    public String putOrders(String orderID, String latitude, String longtitude, String typeId, String size, String weight, String description) {
-        return null;
-    }
-
-    @Override
-    @RequestMapping(method=DELETE, value = "/orders/")
-    public String deleteOrders(String orderID) {
-        return null;
-    }
-
-    @Override
-    @RequestMapping(method=PUT, value = "/orders/status/")
-    public String putOrdersStatus(String orderID, String status) {
-        return null;
-    }
-
-
-    // Test methods
-    @Override
-    @RequestMapping(method=POST, value = "/add/user/")
-    public String addUser(
-            @RequestParam(name = "login", defaultValue = "DeafaultUser") String strLogin,
-            @RequestParam(name = "role", defaultValue = "User") String strRole){
-
-        return Service.addUser(strLogin, strRole);
-    }
-
-    @Override
-    @RequestMapping(method=GET, value = "/get/user/")
-    public String getUser(
-            @RequestParam(name = "id", defaultValue = "1") String strId){
-
-        return Service.getUser(strId);
-    }
-
-    @Override
-    @RequestMapping(method=GET, value = "/get/point/")
-    public Point getPoint(
-            @RequestParam(name = "id", defaultValue = "1") String strId){
-
-        return Service.getPoint(strId);
-    }
-
-    @Override
-    @RequestMapping(method=POST, value = "/add/point/")
-    public String addPoint(
-            @RequestParam(name = "creatorId", defaultValue = "1") String strCreatorId,
-            @RequestParam(name = "groupId", defaultValue = "1") String strGroupId){
-        return Service.addPoint(strCreatorId, strGroupId);
-    }*/
 }

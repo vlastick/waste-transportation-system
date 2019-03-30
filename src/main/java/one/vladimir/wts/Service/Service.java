@@ -1,35 +1,54 @@
 package one.vladimir.wts.Service;
 
+import one.vladimir.wts.Service.POJO.Base;
+import one.vladimir.wts.Service.POJO.Dump;
+import one.vladimir.wts.Service.POJO.Point;
+
+import java.util.List;
+
+/*
+import org.springframework.beans.factory.annotation.Autowired;
 import one.vladimir.wts.DBService.DBServiceImplementation;
 import one.vladimir.wts.DBService.Entities.Group;
 import one.vladimir.wts.DBService.Entities.Point;
 import one.vladimir.wts.DBService.Entities.User;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.NoSuchElementException;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicInteger;*/
 
 public class Service {
 
-    @Autowired
-    static DBServiceImplementation db = new DBServiceImplementation();
-    private final AtomicInteger counter = new AtomicInteger();
 
 
-    static public String getOrdersList() {
-        return "ordersList";
+    public static String postPoint(Point point){
+        return  "Point was posted";
     }
 
-    static public String getOrders(String ownerId, String statusId, String typeId) {
-        return "getOrders";
+    public static String postDump(Dump dump){
+        return  "Dump was posted";
     }
 
-    static public String getOrdersCurrent() {
-        return "currentOrdersList";
+    public static String postBase(Base base){
+        return "Base was posted";
     }
 
-    //Test
+    public static String postPoints(List <Point> point){
+        return  "Points list was posted";
+    }
 
+    public static String postDumps(List <Dump> dump){
+        return  "Dumps list  was posted";
+    }
+
+    public static String postBases(List <Base> base){
+        return "Bases list  was posted";
+    }
+
+
+
+   // @Autowired
+    //static DBServiceImplementation db = new DBServiceImplementation();
+
+    /*
     public static String addUser(String strLogin, String strRole){
 
         User user = new User();
@@ -72,4 +91,5 @@ public class Service {
         db.addPoint(point);
         return "True";
     }
+    */
 }
