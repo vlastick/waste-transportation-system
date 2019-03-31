@@ -1,5 +1,7 @@
 package one.vladimir.wts.DBService.Entities;
 
+import one.vladimir.wts.BusinessLogic.POJO.Point;
+
 import javax.persistence.*;
 import java.util.Collection;
 
@@ -8,6 +10,10 @@ public class PointEntity {
     @Id
     @GeneratedValue
     private Integer pointId;
+
+    private Double longitude;
+
+    private Double latitude;
 
     @ManyToOne
     @JoinColumn(name = "CreatorId")
@@ -26,8 +32,29 @@ public class PointEntity {
     @OneToMany(mappedBy = "point", cascade = CascadeType.ALL)
     private Collection<RoutePointEntity> routePoints;
 
+    //constructors
+
+    public PointEntity() {
+
+    }
+
+    //POJO constructor
+    public PointEntity(Point point) {
+        this.longitude = point.getLongitude();
+        this.latitude = point.getLatitude();
+    }
+
 
     //    getters and setters
+
+    //POJO getter
+    public Point getPoint() {
+        Point point = new Point();
+        point.setLatitude(this.latitude);
+        point.setLongitude(this.longitude);
+        return point;
+    }
+
     public Integer getPointId() {
         return pointId;
     }
