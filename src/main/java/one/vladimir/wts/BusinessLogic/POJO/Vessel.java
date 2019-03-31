@@ -3,6 +3,9 @@ package one.vladimir.wts.BusinessLogic.POJO;
 import java.util.Set;
 
 public class Vessel {
+
+    private Integer id;
+
     private String name;
 
     private Set<Crewman> crew;
@@ -15,6 +18,14 @@ public class Vessel {
 
 
     //    getters and setters
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }

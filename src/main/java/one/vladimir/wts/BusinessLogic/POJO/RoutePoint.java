@@ -2,6 +2,8 @@ package one.vladimir.wts.BusinessLogic.POJO;
 
 public class RoutePoint {
 
+    private Integer id;
+
     private Point containedPoint;
 
     private RoutePointStatus status;
@@ -10,6 +12,14 @@ public class RoutePoint {
 
 
     //    getters and setters
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public Point getContainedPoint() {
         return containedPoint;
     }

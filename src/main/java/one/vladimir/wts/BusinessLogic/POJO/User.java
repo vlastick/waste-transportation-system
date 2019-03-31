@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Set;
 
 public class User {
+
+    private Integer id;
+
     private String login;
 
     private String role;
@@ -16,6 +19,14 @@ public class User {
 
 
     //    getters and setters
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getLogin() {
         return login;
     }
