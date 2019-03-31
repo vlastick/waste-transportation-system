@@ -1,8 +1,11 @@
 package one.vladimir.wts.DBService;
 
-import one.vladimir.wts.DBService.Entities.UserEntity;
+import one.vladimir.wts.BusinessLogic.POJO.User;
 
 public interface DBServiceInterface {
 
-    public void addUser(UserEntity user);
+    public void addUser(User user);
+
+    public User getUserById(Integer id);
+    
 }

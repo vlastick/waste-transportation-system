@@ -183,7 +183,7 @@ public class RestImplementation implements RestInterface {
     @Override
     @RequestMapping(method = GET, value = "/add_user/")
     public ResponseEntity<String> addUser(){
-        String result = businessLogic.addUser("MyleneFarmer", "User");
+        String result = businessLogic.addUser("MyleneFarmer", "User", "1123");
         return new ResponseEntity<>(result, OK);
     }
 

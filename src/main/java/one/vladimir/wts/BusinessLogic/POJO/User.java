@@ -1,5 +1,6 @@
 package one.vladimir.wts.BusinessLogic.POJO;
 
+import java.util.List;
 import java.util.Set;
 
 public class User {
@@ -9,7 +10,9 @@ public class User {
 
     private String password;
 
-    private Set<Point> createdPoints;
+    private String email;
+
+    private List<Point> createdPoints;
 
 
     //    getters and setters
@@ -37,11 +40,19 @@ public class User {
         this.password = password;
     }
 
-    public Set<Point> getCreatedPoints() {
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public List<Point> getCreatedPoints() {
         return createdPoints;
     }
 
-    public void setCreatedPoints(Set<Point> createdPoints) {
+    public void setCreatedPoints(List<Point> createdPoints) {
         this.createdPoints = createdPoints;
     }
 }

@@ -2,11 +2,7 @@ package one.vladimir.wts.BusinessLogic;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import one.vladimir.wts.BusinessLogic.POJO.Base;
-import one.vladimir.wts.BusinessLogic.POJO.Dump;
-import one.vladimir.wts.BusinessLogic.POJO.Point;
-import one.vladimir.wts.BusinessLogic.POJO.DumpStatus;
-import one.vladimir.wts.BusinessLogic.POJO.DumpType;
+import one.vladimir.wts.BusinessLogic.POJO.*;
 import one.vladimir.wts.DBService.DBServiceImplementation;
 import one.vladimir.wts.DBService.Entities.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,12 +76,13 @@ public class BusinessLogic implements BusinessLogicInterface{
     }
 
 
-    public String addUser(String strLogin, String strRole){
+    public String addUser(String strLogin, String strRole, String strPassword){
 
-        UserEntity user = new UserEntity();
+        User user = new User();
         user.setLogin(strLogin);
         user.setRole(strRole);
-        db.addUser(user);
+        user.setPassword(strPassword);
+        //db.addUser(user);
         return "User added";
     }
 
@@ -93,7 +90,7 @@ public class BusinessLogic implements BusinessLogicInterface{
     public String getUser(String strId){
 
         Integer id = Integer.valueOf(strId);
-        UserEntity user;
+        User user;
         try{
             user = db.getUserById(id);
         } catch (NoSuchElementException e){
