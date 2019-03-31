@@ -5,7 +5,7 @@ import java.util.Collection;
 
 @Entity
 @Table(name = "group_")
-public class Group {
+public class GroupEntity {
     @Id
     @GeneratedValue
     private Integer GroupId;
@@ -13,7 +13,7 @@ public class Group {
     private Integer Koef;
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
-    private Collection<Point> points;
+    private Collection<PointEntity> points;
 
 
     //    getters and setters

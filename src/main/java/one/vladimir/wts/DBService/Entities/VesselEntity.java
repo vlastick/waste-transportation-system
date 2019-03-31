@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
-public class Vessel {
+public class VesselEntity {
     @Id
     @GeneratedValue
     private Integer vesselId;
@@ -12,10 +12,10 @@ public class Vessel {
     private String name;
 
     @OneToMany(mappedBy = "vessel", cascade = CascadeType.ALL)
-    private Collection<Crewman> crewmans;
+    private Collection<CrewmanEntity> crewmans;
 
     @OneToOne(mappedBy = "vessel", cascade = CascadeType.ALL)
-    private Route route;
+    private RouteEntity route;
 
 
     //    getters and setters

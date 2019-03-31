@@ -4,27 +4,27 @@ import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
-public class Point {
+public class PointEntity {
     @Id
     @GeneratedValue
     private Integer pointId;
 
     @ManyToOne
     @JoinColumn(name = "CreatorId")
-    private User creator;
+    private UserEntity creator;
 
     @ManyToOne
     @JoinColumn(name = "GroupId")
-    private Group group;
+    private GroupEntity group;
 
     @OneToOne(mappedBy = "point", cascade = CascadeType.ALL)
-    private Dump dump;
+    private DumpEntity dump;
 
     @OneToOne(mappedBy = "point", cascade = CascadeType.ALL)
-    private Base base;
+    private BaseEntity base;
 
     @OneToMany(mappedBy = "point", cascade = CascadeType.ALL)
-    private Collection<RoutePoint> routePoints;
+    private Collection<RoutePointEntity> routePoints;
 
 
     //    getters and setters
@@ -36,19 +36,19 @@ public class Point {
         this.pointId = pointId;
     }
 
-    public User getCreator() {
+    public UserEntity getCreator() {
         return creator;
     }
 
-    public void setCreator(User creator) {
+    public void setCreator(UserEntity creator) {
         this.creator = creator;
     }
 
-    public Group getGroup() {
+    public GroupEntity getGroup() {
         return group;
     }
 
-    public void setGroup(Group group) {
+    public void setGroup(GroupEntity group) {
         this.group = group;
     }
 }

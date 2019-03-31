@@ -3,7 +3,7 @@ package one.vladimir.wts.DBService.Entities;
 import javax.persistence.*;
 
 @Entity
-public class RoutePoint {
+public class RoutePointEntity {
     @Id
     @GeneratedValue
     private Integer routePointId;
@@ -12,11 +12,11 @@ public class RoutePoint {
 
     @ManyToOne
     @JoinColumn(name = "PointId")
-    private Point point;
+    private PointEntity point;
 
     @ManyToOne
     @JoinColumn(name = "RouteId")
-    private Route route;
+    private RouteEntity route;
 
 
     //    getters and setters
@@ -36,19 +36,19 @@ public class RoutePoint {
         Koef = koef;
     }
 
-    public Point getPoint() {
+    public PointEntity getPoint() {
         return point;
     }
 
-    public void setPoint(Point point) {
+    public void setPoint(PointEntity point) {
         this.point = point;
     }
 
-    public Route getRoute() {
+    public RouteEntity getRoute() {
         return route;
     }
 
-    public void setRoute(Route route) {
+    public void setRoute(RouteEntity route) {
         this.route = route;
     }
 }

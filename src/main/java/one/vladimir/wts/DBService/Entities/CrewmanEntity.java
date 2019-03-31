@@ -3,18 +3,18 @@ package one.vladimir.wts.DBService.Entities;
 import javax.persistence.*;
 
 @Entity
-public class Crewman {
+public class CrewmanEntity {
     @Id
     @GeneratedValue
     private Integer crewmanId;
 
     @OneToOne
     @JoinColumn(name = "UserId")
-    private User user;
+    private UserEntity user;
 
     @ManyToOne
     @JoinColumn(name = "VesselId")
-    private Vessel vessel;
+    private VesselEntity vessel;
 
 
     //    getters and setters
@@ -26,19 +26,19 @@ public class Crewman {
         this.crewmanId = crewmanId;
     }
 
-    public User getUser() {
+    public UserEntity getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserEntity user) {
         this.user = user;
     }
 
-    public Vessel getVessel() {
+    public VesselEntity getVessel() {
         return vessel;
     }
 
-    public void setVessel(Vessel vessel) {
+    public void setVessel(VesselEntity vessel) {
         this.vessel = vessel;
     }
 }

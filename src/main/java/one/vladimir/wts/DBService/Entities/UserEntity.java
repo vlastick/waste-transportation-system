@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
-public class User {
+public class UserEntity {
     @Id
     @GeneratedValue
     private Integer userId;
@@ -14,10 +14,10 @@ public class User {
     private String login;
 
     @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
-    private Collection<Point> points;
+    private Collection<PointEntity> points;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private Crewman crewmans;
+    private CrewmanEntity crewmans;
 
 
     //    getters and setters

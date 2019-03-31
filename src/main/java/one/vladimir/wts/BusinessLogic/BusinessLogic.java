@@ -8,7 +8,7 @@ import one.vladimir.wts.BusinessLogic.POJO.Point;
 import one.vladimir.wts.BusinessLogic.POJO.DumpStatus;
 import one.vladimir.wts.BusinessLogic.POJO.DumpType;
 import one.vladimir.wts.DBService.DBServiceImplementation;
-import one.vladimir.wts.DBService.Entities.User;
+import one.vladimir.wts.DBService.Entities.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +19,9 @@ import java.util.NoSuchElementException;
 /*
 import org.springframework.beans.factory.annotation.Autowired;
 import one.vladimir.wts.DBService.DBServiceImplementation;
-import one.vladimir.wts.DBService.Entities.Group;
-import one.vladimir.wts.DBService.Entities.Point;
-import one.vladimir.wts.DBService.Entities.User;
+import one.vladimir.wts.DBService.Entities.GroupEntity;
+import one.vladimir.wts.DBService.Entities.PointEntity;
+import one.vladimir.wts.DBService.Entities.UserEntity;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;*/
 
@@ -32,15 +32,15 @@ public class BusinessLogic implements BusinessLogicInterface{
     private DBServiceImplementation db = new DBServiceImplementation();
 
     public String postPoint(Point point) {
-        return "Point was posted";
+        return "PointEntity was posted";
     }
 
     public String postDump(Dump dump) {
-        return "Dump was posted";
+        return "DumpEntity was posted";
     }
 
     public String postBase(Base base) {
-        return "Base was posted";
+        return "BaseEntity was posted";
     }
 
     public String postPoints(List<Point> point) {
@@ -82,7 +82,7 @@ public class BusinessLogic implements BusinessLogicInterface{
 
     public String addUser(String strLogin, String strRole){
 
-        User user = new User();
+        UserEntity user = new UserEntity();
         user.setLogin(strLogin);
         user.setRole(strRole);
         db.addUser(user);
@@ -93,7 +93,7 @@ public class BusinessLogic implements BusinessLogicInterface{
     public String getUser(String strId){
 
         Integer id = Integer.valueOf(strId);
-        User user;
+        UserEntity user;
         try{
             user = db.getUserById(id);
         } catch (NoSuchElementException e){
@@ -103,10 +103,10 @@ public class BusinessLogic implements BusinessLogicInterface{
     }
 
     /*
-    public static Point getPoint(String strId){
+    public static PointEntity getPoint(String strId){
 
         Integer id = Integer.valueOf(strId);
-        Point point = db.getPointById(id);
+        PointEntity point = db.getPointById(id);
         return point;
     }
 
@@ -114,9 +114,9 @@ public class BusinessLogic implements BusinessLogicInterface{
 
         Integer creatorId = Integer.valueOf(strCreatorId);
         Integer groupId = Integer.valueOf(strGroupId);
-        User creator = db.getUserById(creatorId);
-        Group group = db.getGroupById(groupId);
-        Point point = new Point();
+        UserEntity creator = db.getUserById(creatorId);
+        GroupEntity group = db.getGroupById(groupId);
+        PointEntity point = new PointEntity();
         point.setGroup(group);
         point.setCreator(creator);
         db.addPoint(point);

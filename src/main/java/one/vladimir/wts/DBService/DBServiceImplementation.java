@@ -24,12 +24,12 @@ public class DBServiceImplementation implements DBServiceInterface{
 
 //    Basic Queries
 
-    public void addUser(User user) {
+    public void addUser(UserEntity user) {
         userRepo.save(user);
     }
 
-    public User getUserById(Integer id) {
-        User user;
+    public UserEntity getUserById(Integer id) {
+        UserEntity user;
         try {
             user = userRepo.findById(id).get();
         } catch (NoSuchElementException e) {
@@ -39,13 +39,13 @@ public class DBServiceImplementation implements DBServiceInterface{
         return user;
     }
 
-    public void addPoint(Point point) {
-        User user = point.getCreator();
+    public void addPoint(PointEntity point) {
+        UserEntity user = point.getCreator();
         pointRepo.save(point);
     }
 
-    public Point getPointById(Integer id) {
-        Point point;
+    public PointEntity getPointById(Integer id) {
+        PointEntity point;
         try {
             point = pointRepo.findById(id).get();
         } catch (NoSuchElementException e){
@@ -54,12 +54,12 @@ public class DBServiceImplementation implements DBServiceInterface{
         return point;
     }
 
-    public void addGroup(Group group) {
+    public void addGroup(GroupEntity group) {
         groupRepo.save(group);
     }
 
-    public Group getGroupById(Integer id) {
-        Group group;
+    public GroupEntity getGroupById(Integer id) {
+        GroupEntity group;
         try {
             group = groupRepo.findById(id).get();
         } catch (NoSuchElementException e){
@@ -69,12 +69,12 @@ public class DBServiceImplementation implements DBServiceInterface{
     }
 
     public Integer testQuery() {
-        /*User u = new User();
+        /*UserEntity u = new UserEntity();
         u.setLogin("User1");
         u.setRole("Admin");
         userRepo.save(u);
 
-        Point p = new Point();
+        PointEntity p = new PointEntity();
         p.setCreator(u);
         p.setGroupId(1);
         pointRepo.save(p);

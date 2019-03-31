@@ -3,14 +3,14 @@ package one.vladimir.wts.DBService.Entities;
 import javax.persistence.*;
 
 @Entity
-public class Base {
+public class BaseEntity {
     @Id
     @GeneratedValue
     private Integer baseId;
 
     @OneToOne
     @JoinColumn(name = "PointId")
-    private Point point;
+    private PointEntity point;
 
 
     //    getters and setters
@@ -22,11 +22,11 @@ public class Base {
         this.baseId = baseId;
     }
 
-    public Point getPoint() {
+    public PointEntity getPoint() {
         return point;
     }
 
-    public void setPoint(Point point) {
+    public void setPoint(PointEntity point) {
         this.point = point;
     }
 }

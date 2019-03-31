@@ -4,17 +4,17 @@ import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
-public class Route {
+public class RouteEntity {
     @Id
     @GeneratedValue
     private Integer routeId;
 
     @OneToOne
     @JoinColumn(name = "VesselId")
-    Vessel vessel;
+    VesselEntity vessel;
 
     @OneToMany(mappedBy = "route", cascade = CascadeType.ALL)
-    private Collection<RoutePoint> routePoints;
+    private Collection<RoutePointEntity> routePoints;
 
 
     //    getters and setters
@@ -26,11 +26,11 @@ public class Route {
         this.routeId = routeId;
     }
 
-    public Vessel getVessel() {
+    public VesselEntity getVessel() {
         return vessel;
     }
 
-    public void setVessel(Vessel vessel) {
+    public void setVessel(VesselEntity vessel) {
         this.vessel = vessel;
     }
 }
