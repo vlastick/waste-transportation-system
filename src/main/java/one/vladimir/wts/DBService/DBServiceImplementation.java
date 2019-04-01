@@ -1,5 +1,6 @@
 package one.vladimir.wts.DBService;
 
+import one.vladimir.wts.BusinessLogic.POJO.Group;
 import one.vladimir.wts.BusinessLogic.POJO.Point;
 import one.vladimir.wts.BusinessLogic.POJO.User;
 import one.vladimir.wts.DBService.Entities.*;
@@ -30,26 +31,7 @@ public class DBServiceImplementation implements DBServiceInterface {
     //For DB testing
     @PostConstruct
     public void testDBService() {
-        /*UserEntity userEnt = new UserEntity();
-        userEnt.setLogin("a");
-        userEnt.setRole("2");
-        userEnt.setPassword("3");
-        userRepo.save(userEnt);
-        userEnt = new UserEntity();
-        userEnt.setLogin("b");
-        userEnt.setRole("2");
-        userEnt.setPassword("3");
-        userRepo.save(userEnt);*/
 
-/*        User user = new User();
-        user.setEmail("abc@mail.ru");
-        user.setRole("user");
-        user.setPassword("222");
-        user.setLogin("1");
-        this.addUser(user);
-        this.addUser(user);*/
-
-//        UserEntity userEnt = userRepo.findById(1).get();
 //        pointRepo.findPointsByCreator(userEnt).forEach(point -> System.out.println(point.getPointId()));
 //        pointRepo.findPointsByCreatorId(1).forEach(point -> System.out.println(point.getPointId()));
 
@@ -63,7 +45,9 @@ public class DBServiceImplementation implements DBServiceInterface {
         if (userRepo.findAllEmails().contains(user.getEmail())) {
             throw new IllegalArgumentException("User with this email already exists");
         }
-        UserEntity userEnt = new UserEntity(user);
+        UserEntity userEnt = new UserEntity();
+        userEnt.setUser(user);
+        userEnt.setUserId(null);
         userRepo.save(userEnt);
     }
 
@@ -84,9 +68,8 @@ public class DBServiceImplementation implements DBServiceInterface {
         return user;
     }
 
-    public void addPoint(PointEntity point) {
-        UserEntity user = point.getCreator();
-        pointRepo.save(point);
+    public void addPoint(Point point, User creator, Group group) {
+
     }
 
     public PointEntity getPointById(Integer id) {

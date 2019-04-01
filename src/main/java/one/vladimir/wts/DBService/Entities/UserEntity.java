@@ -25,15 +25,12 @@ public class UserEntity {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private CrewmanEntity crewmans;
 
-    //constructors
 
-    //default constructor
-    public UserEntity(){
+    //    getters and setters
 
-    }
-
-    //POJO constructor
-    public UserEntity(User user){
+    //POJO setter
+    public void setUser(User user) {
+        this.userId = user.getId();
         this.role = user.getRole();
         this.login = user.getLogin();
         this.password = user.getPassword();
@@ -41,11 +38,10 @@ public class UserEntity {
     }
 
 
-    //    getters and setters
-
     //POJO getter
-    public User getUser(){
+    public User getUser() {
         User user = new User();
+        user.setId(this.userId);
         user.setLogin(this.login);
         user.setPassword(this.password);
         user.setRole(this.role);

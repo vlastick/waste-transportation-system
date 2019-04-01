@@ -32,24 +32,22 @@ public class PointEntity {
     @OneToMany(mappedBy = "point", cascade = CascadeType.ALL)
     private Collection<RoutePointEntity> routePoints;
 
-    //constructors
 
-    public PointEntity() {
-
-    }
-
-    //POJO constructor
-    public PointEntity(Point point) {
-        this.longitude = point.getLongitude();
-        this.latitude = point.getLatitude();
-    }
 
 
     //    getters and setters
 
+    //POJO setter
+    public void setPoint(Point point) {
+        this.pointId = point.getId();
+        this.longitude = point.getLongitude();
+        this.latitude = point.getLatitude();
+    }
+
     //POJO getter
     public Point getPoint() {
         Point point = new Point();
+        point.setId(this.pointId);
         point.setLatitude(this.latitude);
         point.setLongitude(this.longitude);
         return point;
