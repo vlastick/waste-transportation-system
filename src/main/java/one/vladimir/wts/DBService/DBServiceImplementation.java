@@ -34,8 +34,19 @@ public class DBServiceImplementation implements DBServiceInterface {
 
 //        pointRepo.findPointsByCreator(userEnt).forEach(point -> System.out.println(point.getPointId()));
 //        pointRepo.findPointsByCreatorId(1).forEach(point -> System.out.println(point.getPointId()));
-
 //        this.getUserById(1).getCreatedPoints().forEach(x->System.out.println(x.getLatitude()));
+//        Point p = new Point();
+//        Group g = new Group();
+//        User u  = new User();
+//        u.setId(1);
+//        g.setId(7);
+//        g.setKoef(111);
+//        p.setId(111);
+//        p.setLongitude(1111.1);
+//        this.addPoint(p, u, g);
+//        System.out.println(this.getPointById(14).getLatitude().toString() + this.getPointById(19).getLongitude().toString());
+
+
     }
 
 
@@ -56,7 +67,7 @@ public class DBServiceImplementation implements DBServiceInterface {
         try {
             userEnt = userRepo.findById(id).get();
         } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("User not found");
+            throw new NoSuchElementException("User with id " + id + " not found");
         }
         User user = userEnt.getUser();
         List<PointEntity> createdPointEntities = pointRepo.findPointsByCreator(userEnt);
@@ -69,20 +80,36 @@ public class DBServiceImplementation implements DBServiceInterface {
     }
 
     public void addPoint(Point point, User creator, Group group) {
-
+        if (!userRepo.findAllIds().contains(creator.getId())) {
+            throw new IllegalArgumentException("User with id " + creator.getId() + " not found");
+        }
+        if (!groupRepo.findAllIds().contains(group.getId())) {
+            throw new IllegalArgumentException("Group with id " + group.getId() + " not found");
+        }
+        PointEntity pointEnt = new PointEntity();
+        GroupEntity groupEnt = new GroupEntity();
+        UserEntity creatorEnt = new UserEntity();
+        groupEnt.setGroupId(group.getId());
+        creatorEnt.setUserId(creator.getId());
+        pointEnt.setPoint(point);
+        pointEnt.setCreator(creatorEnt);
+        pointEnt.setGroup(groupEnt);
+        pointEnt.setPointId(null);
+        pointRepo.save(pointEnt);
     }
 
-    public PointEntity getPointById(Integer id) {
-        PointEntity point;
+    public Point getPointById(Integer id) {
+        PointEntity pointEnt;
         try {
-            point = pointRepo.findById(id).get();
+            pointEnt = pointRepo.findById(id).get();
         } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("point not found");
+            throw new NoSuchElementException("point with id " + id + " not found");
         }
+        Point point = pointEnt.getPoint();
         return point;
     }
 
-    public void addGroup(GroupEntity group) {
+    /*public void addGroup(GroupEntity group) {
         groupRepo.save(group);
     }
 
@@ -94,7 +121,7 @@ public class DBServiceImplementation implements DBServiceInterface {
             throw new NoSuchElementException("group not found");
         }
         return group;
-    }
+    }*/
 
     public Integer testQuery() {
         /*UserEntity u = new UserEntity();
