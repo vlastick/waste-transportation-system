@@ -1,5 +1,6 @@
 package one.vladimir.wts.DBService;
 
+import one.vladimir.wts.BusinessLogic.POJO.DumpStatus;
 import one.vladimir.wts.BusinessLogic.POJO.Group;
 import one.vladimir.wts.BusinessLogic.POJO.Point;
 import one.vladimir.wts.BusinessLogic.POJO.User;
@@ -38,13 +39,23 @@ public class DBServiceImplementation implements DBServiceInterface {
 //        Point p = new Point();
 //        Group g = new Group();
 //        User u  = new User();
-//        u.setId(1);
+//        u.setUserId(1);
 //        g.setId(7);
 //        g.setKoef(111);
-//        p.setId(111);
+//        this.addGroup(g);
+//        p.setPointId(8);
 //        p.setLongitude(1111.1);
 //        this.addPoint(p, u, g);
 //        System.out.println(this.getPointById(14).getLatitude().toString() + this.getPointById(19).getLongitude().toString());
+
+//        DumpStatus s = DumpStatus.UNCONFIRMED;
+//        DumpStatus d = DumpStatus.valueOf("removed");
+//        System.out.println(s);
+//        System.out.println(d);
+//        System.out.println(this.getGroupById(23).getKoef());
+
+
+        ;
 
 
     }
@@ -109,19 +120,23 @@ public class DBServiceImplementation implements DBServiceInterface {
         return point;
     }
 
-    /*public void addGroup(GroupEntity group) {
-        groupRepo.save(group);
+    public void addGroup(Group group) {
+        GroupEntity groupEnt = new GroupEntity();
+        groupEnt.setGroup(group);
+        groupEnt.setGroupId(null);
+        groupRepo.save(groupEnt);
     }
 
-    public GroupEntity getGroupById(Integer id) {
-        GroupEntity group;
+    public Group getGroupById(Integer id) {
+        GroupEntity groupEnt;
         try {
-            group = groupRepo.findById(id).get();
+            groupEnt = groupRepo.findById(id).get();
         } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("group not found");
+            throw new NoSuchElementException("group with id " + id + " not found");
         }
+        Group group = groupEnt.getGroup();
         return group;
-    }*/
+    }
 
     public Integer testQuery() {
         /*UserEntity u = new UserEntity();

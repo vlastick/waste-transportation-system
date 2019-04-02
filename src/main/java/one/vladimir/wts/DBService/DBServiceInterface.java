@@ -14,4 +14,8 @@ public interface DBServiceInterface {
 
     public Point getPointById(Integer id);
 
+    public void addGroup(Group group);
+
+    public Group getGroupById(Integer id);
+
 }

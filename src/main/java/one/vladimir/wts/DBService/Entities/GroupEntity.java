@@ -1,5 +1,7 @@
 package one.vladimir.wts.DBService.Entities;
 
+import one.vladimir.wts.BusinessLogic.POJO.Group;
+
 import javax.persistence.*;
 import java.util.Collection;
 
@@ -17,6 +19,19 @@ public class GroupEntity {
 
 
     //    getters and setters
+
+    public void setGroup(Group group) {
+        this.setGroupId(group.getId());
+        this.setKoef(group.getKoef());
+    }
+
+    public Group getGroup() {
+        Group group = new Group();
+        group.setId(this.getGroupId());
+        group.setKoef(this.getKoef());
+        return group;
+    }
+
     public Integer getGroupId() {
         return GroupId;
     }
