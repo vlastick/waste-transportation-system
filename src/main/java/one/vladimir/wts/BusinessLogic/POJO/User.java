@@ -19,11 +19,11 @@ public class User {
 
 
     //    getters and setters
-    public Integer getId() {
+    public Integer getUserId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setUserId(Integer id) {
         this.id = id;
     }
 

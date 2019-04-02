@@ -9,11 +9,11 @@ public class Point {
     private Double latitude;
 
     //    getters and setters
-    public Integer getId() {
+    public Integer getPointId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setPointId(Integer id) {
         this.id = id;
     }
 

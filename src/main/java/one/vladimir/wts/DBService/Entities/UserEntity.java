@@ -30,7 +30,7 @@ public class UserEntity {
 
     //POJO setter
     public void setUser(User user) {
-        this.userId = user.getId();
+        this.userId = user.getUserId();
         this.role = user.getRole();
         this.login = user.getLogin();
         this.password = user.getPassword();
@@ -41,7 +41,7 @@ public class UserEntity {
     //POJO getter
     public User getUser() {
         User user = new User();
-        user.setId(this.userId);
+        user.setUserId(this.userId);
         user.setLogin(this.login);
         user.setPassword(this.password);
         user.setRole(this.role);

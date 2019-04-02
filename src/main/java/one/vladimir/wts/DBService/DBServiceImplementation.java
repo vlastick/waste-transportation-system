@@ -80,8 +80,8 @@ public class DBServiceImplementation implements DBServiceInterface {
     }
 
     public void addPoint(Point point, User creator, Group group) {
-        if (!userRepo.findAllIds().contains(creator.getId())) {
-            throw new IllegalArgumentException("User with id " + creator.getId() + " not found");
+        if (!userRepo.findAllIds().contains(creator.getUserId())) {
+            throw new IllegalArgumentException("User with id " + creator.getUserId() + " not found");
         }
         if (!groupRepo.findAllIds().contains(group.getId())) {
             throw new IllegalArgumentException("Group with id " + group.getId() + " not found");
@@ -90,7 +90,7 @@ public class DBServiceImplementation implements DBServiceInterface {
         GroupEntity groupEnt = new GroupEntity();
         UserEntity creatorEnt = new UserEntity();
         groupEnt.setGroupId(group.getId());
-        creatorEnt.setUserId(creator.getId());
+        creatorEnt.setUserId(creator.getUserId());
         pointEnt.setPoint(point);
         pointEnt.setCreator(creatorEnt);
         pointEnt.setGroup(groupEnt);

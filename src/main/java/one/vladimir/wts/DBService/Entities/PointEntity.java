@@ -39,7 +39,7 @@ public class PointEntity {
 
     //POJO setter
     public void setPoint(Point point) {
-        this.pointId = point.getId();
+        this.pointId = point.getPointId();
         this.longitude = point.getLongitude();
         this.latitude = point.getLatitude();
     }
@@ -47,7 +47,7 @@ public class PointEntity {
     //POJO getter
     public Point getPoint() {
         Point point = new Point();
-        point.setId(this.pointId);
+        point.setPointId(this.pointId);
         point.setLatitude(this.latitude);
         point.setLongitude(this.longitude);
         return point;
