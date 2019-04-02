@@ -1,9 +1,6 @@
 package one.vladimir.wts.DBService;
 
-import one.vladimir.wts.BusinessLogic.POJO.DumpStatus;
-import one.vladimir.wts.BusinessLogic.POJO.Group;
-import one.vladimir.wts.BusinessLogic.POJO.Point;
-import one.vladimir.wts.BusinessLogic.POJO.User;
+import one.vladimir.wts.BusinessLogic.POJO.*;
 import one.vladimir.wts.DBService.Entities.*;
 import one.vladimir.wts.DBService.Repositories.DumpRepository;
 import one.vladimir.wts.DBService.Repositories.GroupRepository;
@@ -48,14 +45,26 @@ public class DBServiceImplementation implements DBServiceInterface {
 //        this.addPoint(p, u, g);
 //        System.out.println(this.getPointById(14).getLatitude().toString() + this.getPointById(19).getLongitude().toString());
 
-//        DumpStatus s = DumpStatus.UNCONFIRMED;
+//        DumpStatus s = null;
+//        System.out.println(s.toString());
 //        DumpStatus d = DumpStatus.valueOf("removed");
 //        System.out.println(s);
 //        System.out.println(d);
 //        System.out.println(this.getGroupById(23).getKoef());
+//        PointEntity p = pointRepo.findById(8).get();
+//        DumpEntity d = dumpRepo.findById(11).get();
+//        Dump p1 = d.getDump();
+//        d.getPoint().getPoint(p1);
+//        Dump p1 = this.getDumpById(11);
+//        System.out.println(p1.getStatus() + p1.getType().toString() + p1.getPointId().toString() + p1.getLatitude().toString());
 
-
-        ;
+//        Dump d = new Dump();
+//        d.setType(DumpType.MIXED);
+//        d.setStatus(DumpStatus.UNCONFIRMED);
+//        d.setPointId(8);
+//        d.setLatitude(133.0);
+//        d.setPriority(1);
+//        this.addDump(d);
 
 
     }
@@ -114,7 +123,7 @@ public class DBServiceImplementation implements DBServiceInterface {
         try {
             pointEnt = pointRepo.findById(id).get();
         } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("point with id " + id + " not found");
+            throw new NoSuchElementException("Point with id " + id + " not found");
         }
         Point point = pointEnt.getPoint();
         return point;
@@ -132,24 +141,41 @@ public class DBServiceImplementation implements DBServiceInterface {
         try {
             groupEnt = groupRepo.findById(id).get();
         } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("group with id " + id + " not found");
+            throw new NoSuchElementException("Group with id " + id + " not found");
         }
         Group group = groupEnt.getGroup();
         return group;
     }
 
-    public Integer testQuery() {
-        /*UserEntity u = new UserEntity();
-        u.setLogin("User1");
-        u.setRole("Admin");
-        userRepo.save(u);
+    public void addDump(Dump dump) {
+        if (!pointRepo.findAllIds().contains(dump.getPointId())) {
+            throw new IllegalArgumentException("Point with id " + dump.getPointId() + " not found");
+        }
+        DumpEntity dumpEnt = new DumpEntity();
+        PointEntity pointEnt = new PointEntity();
+        pointEnt.setPointId(dump.getPointId());
+        try {
+            dumpEnt.setDump(dump);
+        } catch (NullPointerException e) {
+            throw new IllegalArgumentException("Type and Status of dump couldn't be null");
+        }
 
-        PointEntity p = new PointEntity();
-        p.setCreator(u);
-        p.setGroupId(1);
-        pointRepo.save(p);
-
-        userRepo.deleteById(5);*/
-        return 1;
+        dumpEnt.setPoint(pointEnt);
+        dumpEnt.setDumpId(null);
+        dumpRepo.save(dumpEnt);
     }
+
+    public Dump getDumpById(Integer id) {
+        DumpEntity dumpEnt;
+        try {
+            dumpEnt = dumpRepo.findById(id).get();
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException("Dump with id " + id + " not found");
+        }
+        Dump dump = dumpEnt.getDump();
+        dumpEnt.getPoint().getPoint(dump);
+        return dump;
+    }
+
+
 }

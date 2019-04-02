@@ -20,11 +20,13 @@ public class GroupEntity {
 
     //    getters and setters
 
+    //POJO setter
     public void setGroup(Group group) {
         this.setGroupId(group.getId());
         this.setKoef(group.getKoef());
     }
 
+    //POJO getter
     public Group getGroup() {
         Group group = new Group();
         group.setId(this.getGroupId());

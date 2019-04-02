@@ -13,4 +13,7 @@ public interface PointRepository extends CrudRepository<PointEntity, Integer> {
     List<PointEntity> findPointsByCreatorId(Integer creatorId);
 
     List<PointEntity> findPointsByCreator(UserEntity creator);
+
+    @Query("SELECT p.pointId FROM PointEntity p")
+    List<Integer> findAllIds();
 }
