@@ -10,7 +10,7 @@ import java.util.Collection;
 public class GroupEntity {
     @Id
     @GeneratedValue
-    private Integer GroupId;
+    private Integer groupId;
 
     private Integer Koef;
 
@@ -35,11 +35,11 @@ public class GroupEntity {
     }
 
     public Integer getGroupId() {
-        return GroupId;
+        return groupId;
     }
 
     public void setGroupId(Integer groupId) {
-        GroupId = groupId;
+        this.groupId = groupId;
     }
 
     public Integer getKoef() {

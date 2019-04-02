@@ -65,7 +65,10 @@ public class DBServiceImplementation implements DBServiceInterface {
 //        d.setLatitude(133.0);
 //        d.setPriority(1);
 //        this.addDump(d);
-
+//        GroupEntity groupEnt = new GroupEntity();
+//        groupEnt.setGroupId(7);
+//        pointRepo.findPointsByGroup(groupEnt).forEach(point -> System.out.println(point.getPointId()));
+//        System.out.println(this.getGroupById(7).getContainedPoints());
 
     }
 
@@ -144,6 +147,12 @@ public class DBServiceImplementation implements DBServiceInterface {
             throw new NoSuchElementException("Group with id " + id + " not found");
         }
         Group group = groupEnt.getGroup();
+        List<PointEntity> pointEntities = pointRepo.findPointsByGroup(groupEnt);
+        List<Point> points = new Vector<Point>();
+        for (PointEntity pointEnt : pointEntities) {
+            points.add(pointEnt.getPoint());
+        }
+        group.setContainedPoints(points);
         return group;
     }
 

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface GroupRepository extends CrudRepository<GroupEntity, Integer> {
 
-    @Query("SELECT g.GroupId FROM GroupEntity g")
+    @Query("SELECT g.groupId FROM GroupEntity g")
     List<Integer> findAllIds();
 
 }
