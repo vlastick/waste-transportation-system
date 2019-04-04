@@ -1,9 +1,6 @@
 package one.vladimir.wts.DBService;
 
-import one.vladimir.wts.BusinessLogic.POJO.Dump;
-import one.vladimir.wts.BusinessLogic.POJO.Group;
-import one.vladimir.wts.BusinessLogic.POJO.Point;
-import one.vladimir.wts.BusinessLogic.POJO.User;
+import one.vladimir.wts.BusinessLogic.POJO.*;
 
 public interface DBServiceInterface {
 
@@ -22,5 +19,27 @@ public interface DBServiceInterface {
     public void addDump(Dump dump);
 
     public Dump getDumpById(Integer id);
+
+    //TODO: vvv implement following queries vvv
+
+    public void addBase(Base base);
+
+    public Base getBaseById(Integer id);
+
+    public void addCrewman(Crewman crewman);
+
+    public Crewman getCrewmanById(Integer id);
+
+    public void addRoute(Route route);
+
+    public Route getRouteById(Integer id);
+
+    public void addRoutePoint(RoutePoint routePoint);
+
+    public RoutePoint getRoutePointById(Integer id);
+
+    public void addVessel(Vessel vessel);
+
+    public Vessel getVesselById(Integer id);
 
 }

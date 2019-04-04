@@ -156,6 +156,7 @@ public class DBServiceImplementation implements DBServiceInterface {
         return group;
     }
 
+    //TODO: add object uniqueness check for exact point
     public void addDump(Dump dump) {
         if (!pointRepo.findAllIds().contains(dump.getPointId())) {
             throw new IllegalArgumentException("Point with id " + dump.getPointId() + " not found");
@@ -184,6 +185,44 @@ public class DBServiceImplementation implements DBServiceInterface {
         Dump dump = dumpEnt.getDump();
         dumpEnt.getPoint().getPoint(dump);
         return dump;
+    }
+
+    //TODO: vvv implement following queries vvv
+
+    public void addBase(Base base) {
+    }
+
+
+    public Base getBaseById(Integer id) {
+        return new Base();
+    }
+
+    public void addCrewman(Crewman crewman) {
+    }
+
+    public Crewman getCrewmanById(Integer id) {
+        return new Crewman();
+    }
+
+    public void addRoute(Route route) {
+    }
+
+    public Route getRouteById(Integer id) {
+        return new Route();
+    }
+
+    public void addRoutePoint(RoutePoint routePoint) {
+    }
+
+    public RoutePoint getRoutePointById(Integer id) {
+        return new RoutePoint();
+    }
+
+    public void addVessel(Vessel vessel) {
+    }
+
+    public Vessel getVesselById(Integer id) {
+        return new Vessel();
     }
 
 
