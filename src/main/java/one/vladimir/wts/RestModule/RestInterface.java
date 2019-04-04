@@ -12,4 +12,6 @@ public interface RestInterface {
     ResponseEntity<String> addUser();
 
     ResponseEntity<String> getUser();
+
+    ResponseEntity<String> testGeo(String data);
 }

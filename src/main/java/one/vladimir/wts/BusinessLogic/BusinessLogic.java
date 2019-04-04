@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import one.vladimir.wts.BusinessLogic.POJO.*;
 import one.vladimir.wts.DBService.DBServiceImplementation;
 import one.vladimir.wts.DBService.Entities.UserEntity;
+import one.vladimir.wts.GeoModule.GeoImplementation;
+import one.vladimir.wts.GeoModule.GeoInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,20 +14,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-/*
-import org.springframework.beans.factory.annotation.Autowired;
-import one.vladimir.wts.DBService.DBServiceImplementation;
-import one.vladimir.wts.DBService.Entities.GroupEntity;
-import one.vladimir.wts.DBService.Entities.PointEntity;
-import one.vladimir.wts.DBService.Entities.UserEntity;
-import java.util.NoSuchElementException;
-import java.util.concurrent.atomic.AtomicInteger;*/
 
 @Service
 public class BusinessLogic implements BusinessLogicInterface{
 
     @Autowired
     private DBServiceImplementation db = new DBServiceImplementation();
+
+    @Autowired
+    private GeoInterface geo = new GeoImplementation();
+
 
     public String postPoint(Point point) {
         return "PointEntity was posted";
@@ -73,6 +71,11 @@ public class BusinessLogic implements BusinessLogicInterface{
             e.printStackTrace();
         }
         return answerJson;
+    }
+
+    @Override
+    public String testGeo(String request) {
+        return geo.getResult(request);
     }
 
 

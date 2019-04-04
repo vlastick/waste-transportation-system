@@ -22,4 +22,6 @@ public interface BusinessLogicInterface {
     String postBases(List<Base> base);
 
     String getDumps(JsonNode filter);
+
+    String testGeo(String request);
 }

@@ -194,4 +194,12 @@ public class RestImplementation implements RestInterface {
         String result = businessLogic.getUser("1");
         return new ResponseEntity<>(result, OK);
     }
+
+    @Override
+    @RequestMapping(method = GET, value = "/test_geo")
+    public ResponseEntity<String> testGeo(
+            @RequestBody String data) {
+
+        return new ResponseEntity(businessLogic.testGeo(data), OK);
+    }
 }
