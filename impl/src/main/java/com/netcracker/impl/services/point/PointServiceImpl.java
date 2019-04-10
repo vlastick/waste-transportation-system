@@ -32,6 +32,7 @@ public class PointServiceImpl implements PointService {
     void init(){
         db = context.getBean("database", Database.class);
         geo = context.getBean("geo", Geo.class);
+        System.out.println("PointServiceImpl postconstruct");
     }
 
 

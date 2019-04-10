@@ -30,3 +30,9 @@
 ###Database config###
 #/src/main/resources/application.properties
 #src/main/resources/application.properties
+impl/target/classes/com/netcracker/impl/database/DatabaseImpl.class
+impl/target/classes/com/netcracker/impl/rest/RestImpl$1.class
+impl/target/classes/com/netcracker/impl/rest/RestImpl$2.class
+impl/target/classes/com/netcracker/impl/rest/RestImpl$3.class
+impl/target/classes/com/netcracker/impl/rest/RestImpl.class
+impl/target/classes/com/netcracker/impl/services/point/PointServiceImpl.class

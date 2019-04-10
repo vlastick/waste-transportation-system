@@ -35,6 +35,7 @@ public class RestImpl implements Rest {
     @PostConstruct
     void init(){
         pointService = context.getBean("pointService", PointService.class);
+        System.out.println("rest postconstruct");
     }
 
     @Override

@@ -9,9 +9,16 @@ import com.netcracker.impl.services.point.PointServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.PostConstruct;
+
 
 @Configuration
 public class ApplicationConfig {
+
+    @PostConstruct
+    public void testMethod(){
+        System.out.println("ApplicationConfig postconstruct");
+    }
 
     @Bean(name = "geo")
     Geo getGeo(){

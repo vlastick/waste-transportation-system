@@ -74,6 +74,7 @@ public class DatabaseImpl implements Database {
 //        groupEnt.setGroupId(7);
 //        pointRepo.findPointsByGroup(groupEnt).forEach(point -> System.out.println(point.getPointId()));
 //        System.out.println(this.getGroupById(7).getContainedPoints());
+        System.out.println("db postconstruct");
 
     }
 
