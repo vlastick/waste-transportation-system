@@ -3,7 +3,9 @@ package one.vladimir.wts.DBService.Entities;
 import one.vladimir.wts.BusinessLogic.POJO.Point;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Date;
 
 
 //TODO: add create and modified dates
@@ -17,9 +19,17 @@ public class PointEntity {
 
     private Double latitude;
 
+    private Timestamp updatedWhen;
+
+    private Timestamp createdWhen;
+
     @ManyToOne
-    @JoinColumn(name = "CreatorId")
-    private UserEntity creator;
+    @JoinColumn(name = "createdBy")
+    private UserEntity createdBy;
+
+    @ManyToOne
+    @JoinColumn(name = "updatedBy")
+    private UserEntity updatedBy;
 
     @ManyToOne
     @JoinColumn(name = "GroupId")
@@ -87,12 +97,20 @@ public class PointEntity {
         this.latitude = latitude;
     }
 
-    public UserEntity getCreator() {
-        return creator;
+    public UserEntity getCreatedBy() {
+        return createdBy;
     }
 
-    public void setCreator(UserEntity creator) {
-        this.creator = creator;
+    public void setCreatedBy(UserEntity createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public UserEntity getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(UserEntity updatedBy) {
+        this.updatedBy = updatedBy;
     }
 
     public GroupEntity getGroup() {
@@ -101,5 +119,21 @@ public class PointEntity {
 
     public void setGroup(GroupEntity group) {
         this.group = group;
+    }
+
+    public Timestamp getUpdatedWhen() {
+        return updatedWhen;
+    }
+
+    public void setUpdatedWhen(Timestamp updatedWhen) {
+        this.updatedWhen = updatedWhen;
+    }
+
+    public Timestamp getCreatedWhen() {
+        return createdWhen;
+    }
+
+    public void setCreatedWhen(Timestamp createdWhen) {
+        this.createdWhen = createdWhen;
     }
 }

@@ -19,8 +19,11 @@ public class UserEntity {
 
     private String email;
 
-    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
-    private Collection<PointEntity> points;
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL)
+    private Collection<PointEntity> createdPoints;
+
+    @OneToMany(mappedBy = "updatedBy", cascade = CascadeType.ALL)
+    private Collection<PointEntity> updatedPoints;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private CrewmanEntity crewmans;

@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Vector;
@@ -93,7 +95,7 @@ public class DBServiceImplementation implements DBServiceInterface {
             throw new NoSuchElementException("User with id " + id + " not found");
         }
         User user = userEnt.getUser();
-        List<PointEntity> createdPointEntities = pointRepo.findPointsByCreator(userEnt);
+        List<PointEntity> createdPointEntities = pointRepo.findPointsByCreatedBy(userEnt);
         List<Point> createdPoints = new Vector<Point>();
         for (PointEntity pointEnt : createdPointEntities) {
             createdPoints.add(pointEnt.getPoint());
@@ -115,7 +117,7 @@ public class DBServiceImplementation implements DBServiceInterface {
         groupEnt.setGroupId(group.getId());
         creatorEnt.setUserId(creator.getUserId());
         pointEnt.setPoint(point);
-        pointEnt.setCreator(creatorEnt);
+        pointEnt.setCreatedBy(creatorEnt);
         pointEnt.setGroup(groupEnt);
         pointEnt.setPointId(null);
         pointRepo.save(pointEnt);

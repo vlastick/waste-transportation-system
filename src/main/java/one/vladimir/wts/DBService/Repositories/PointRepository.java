@@ -10,10 +10,10 @@ import java.util.List;
 
 public interface PointRepository extends CrudRepository<PointEntity, Integer> {
 
-    @Query("SELECT p FROM PointEntity p where p.creator.userId = ?1")
-    List<PointEntity> findPointsByCreatorId(Integer creatorId);
+    @Query("SELECT p FROM PointEntity p where p.createdBy.userId = ?1")
+    List<PointEntity> findPointsByCreatedById(Integer creatorId);
 
-    List<PointEntity> findPointsByCreator(UserEntity creator);
+    List<PointEntity> findPointsByCreatedBy(UserEntity createdBy);
 
     @Query("SELECT p FROM PointEntity p where p.group.groupId = ?1")
     List<PointEntity> findPointsByGroupId(Integer groupId);

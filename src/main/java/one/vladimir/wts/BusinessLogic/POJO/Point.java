@@ -1,5 +1,7 @@
 package one.vladimir.wts.BusinessLogic.POJO;
 
+import java.sql.Timestamp;
+
 public class Point {
 
     private Integer id;
@@ -7,6 +9,14 @@ public class Point {
     private Double longitude;
 
     private Double latitude;
+
+    private User createdBy;
+
+    private User updatedBy;
+
+    private Timestamp createdWhen;
+
+    private Timestamp updatedWhen;
 
     //    getters and setters
     public Integer getPointId() {
@@ -31,5 +41,37 @@ public class Point {
 
     public Double getLatitude() {
         return latitude;
+    }
+
+    public User getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(User createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public User getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(User updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    public Timestamp getCreatedWhen() {
+        return createdWhen;
+    }
+
+    public void setCreatedWhen(Timestamp createdWhen) {
+        this.createdWhen = createdWhen;
+    }
+
+    public Timestamp getUpdatedWhen() {
+        return updatedWhen;
+    }
+
+    public void setUpdatedWhen(Timestamp updatedWhen) {
+        this.updatedWhen = updatedWhen;
     }
 }
