@@ -99,12 +99,12 @@ public class DatabaseImpl implements Database {
             throw new NoSuchElementException("User with id " + id + " not found");
         }
         User user = userEnt.getUser();
-        List<PointEntity> createdPointEntities = pointRepo.findPointsByCreator(userEnt);
-        List<Point> createdPoints = new Vector<Point>();
-        for (PointEntity pointEnt : createdPointEntities) {
-            createdPoints.add(pointEnt.getPoint());
-        }
-        user.setCreatedPoints(createdPoints);
+//        List<PointEntity> createdPointEntities = pointRepo.findPointsByCreatedBy(userEnt);
+//        List<Point> createdPoints = new Vector<Point>();
+//        for (PointEntity pointEnt : createdPointEntities) {
+//            createdPoints.add(pointEnt.getPoint());
+//        }
+//        user.setCreatedPoints(createdPoints);
         return user;
     }
 
@@ -121,7 +121,7 @@ public class DatabaseImpl implements Database {
         groupEnt.setGroupId(group.getId());
         creatorEnt.setUserId(creator.getUserId());
         pointEnt.setPoint(point);
-        pointEnt.setCreator(creatorEnt);
+        pointEnt.setCreatedBy(creatorEnt);
         pointEnt.setGroup(groupEnt);
         pointEnt.setPointId(null);
         pointRepo.save(pointEnt);

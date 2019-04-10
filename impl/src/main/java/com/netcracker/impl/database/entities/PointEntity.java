@@ -3,6 +3,7 @@ package com.netcracker.impl.database.entities;
 import com.netcracker.api.pojo.Point;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Collection;
 
 
@@ -17,9 +18,17 @@ public class PointEntity {
 
     private Double latitude;
 
+    private Timestamp updatedWhen;
+
+    private Timestamp createdWhen;
+
     @ManyToOne
     @JoinColumn(name = "CreatorId")
-    private UserEntity creator;
+    private UserEntity createdBy;
+
+    @ManyToOne
+    @JoinColumn(name = "UpdaterId")
+    private UserEntity updatedBy;
 
     @ManyToOne
     @JoinColumn(name = "GroupId")
@@ -87,12 +96,36 @@ public class PointEntity {
         this.latitude = latitude;
     }
 
-    public UserEntity getCreator() {
-        return creator;
+    public Timestamp getUpdatedWhen() {
+        return updatedWhen;
     }
 
-    public void setCreator(UserEntity creator) {
-        this.creator = creator;
+    public void setUpdatedWhen(Timestamp updatedWhen) {
+        this.updatedWhen = updatedWhen;
+    }
+
+    public Timestamp getCreatedWhen() {
+        return createdWhen;
+    }
+
+    public void setCreatedWhen(Timestamp createdWhen) {
+        this.createdWhen = createdWhen;
+    }
+
+    public UserEntity getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(UserEntity createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public UserEntity getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(UserEntity updatedBy) {
+        this.updatedBy = updatedBy;
     }
 
     public GroupEntity getGroup() {

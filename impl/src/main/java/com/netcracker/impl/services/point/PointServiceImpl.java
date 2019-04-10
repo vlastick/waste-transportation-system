@@ -132,7 +132,7 @@ public class PointServiceImpl implements PointService {
         GroupEntity group = db.getGroupById(groupId);
         PointEntity point = new PointEntity();
         point.setGroup(group);
-        point.setCreator(creator);
+        point.setCreatedBy(creator);
         db.addPoint(point);
         return "True";
     }

@@ -14,8 +14,6 @@ public class User {
 
     private String email;
 
-    private List<Point> createdPoints;
-
 
     //    getters and setters
     public Integer getUserId() {
@@ -58,11 +56,4 @@ public class User {
         this.email = email;
     }
 
-    public List<Point> getCreatedPoints() {
-        return createdPoints;
-    }
-
-    public void setCreatedPoints(List<Point> createdPoints) {
-        this.createdPoints = createdPoints;
-    }
 }
