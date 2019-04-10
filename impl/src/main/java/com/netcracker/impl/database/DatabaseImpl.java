@@ -4,10 +4,7 @@ import com.netcracker.api.Database;
 import com.netcracker.api.pojo.*;
 import com.netcracker.impl.database.entities.*;
 
-import com.netcracker.impl.database.repositories.DumpRepository;
-import com.netcracker.impl.database.repositories.GroupRepository;
-import com.netcracker.impl.database.repositories.PointRepository;
-import com.netcracker.impl.database.repositories.UserRepository;
+import com.netcracker.impl.database.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +27,12 @@ public class DatabaseImpl implements Database {
 
     @Autowired
     private GroupRepository groupRepo;
+
+    @Autowired
+    private VesselRepository vesselRepo;
+
+    @Autowired
+    private RouteRepository routeRepo;
 
     //For DB testing
     @PostConstruct
@@ -74,7 +77,7 @@ public class DatabaseImpl implements Database {
 //        groupEnt.setGroupId(7);
 //        pointRepo.findPointsByGroup(groupEnt).forEach(point -> System.out.println(point.getPointId()));
 //        System.out.println(this.getGroupById(7).getContainedPoints());
-        System.out.println("db postconstruct");
+//        System.out.println(this.getVesselById(13));
 
     }
 
@@ -227,8 +230,17 @@ public class DatabaseImpl implements Database {
     public void addVessel(Vessel vessel) {
     }
 
+
     public Vessel getVesselById(Integer id) {
-        return new Vessel();
+        VesselEntity vesselEnt;
+        try {
+            vesselEnt = vesselRepo.findById(id).get();
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException("Vessel with id " + id + " not found");
+        }
+        Vessel vessel = vesselEnt.getVessel();
+        vessel.setCurrRoute(routeRepo.findRouteByVessel(vesselEnt).getRoute());
+        return vessel;
     }
 
 }

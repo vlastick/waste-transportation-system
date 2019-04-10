@@ -1,5 +1,7 @@
 package com.netcracker.impl.database.entities;
 
+import com.netcracker.api.pojo.Vessel;
+
 import javax.persistence.*;
 import java.util.Collection;
 
@@ -19,6 +21,21 @@ public class VesselEntity {
 
 
     //    getters and setters
+
+    //POJO setter
+    public void setVessel(Vessel vessel) {
+        this.vesselId = vessel.getId();
+        this.name = vessel.getName();
+    }
+
+    //POJO getter
+    public Vessel getVessel() {
+        Vessel vessel = new Vessel();
+        vessel.setId(this.getVesselId());
+        vessel.setName(this.getName());
+        return vessel;
+    }
+
     public Integer getVesselId() {
         return vesselId;
     }
