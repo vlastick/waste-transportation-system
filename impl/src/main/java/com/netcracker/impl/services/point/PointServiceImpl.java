@@ -35,29 +35,79 @@ public class PointServiceImpl implements PointService {
         System.out.println("PointServiceImpl postconstruct");
     }
 
-
-    public String postPoint(Point point) {
-        return "PointEntity was posted";
+    @Override
+    public String addDump(Dump dump) {
+        return null;
     }
 
-    public String postDump(Dump dump) {
-        return "DumpEntity was posted";
+    @Override
+    public String addBase(Base base) {
+        return null;
     }
 
-    public String postBase(Base base) {
-        return "BaseEntity was posted";
+    @Override
+    public Dump getDump(Integer id) {
+        return null;
     }
 
-    public String postPoints(List<Point> point) {
-        return "Points list was posted";
+    @Override
+    public Base getBase(Integer id) {
+        return null;
     }
 
-    public String postDumps(List<Dump> dump) {
-        return "Dumps list  was posted";
+    @Override
+    public List<Dump> getDumps() {
+        return null;
     }
 
-    public String postBases(List<Base> base) {
-        return "Bases list  was posted";
+    @Override
+    public List<Base> getBases() {
+        return null;
+    }
+
+    @Override
+    public Route getRoute(Integer id) {
+        return null;
+    }
+
+    @Override
+    public List<Route> getRoutes() {
+        return null;
+    }
+
+    @Override
+    public String addRoute(Route route) {
+        return null;
+    }
+
+    @Override
+    public String updateDump(Dump dump) {
+        return null;
+    }
+
+    @Override
+    public String updateBase(Base base) {
+        return null;
+    }
+
+    @Override
+    public String updateRoute(Route route) {
+        return null;
+    }
+
+    @Override
+    public String addVessel(Vessel vessel) {
+        return null;
+    }
+
+    @Override
+    public Vessel getVessel(Vessel vessel) {
+        return null;
+    }
+
+    @Override
+    public String updateVessel(Vessel vessel) {
+        return null;
     }
 
     // TODO - write more functions to get all types of entities.

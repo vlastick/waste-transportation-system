@@ -7,17 +7,50 @@ import java.util.List;
 
 public interface PointService {
 
-    String postPoint(Point point);
+    // Post point
+    String addDump(Dump dump);
 
-    String postDump(Dump dump);
+    // Post point
+    String addBase(Base base);
 
-    String postBase(Base base);
+    // Get point
+    Dump getDump(Integer id);
 
-    String postPoints(List<Point> point);
+    // Get point
+    Base getBase(Integer id);
 
-    String postDumps(List<Dump> dump);
+    // Get points
+    List <Dump> getDumps();
 
-    String postBases(List<Base> base);
+    // Get points
+    List <Base> getBases();
+
+    // Get route
+    Route getRoute(Integer id);
+
+    // Get routes
+    List<Route> getRoutes();
+
+    // Post route
+    String addRoute(Route route);
+
+    // Put point
+    String updateDump(Dump dump);
+
+    // Put point
+    String updateBase(Base base);
+
+    // Put route
+    String updateRoute(Route route);
+
+    // Post vessel
+    String addVessel(Vessel vessel);
+
+    // Get vessel
+    Vessel getVessel(Vessel vessel);
+
+    // Put vessel
+    String updateVessel(Vessel vessel);
 
     String getDumps(JsonNode filter);
 

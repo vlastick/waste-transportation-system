@@ -4,9 +4,9 @@ import org.springframework.http.ResponseEntity;
 
 public interface Rest {
 
-    ResponseEntity <String> postPoint(String type, String configJSON);
+    ResponseEntity <String> addPoint(String type, String configJSON);
 
-    ResponseEntity <String> getPoint(String type, String filterJSON);
+    ResponseEntity <String> getPoint(String strId, String type);
 
     // Just test methods
     ResponseEntity <String> addUser();
