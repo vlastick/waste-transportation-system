@@ -20,8 +20,6 @@ public interface Database {
 
     public Dump getDumpById(Integer id);
 
-    //TODO: vvv implement following queries vvv
-
     public void addBase(Base base);
 
     public Base getBaseById(Integer id);
@@ -30,11 +28,11 @@ public interface Database {
 
     public Crewman getCrewmanById(Integer id);
 
-    public void addRoute(Route route);
+    public void addRoute(Route route, Vessel vessel);
 
     public Route getRouteById(Integer id);
 
-    public void addRoutePoint(RoutePoint routePoint);
+    public void addRoutePoint(RoutePoint routePoint, Route route);
 
     public RoutePoint getRoutePointById(Integer id);
 
