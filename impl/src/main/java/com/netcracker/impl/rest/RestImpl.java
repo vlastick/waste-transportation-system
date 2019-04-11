@@ -1,5 +1,6 @@
 package com.netcracker.impl.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.netcracker.api.Rest;
 import com.netcracker.api.pojo.*;
 
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 
 import static com.fasterxml.jackson.databind.node.JsonNodeType.OBJECT;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -31,6 +33,7 @@ public class RestImpl implements Rest {
 
     @PostConstruct
     void init(){
+
         pointService = context.getBean("pointService", PointService.class);
         System.out.println("rest postconstruct");
     }
@@ -39,10 +42,11 @@ public class RestImpl implements Rest {
     @RequestMapping(method = POST, value = "/point/")
     @ResponseBody
     public ResponseEntity<String> addPoint(
+
             @RequestParam(name = "type", defaultValue = "not given") String type,
             @RequestBody String configJSON) {
 
-        String answerJSON = "Error";
+        String answerJSON = "";
         HttpStatus status = HttpStatus.BAD_REQUEST;
 
         try {
@@ -55,19 +59,21 @@ public class RestImpl implements Rest {
                 switch (type) {
 
                     case "dump":
+
                         Dump dump = mapper.readValue(configJSON, Dump.class);
                         answerJSON = pointService.addDump(dump);
                         status = CREATED;
                         break;
 
                     case "base":
+
                         Base base = mapper.readValue(configJSON, Base.class);
                         answerJSON = pointService.addBase(base);
                         status = CREATED;
                         break;
 
                     default:
-                        answerJSON = "Unsupported type: " + type;
+                        answerJSON = "Error. Unsupported type: type =" + type;
                         break;
                 }
 
@@ -75,12 +81,13 @@ public class RestImpl implements Rest {
 
         } catch (com.fasterxml.jackson.core.JsonParseException e) {
 
-            System.out.println("JSON parsing exception: can't read JSON structure - there are some errors!");
+            answerJSON = "JSON parsing exception: can't read JSON structure because there are some mistakes!";
             e.printStackTrace();
 
         } catch (com.fasterxml.jackson.databind.JsonMappingException e) {
 
-            System.out.println("JSON incorrect value exception: class has not value in JSON!");
+            answerJSON = "JSON init exception." +
+                    "JSON body contains values which don't exist in type=" + type +" class.";
             e.printStackTrace();
 
         } catch (java.io.IOException e) {
@@ -97,17 +104,17 @@ public class RestImpl implements Rest {
     @ResponseBody
     public ResponseEntity<String> getPoint(
             @PathVariable String strId,
-            @RequestParam(name = "type", defaultValue = "not given") String type) {
+            @RequestParam(name = "type", defaultValue = "") String type) {
 
-        String answerJSON = "Error";
+        String answerJSON = "";
         HttpStatus status = HttpStatus.BAD_REQUEST;
 
-        System.out.println("I AM HERE");
-
-        if((strId.isEmpty()) || (type.equals("not given"))) {
-            answerJSON = "ID or type are not given";
+        if((strId.isEmpty()) || (type.equals(""))) {
+            answerJSON = "Error. ID or type point aren't given";
         }
+
         else{
+
             try {
                 Integer id = Integer.parseInt(strId);
 
@@ -117,39 +124,147 @@ public class RestImpl implements Rest {
                         Dump dump = pointService.getDump(id);
 
                         if(dump != null) {
-                            answerJSON = dump.toString();
+                            ObjectMapper mapper = new ObjectMapper();
+                            answerJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(dump);
+                            status = OK;
                         }
                         else {
-                            answerJSON = "Dump not found";
+                            answerJSON = "Dump with id=" + strId + "  not found";
+                            status = NOT_FOUND;
                         }
-                        status = OK;
+
                         break;
 
                     case "base":
-                        //TODO call new function
+
                         Base base = pointService.getBase(id);
+
                         if(base != null) {
-                            answerJSON = base.toString();
+                            ObjectMapper mapper = new ObjectMapper();
+                            answerJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(base);
+                            status = OK;
                         }
                         else {
-                            answerJSON = "Base not found";
+                            answerJSON = "Base with id=" + strId + "  not found";
+                            status = NOT_FOUND;
                         }
-                        status = OK;
 
                         break;
 
                     default:
-                        answerJSON = "Unsupported type: " + type;
+
+                        answerJSON = "Error. Unsupported type: type=" + type;
                         break;
                 }
 
             } catch (NumberFormatException e) {
+
+                answerJSON = "Error. Given ID doesn't a numb";
                 e.printStackTrace();
-                answerJSON = "Incorrect type of id (not number)";
+            } catch (JsonProcessingException e) {
+                answerJSON = "Can't parse class to JSON";
+                e.printStackTrace();
             }
         }
 
         return new ResponseEntity<>(answerJSON, status);
+    }
+
+    @Override
+    @RequestMapping(method = PUT, value = "/point/{strId}")
+    @ResponseBody
+
+    public ResponseEntity<String> updatePoint(
+            @PathVariable String strId,
+            @RequestParam(name = "type", defaultValue = "") String type,
+            @RequestBody String configJSON){
+
+        String answerJSON = "";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        if((strId.isEmpty()) || (type.equals(""))) {
+            answerJSON = "Error. ID or type point aren't given";
+        }
+
+        else {
+
+            try {
+                Integer id = Integer.parseInt(strId);
+
+                try {
+
+                    ObjectMapper mapper = new ObjectMapper();
+                    JsonNode array = mapper.readValue(configJSON, JsonNode.class);
+
+                    if (array.getNodeType() == OBJECT) {
+
+                        switch (type) {
+
+                            case "dump":
+
+                                Dump dump = mapper.readValue(configJSON, Dump.class);
+                                answerJSON = "UPD dump";//pointService.addDump(dump);
+                                status = CREATED;
+                                break;
+
+                            case "base":
+
+                                Base base = mapper.readValue(configJSON, Base.class);
+                                answerJSON = "UPD base";//pointService.addBase(base);
+                                status = CREATED;
+                                break;
+
+                            default:
+                                answerJSON = "Error. Unsupported type: type =" + type;
+                                break;
+                        }
+
+                    }
+
+                } catch (com.fasterxml.jackson.core.JsonParseException e) {
+
+                    answerJSON = "JSON parsing exception: can't read JSON structure because there are some mistakes!";
+                    e.printStackTrace();
+
+                } catch (com.fasterxml.jackson.databind.JsonMappingException e) {
+
+                    answerJSON = "JSON init exception." +
+                            "JSON body contains values which don't exist in type=" + type +" class.";
+                    e.printStackTrace();
+
+                } catch (java.io.IOException e) {
+
+                    System.out.println("Java IO Exception");
+                    e.printStackTrace();
+                }
+
+
+            } catch (NumberFormatException e) {
+
+                answerJSON = "Error. Given ID doesn't a numb";
+                e.printStackTrace();
+            }
+        }
+
+        return new ResponseEntity<>(answerJSON, status);
+    }
+
+
+
+
+    @Override
+    public ResponseEntity<String> addRoute(String type, String configJSON) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<String> getRoute(String strId, String type) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<String> updateRoute(String id, String type, String configJSON) {
+        return null;
     }
 
     // Test DB methods

@@ -30,6 +30,7 @@ public class PointServiceImpl implements PointService {
 
     @PostConstruct
     void init(){
+
         db = context.getBean("database", Database.class);
         geo = context.getBean("geo", Geo.class);
         System.out.println("PointServiceImpl postconstruct");
@@ -37,22 +38,35 @@ public class PointServiceImpl implements PointService {
 
     @Override
     public String addDump(Dump dump) {
-        return null;
+        db.addDump(dump);
+        return "New dump was added";
     }
 
     @Override
     public String addBase(Base base) {
-        return null;
+        db.addBase(base);
+        return "Base was added";
     }
 
     @Override
     public Dump getDump(Integer id) {
-        return null;
+
+        Dump dump = db.getDumpById(id);
+        if(dump == null){
+           dump = new Dump();
+           System.out.println("Dump was empty");
+        }
+        return dump;
     }
 
     @Override
     public Base getBase(Integer id) {
-        return null;
+        Base base = db.getBaseById(id);
+        if(base == null){
+            base = new Base();
+            System.out.println("Base was empty");
+        }
+        return base;
     }
 
     @Override
