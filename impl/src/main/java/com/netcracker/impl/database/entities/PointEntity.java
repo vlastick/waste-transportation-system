@@ -65,11 +65,10 @@ public class PointEntity {
     }
 
     //POJO getter for exact Point
-    public Point getPoint(Point point) {
+    public void getPoint(Point point) {
         point.setPointId(this.pointId);
         point.setLatitude(this.latitude);
         point.setLongitude(this.longitude);
-        return point;
     }
 
     public Integer getPointId() {

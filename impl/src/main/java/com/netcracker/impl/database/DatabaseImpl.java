@@ -34,6 +34,15 @@ public class DatabaseImpl implements Database {
     @Autowired
     private RouteRepository routeRepo;
 
+    @Autowired
+    private RoutePointRepository routePointRepo;
+
+    @Autowired
+    private BaseRepository baseRepo;
+
+    @Autowired
+    private CrewmanRepository crewmanRepo;
+
     //For DB testing
     @PostConstruct
     public void testDBService() {

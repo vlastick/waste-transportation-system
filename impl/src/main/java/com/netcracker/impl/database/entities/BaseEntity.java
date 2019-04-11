@@ -1,5 +1,7 @@
 package com.netcracker.impl.database.entities;
 
+import com.netcracker.api.pojo.Base;
+
 import javax.persistence.*;
 
 @Entity
@@ -14,6 +16,19 @@ public class BaseEntity {
 
 
     //    getters and setters
+
+    //POJO setter
+    public void setBase(Base base) {
+        this.setBaseId(base.getId());
+    }
+
+    //POJO getter
+    public Base getBase() {
+        Base base = new Base();
+        base.setId(this.getBaseId());
+        return base;
+    }
+
     public Integer getBaseId() {
         return baseId;
     }

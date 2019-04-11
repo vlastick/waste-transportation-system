@@ -52,6 +52,15 @@ public class UserEntity {
         return user;
     }
 
+    //POJO getter for exact User
+    public void getUser(User user) {
+        user.setUserId(this.userId);
+        user.setLogin(this.login);
+        user.setPassword(this.password);
+        user.setRole(this.role);
+        user.setEmail(this.email);
+    }
+
     public Integer getUserId() {
         return userId;
     }
