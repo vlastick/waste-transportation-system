@@ -81,7 +81,12 @@ public class PointServiceImpl implements PointService {
 
     @Override
     public Route getRoute(Integer id) {
-        return null;
+        Route route = db.getRouteById(id);
+        if(route == null){
+            route = new Route();
+            System.out.println("Route was empty");
+        }
+        return route;
     }
 
     @Override
@@ -111,12 +116,19 @@ public class PointServiceImpl implements PointService {
 
     @Override
     public String addVessel(Vessel vessel) {
-        return null;
+
+        db.addVessel(vessel);
+        return "Vessel was added";
     }
 
     @Override
     public Vessel getVessel(Integer id) {
-        return null;
+        Vessel vessel = db.getVesselById(id);
+        if(vessel == null){
+            vessel = new Vessel();
+            System.out.println("Vessel was empty");
+        }
+        return vessel;
     }
 
     @Override
