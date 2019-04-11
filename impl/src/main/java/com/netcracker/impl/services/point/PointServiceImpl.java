@@ -115,7 +115,7 @@ public class PointServiceImpl implements PointService {
     }
 
     @Override
-    public Vessel getVessel(Vessel vessel) {
+    public Vessel getVessel(Integer id) {
         return null;
     }
 

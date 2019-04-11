@@ -47,7 +47,7 @@ public interface PointService {
     String addVessel(Vessel vessel);
 
     // Get vessel
-    Vessel getVessel(Vessel vessel);
+    Vessel getVessel(Integer id);
 
     // Put vessel
     String updateVessel(Vessel vessel);

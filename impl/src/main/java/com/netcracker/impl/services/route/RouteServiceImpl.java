@@ -1,4 +1,4 @@
-package com.netcracker.impl.services.path;
+package com.netcracker.impl.services.route;
 
 import com.netcracker.api.RouteService;
 import org.springframework.stereotype.Service;
