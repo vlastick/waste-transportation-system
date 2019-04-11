@@ -9,9 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Vector;
+import java.util.*;
 
 @Service
 public class DatabaseImpl implements Database {
@@ -86,7 +84,9 @@ public class DatabaseImpl implements Database {
 //        groupEnt.setGroupId(7);
 //        pointRepo.findPointsByGroup(groupEnt).forEach(point -> System.out.println(point.getPointId()));
 //        System.out.println(this.getGroupById(7).getContainedPoints());
-//        System.out.println(this.getVesselById(13));
+//        System.out.println(this.getVesselById(13).getCurrRoute());
+//        System.out.println(pointRepo.findById(8).get());
+
 
     }
 
@@ -205,38 +205,135 @@ public class DatabaseImpl implements Database {
         return dump;
     }
 
-    //TODO: vvv implement following queries vvv
-
     public void addBase(Base base) {
+        PointEntity pointEnt;
+        try {
+            pointEnt = pointRepo.findById(base.getPointId()).get();
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException("Point with id " + base.getPointId() + " not found");
+        }
+        BaseEntity baseEnt = new BaseEntity();
+        baseEnt.setBase(base);
+        baseEnt.setPoint(pointEnt);
+        baseEnt.setBaseId(null);
+        baseRepo.save(baseEnt);
     }
 
 
     public Base getBaseById(Integer id) {
-        return new Base();
+        BaseEntity baseEnt;
+        try {
+            baseEnt = baseRepo.findById(id).get();
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException("Base with id " + id + " not found");
+        }
+        Base base = baseEnt.getBase();
+        baseEnt.getPoint().getPoint(base);
+        return base;
     }
 
     public void addCrewman(Crewman crewman) {
+        UserEntity userEnt;
+        VesselEntity vesselEnt;
+
+        try {
+            userEnt = userRepo.findById(crewman.getUserId()).get();
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException("User with id " + crewman.getUserId() + " not found");
+        }
+        try {
+            vesselEnt = vesselRepo.findById(crewman.getVessel().getId()).get();
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException("Vessel with id " + crewman.getVessel().getId() + " not found");
+        }
+        CrewmanEntity crewmanEnt = new CrewmanEntity();
+        crewmanEnt.setCrewman(crewman);
+        crewmanEnt.setUser(userEnt);
+        crewmanEnt.setVessel(vesselEnt);
+        crewmanRepo.save(crewmanEnt);
     }
 
     public Crewman getCrewmanById(Integer id) {
-        return new Crewman();
+        CrewmanEntity crewmanEnt;
+        try {
+            crewmanEnt = crewmanRepo.findById(id).get();
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException("Crewman with id " + id + " not found");
+        }
+        Crewman crewman = crewmanEnt.getCrewman();
+        crewmanEnt.getUser().getUser(crewman);
+        return crewman;
     }
 
-    public void addRoute(Route route) {
+    public void addRoute(Route route, Vessel vessel) {
+        VesselEntity vesselEnt;
+        try {
+            vesselEnt = vesselRepo.findById(vessel.getId()).get();
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException("Vessel with id " + vessel.getId() + " not found");
+        }
+        RouteEntity routeEnt = new RouteEntity();
+        routeEnt.setRoute(route);
+        routeEnt.setVessel(vesselEnt);
+        routeEnt.setRouteId(null);
+        routeRepo.save(routeEnt);
     }
 
     public Route getRouteById(Integer id) {
+        RouteEntity routeEnt;
+        try {
+            routeEnt = routeRepo.findById(id).get();
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException("Route with id " + id + " not found");
+        }
+        Route route = routeEnt.getRoute();
+        List<RoutePointEntity> routePointEntities = routePointRepo.findRoutePointsByRoute(routeEnt);
+        Set<RoutePoint> routePoints = new HashSet<RoutePoint>();
+        for (RoutePointEntity routePointEnt : routePointEntities) {
+            routePoints.add(routePointEnt.getRoutePoint());
+        }
+        route.setRoutePoints(routePoints);
         return new Route();
     }
 
-    public void addRoutePoint(RoutePoint routePoint) {
+    public void addRoutePoint(RoutePoint routePoint, Route route) {
+        PointEntity pointEnt;
+        RouteEntity routeEnt;
+        try {
+            pointEnt = pointRepo.findById(routePoint.getContainedPoint().getPointId()).get();
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException("Point with id " + routePoint.getContainedPoint().getPointId() + " not found");
+        }
+        try {
+            routeEnt = routeRepo.findById(route.getId()).get();
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException("Route with id " + route.getId() + " not found");
+        }
+        RoutePointEntity routePointEnt = new RoutePointEntity();
+        routePointEnt.setRoutePoint(routePoint);
+        routePointEnt.setRoute(routeEnt);
+        routePointEnt.setPoint(pointEnt);
+        routePointEnt.setRoutePointId(null);
+        routePointRepo.save(routePointEnt);
     }
 
     public RoutePoint getRoutePointById(Integer id) {
-        return new RoutePoint();
+        RoutePointEntity routePointEnt;
+        try {
+            routePointEnt = routePointRepo.findById(id).get();
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException("RoutePoint with id " + id + " not found");
+        }
+        RoutePoint routePoint = routePointEnt.getRoutePoint();
+        routePoint.setContainedPoint(routePointEnt.getPoint().getPoint());
+        return routePoint;
     }
 
     public void addVessel(Vessel vessel) {
+        VesselEntity vesselEnt = new VesselEntity();
+        vesselEnt.setVessel(vessel);
+        vesselEnt.setVesselId(null);
+        vesselRepo.save(vesselEnt);
     }
 
 

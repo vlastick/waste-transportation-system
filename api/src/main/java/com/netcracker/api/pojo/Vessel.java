@@ -8,8 +8,6 @@ public class Vessel {
 
     private String name;
 
-    private Set<Crewman> crew;
-
     private Route currRoute;
 
     private Integer capacity;
@@ -32,14 +30,6 @@ public class Vessel {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Set<Crewman> getCrew() {
-        return crew;
-    }
-
-    public void setCrew(Set<Crewman> crew) {
-        this.crew = crew;
     }
 
     public Route getCurrRoute() {
