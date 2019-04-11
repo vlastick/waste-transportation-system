@@ -1,5 +1,7 @@
 package com.netcracker.impl.database.entities;
 
+import com.netcracker.api.pojo.Crewman;
+
 import javax.persistence.*;
 
 @Entity
@@ -18,6 +20,19 @@ public class CrewmanEntity {
 
 
     //    getters and setters
+
+    //POJO setter
+    public void setCrewman(Crewman crewman) {
+        this.setCrewmanId(crewman.getId());
+    }
+
+    //POJO getter
+    public Crewman getCrewman() {
+        Crewman crewman = new Crewman();
+        crewman.setId(this.getCrewmanId());
+        return crewman;
+    }
+
     public Integer getCrewmanId() {
         return crewmanId;
     }
