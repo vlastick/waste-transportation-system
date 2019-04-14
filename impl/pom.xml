@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>impl</artifactId>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
 
     <dependencies>
 
@@ -53,5 +53,9 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <finalName>${artifactId}</finalName>
+    </build>
 
 </project>
