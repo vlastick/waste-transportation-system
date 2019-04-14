@@ -145,6 +145,9 @@ public class DatabaseImpl implements Database {
             throw new NoSuchElementException("Point with id " + id + " not found");
         }
         Point point = pointEnt.getPoint();
+        point.setGroup(pointEnt.getGroup().getGroup());
+        point.setCreatedBy(pointEnt.getCreatedBy().getUser());
+        point.setUpdatedBy(pointEnt.getUpdatedBy().getUser());
         return point;
     }
 
@@ -163,12 +166,6 @@ public class DatabaseImpl implements Database {
             throw new NoSuchElementException("Group with id " + id + " not found");
         }
         Group group = groupEnt.getGroup();
-        List<PointEntity> pointEntities = pointRepo.findPointsByGroup(groupEnt);
-        List<Point> points = new Vector<Point>();
-        for (PointEntity pointEnt : pointEntities) {
-            points.add(pointEnt.getPoint());
-        }
-        group.setContainedPoints(points);
         return group;
     }
 
@@ -260,6 +257,7 @@ public class DatabaseImpl implements Database {
         }
         Crewman crewman = crewmanEnt.getCrewman();
         crewmanEnt.getUser().getUser(crewman);
+        crewman.setVessel(crewmanEnt.getVessel().getVessel());
         return crewman;
     }
 

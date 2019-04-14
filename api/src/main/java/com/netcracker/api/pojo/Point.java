@@ -14,6 +14,8 @@ public class Point {
 
     private User updatedBy;
 
+    private Group group;
+
     private Timestamp createdWhen;
 
     private Timestamp updatedWhen;
@@ -73,5 +75,13 @@ public class Point {
 
     public void setUpdatedWhen(Timestamp updatedWhen) {
         this.updatedWhen = updatedWhen;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
     }
 }

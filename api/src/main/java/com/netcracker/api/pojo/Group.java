@@ -8,8 +8,6 @@ public class Group {
 
     public Integer koef;
 
-    public List<Point> containedPoints;
-
     //    getters and setters
     public Integer getId() {
         return id;
@@ -27,11 +25,4 @@ public class Group {
         this.koef = koef;
     }
 
-    public List<Point> getContainedPoints() {
-        return containedPoints;
-    }
-
-    public void setContainedPoints(List<Point> containedPoints) {
-        this.containedPoints = containedPoints;
-    }
 }
