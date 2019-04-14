@@ -55,7 +55,7 @@
     </dependencies>
 
     <build>
-        <finalName>${artifactId}</finalName>
+        <finalName>wts_app</finalName>
     </build>
 
 </project>

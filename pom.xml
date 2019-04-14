@@ -26,4 +26,8 @@
         <java.version>11</java.version>
     </properties>
 
+    <build>
+        <finalName>wts_app_web</finalName>
+    </build>
+
 </project>
