@@ -29,4 +29,5 @@
 
 ###Database config###
 /src/main/resources/application.properties
-/target/
+### Target folders
+*/target/**
