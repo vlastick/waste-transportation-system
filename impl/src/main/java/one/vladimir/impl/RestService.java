@@ -1,6 +1,5 @@
-package one.vladimir.impl.rest;
+package one.vladimir.impl;
 
-import one.vladimir.api.Rest;
 import one.vladimir.api.PointService;
 import one.vladimir.api.pojo.*;
 
@@ -25,7 +24,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 
 @RestController
-public class RestImpl implements Rest {
+public class RestService {
 
     private PointService pointService;
 
@@ -39,7 +38,6 @@ public class RestImpl implements Rest {
         System.out.println("rest postconstruct");
     }
 
-    @Override
     @RequestMapping(method = POST, value = "/point/")
     @ResponseBody
     public ResponseEntity<String> addPoint(
@@ -100,7 +98,6 @@ public class RestImpl implements Rest {
         return new ResponseEntity<>(answerJSON, status);
     }
 
-    @Override
     @RequestMapping(method = GET, value = "/point/{strId}")
     @ResponseBody
     public ResponseEntity<String> getPoint(
@@ -167,7 +164,6 @@ public class RestImpl implements Rest {
         return new ResponseEntity<>(answerJSON, status);
     }
 
-    @Override
     @RequestMapping(method = POST, value = "/route/")
     @ResponseBody
     public ResponseEntity<String> addRoute(@RequestBody String configJSON) {
@@ -202,7 +198,6 @@ public class RestImpl implements Rest {
         return new ResponseEntity<>(answerJSON, status);
     }
 
-    @Override
     @RequestMapping(method = GET, value = "/route/{strId}")
     @ResponseBody
     public ResponseEntity<String> getRoute(@PathVariable String strId) {
@@ -241,7 +236,6 @@ public class RestImpl implements Rest {
     }
 
 
-    @Override
     @RequestMapping(method = POST, value = "/vessel/")
     @ResponseBody
     public ResponseEntity<String> addVessel(@RequestBody String configJSON) {
@@ -276,7 +270,6 @@ public class RestImpl implements Rest {
         return new ResponseEntity<>(answerJSON, status);
     }
 
-    @Override
     @RequestMapping(method = GET, value = "/vessel/{strId}")
     @ResponseBody
     public ResponseEntity<String> getVessel(@PathVariable String strId) {
@@ -318,7 +311,6 @@ public class RestImpl implements Rest {
 
 
     /* Uncomment and fix in the future when Update modules comes and birds sings with a beautiful voices.
-    @Override
     @RequestMapping(method = PUT, value = "/point/{strId}")
     @ResponseBody
 
@@ -401,7 +393,6 @@ public class RestImpl implements Rest {
 
     // Test DB methods
 
-    @Override
     @RequestMapping(method = GET, value = "/add_user/")
     public ResponseEntity<String> addUser() {
 
@@ -409,7 +400,6 @@ public class RestImpl implements Rest {
         return new ResponseEntity<>(result, OK);
     }
 
-    @Override
     @RequestMapping(method = GET, value = "/get_user/")
     public ResponseEntity<String> getUser() {
 
@@ -419,7 +409,6 @@ public class RestImpl implements Rest {
         return new ResponseEntity<>(result, OK);
     }
 
-    @Override
     @RequestMapping(method = GET, value = "/test_geo")
     public ResponseEntity<String> testGeo(
             @RequestBody String data) {
