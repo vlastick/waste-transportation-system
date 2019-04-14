@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
@@ -17,23 +18,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-@Service
+@Service("pointService")
 public class PointServiceImpl implements PointService {
 
     @Autowired
-    private ApplicationContext context;
-
+    @Qualifier("database")
     private Database db;
 
+    @Autowired
+    @Qualifier("geo")
     private Geo geo;
-
-    @PostConstruct
-    void init(){
-
-        db = context.getBean("database", Database.class);
-        geo = context.getBean("geo", Geo.class);
-        System.out.println("PointServiceImpl postconstruct");
-    }
 
     @Override
     public String addDump(Dump dump) {

@@ -11,7 +11,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.List;
 
-@Service
+@Service("geo")
 public class GeoImpl implements Geo {
 
     // overpass-api.de is blocked by roskomnadzor - check other services or solutions.

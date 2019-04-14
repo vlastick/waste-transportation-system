@@ -1,4 +1,4 @@
-package one.vladimir.impl;
+package one.vladimir.impl.services.rest;
 
 import one.vladimir.api.PointService;
 import one.vladimir.api.pojo.*;
@@ -8,13 +8,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
+import one.vladimir.impl.services.point.PointServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.PostConstruct;
 
 import static com.fasterxml.jackson.databind.node.JsonNodeType.OBJECT;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -26,17 +26,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @RestController
 public class RestService {
 
-    private PointService pointService;
-
     @Autowired
-    private ApplicationContext context;
-
-    @PostConstruct
-    void init() {
-
-        pointService = context.getBean("pointService", PointService.class);
-        System.out.println("rest postconstruct");
-    }
+    @Qualifier("pointService")
+    private PointService pointService;
 
     @RequestMapping(method = POST, value = "/point/")
     @ResponseBody

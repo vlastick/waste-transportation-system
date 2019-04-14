@@ -12,7 +12,7 @@ import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.List;
 
-@Service
+@Service("database")
 public class DatabaseImpl implements Database {
 
     @Autowired
