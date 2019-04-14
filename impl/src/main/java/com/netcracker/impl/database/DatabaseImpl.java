@@ -2,6 +2,7 @@ package com.netcracker.impl.database;
 
 import com.netcracker.api.Database;
 import com.netcracker.api.pojo.*;
+import com.netcracker.api.pojo.Point;
 import com.netcracker.impl.database.entities.*;
 
 import com.netcracker.impl.database.repositories.*;
@@ -9,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 @Service
 public class DatabaseImpl implements Database {
@@ -111,12 +114,6 @@ public class DatabaseImpl implements Database {
             throw new NoSuchElementException("User with id " + id + " not found");
         }
         User user = userEnt.getUser();
-//        List<PointEntity> createdPointEntities = pointRepo.findPointsByCreatedBy(userEnt);
-//        List<Point> createdPoints = new Vector<Point>();
-//        for (PointEntity pointEnt : createdPointEntities) {
-//            createdPoints.add(pointEnt.getPoint());
-//        }
-//        user.setCreatedPoints(createdPoints);
         return user;
     }
 
@@ -134,6 +131,7 @@ public class DatabaseImpl implements Database {
         creatorEnt.setUserId(creator.getUserId());
         pointEnt.setPoint(point);
         pointEnt.setCreatedBy(creatorEnt);
+        pointEnt.setUpdatedBy(creatorEnt);
         pointEnt.setGroup(groupEnt);
         pointEnt.setPointId(null);
         pointRepo.save(pointEnt);
@@ -347,6 +345,80 @@ public class DatabaseImpl implements Database {
         Vessel vessel = vesselEnt.getVessel();
         vessel.setCurrRoute(routeRepo.findRouteByVessel(vesselEnt).getRoute());
         return vessel;
+    }
+
+    public void updateUser(User user) {
+        UserEntity userEnt;
+        userEnt = userRepo.findById(user.getUserId()).get();
+        userEnt.setUser(user);
+        userRepo.save(userEnt);
+    }
+
+    public void updatePoint(Point point, User updater, Group group) {
+        PointEntity pointEnt;
+        GroupEntity groupEnt;
+        UserEntity userEnt;
+        pointEnt = pointRepo.findById(point.getPointId()).get();
+        userEnt = userRepo.findById(updater.getUserId()).get();
+        groupEnt = groupRepo.findById(group.getId()).get();
+        pointEnt.setPoint(point);
+        pointEnt.setGroup(groupEnt);
+        pointEnt.setUpdatedBy(userEnt);
+        pointRepo.save(pointEnt);
+    }
+
+    public void updateGroup(Group group) {
+        GroupEntity groupEnt;
+        groupEnt = groupRepo.findById(group.getId()).get();
+        groupEnt.setGroup(group);
+        groupRepo.save(groupEnt);
+    }
+
+    public void updateDump(Dump dump) {
+        DumpEntity dumpEnt;
+        dumpEnt = dumpRepo.findById(dump.getId()).get();
+        dumpEnt.setDump(dump);
+        dumpRepo.save(dumpEnt);
+    }
+
+    public void updateBase(Base base) {
+        BaseEntity baseEnt;
+        baseEnt = baseRepo.findById(base.getId()).get();
+        baseEnt.setBase(base);
+        baseRepo.save(baseEnt);
+    }
+
+    public void updateCrewman(Crewman crewman) {
+        CrewmanEntity crewmanEnt;
+        VesselEntity vesselEnt;
+        crewmanEnt = crewmanRepo.findById(crewman.getId()).get();
+        vesselEnt = vesselRepo.findById(crewman.getVessel().getId()).get();
+        crewmanEnt.setCrewman(crewman);
+        crewmanEnt.setVessel(vesselEnt);
+    }
+
+    public void updateRoute(Route route, Vessel vessel) {
+        RouteEntity routeEnt;
+        VesselEntity vesselEnt;
+        routeEnt = routeRepo.findById(route.getId()).get();
+        vesselEnt = vesselRepo.findById(vessel.getId()).get();
+        routeEnt.setRoute(route);
+        routeEnt.setVessel(vesselEnt);
+        routeRepo.save(routeEnt);
+    }
+
+    public void updateRoutePoint(RoutePoint routePoint) {
+        RoutePointEntity routePointEnt;
+        routePointEnt = routePointRepo.findById(routePoint.getId()).get();
+        routePointEnt.setRoutePoint(routePoint);
+        routePointRepo.save(routePointEnt);
+    }
+
+    public void updateVessel(Vessel vessel) {
+        VesselEntity vesselEnt;
+        vesselEnt = vesselRepo.findById(vessel.getId()).get();
+        vesselEnt.setVessel(vessel);
+        vesselRepo.save(vesselEnt);
     }
 
 }

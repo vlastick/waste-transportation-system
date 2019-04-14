@@ -53,6 +53,8 @@ public class PointEntity {
         this.pointId = point.getPointId();
         this.longitude = point.getLongitude();
         this.latitude = point.getLatitude();
+        this.updatedWhen = point.getUpdatedWhen();
+        this.createdWhen = point.getCreatedWhen();
     }
 
     //POJO getter
@@ -61,6 +63,8 @@ public class PointEntity {
         point.setPointId(this.pointId);
         point.setLatitude(this.latitude);
         point.setLongitude(this.longitude);
+        point.setCreatedWhen(this.createdWhen);
+        point.setUpdatedWhen(this.updatedWhen);
         return point;
     }
 

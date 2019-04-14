@@ -73,3 +73,7 @@ api/target/classes/com/netcracker/api/Geo.class
 api/target/classes/com/netcracker/api/Database.class
 api/target/classes/application.properties
 impl/target/classes/com/netcracker/impl/database/repositories/RoutePointRepository.class
+*.class
+*.class
+impl/target/classes/com/netcracker/impl/services/path/RouteServiceImpl.class
+impl/target/classes/com/netcracker/impl/database/repositories/RoutePointRepository.class
