@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -28,6 +29,11 @@ public class PointServiceImpl implements PointService {
     @Autowired
     @Qualifier("geo")
     private Geo geo;
+
+    @PostConstruct
+    public void postConstructLog(){
+        System.out.println("pointService initialized");
+    }
 
     @Override
     public String addDump(Dump dump) {

@@ -87,6 +87,7 @@ public class DatabaseImpl implements Database {
 //        System.out.println(this.getGroupById(7).getContainedPoints());
 //        System.out.println(this.getVesselById(13).getCurrRoute());
 //        System.out.println(pointRepo.findById(8).get());
+        System.out.println("DB initialized");
 
 
     }

@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
+
 import static com.fasterxml.jackson.databind.node.JsonNodeType.OBJECT;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -29,6 +31,11 @@ public class RestService {
     @Autowired
     @Qualifier("pointService")
     private PointService pointService;
+
+    @PostConstruct
+    public void postConstructLog(){
+        System.out.println("restService initialized");
+    }
 
     @RequestMapping(method = POST, value = "/point/")
     @ResponseBody
