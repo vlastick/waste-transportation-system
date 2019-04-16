@@ -19,7 +19,7 @@ public class UserServiceImpl {
         System.out.println("userService initialized");
     }
 
-    public User getUserId(){
+    public User getUser(){
         User user = new User();
         user.setUserId(1);
         return user;

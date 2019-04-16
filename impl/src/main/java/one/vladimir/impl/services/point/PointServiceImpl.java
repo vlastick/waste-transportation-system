@@ -10,6 +10,7 @@ import one.vladimir.api.pojo.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import one.vladimir.impl.services.user.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,10 @@ public class PointServiceImpl implements PointService {
     @Qualifier("geo")
     private Geo geo;
 
+    @Autowired
+    @Qualifier("userService")
+    private UserServiceImpl userService;
+
     @PostConstruct
     public void postConstructLog(){
         System.out.println("pointService initialized");
@@ -37,12 +42,22 @@ public class PointServiceImpl implements PointService {
 
     @Override
     public String addDump(Dump dump) {
+        User creator;
+        Group group;
+        creator = userService.getUser();
+        group = db.getGroupByCoordinates(dump.getLatitude(), dump.getLongitude());
+        db.addPoint(dump, creator,group);
         db.addDump(dump);
         return "New dump was added";
     }
 
     @Override
     public String addBase(Base base) {
+        User creator;
+        Group group;
+        creator = userService.getUser();
+        group = db.getGroupByCoordinates(base.getLatitude(), base.getLongitude());
+        db.addPoint(base, creator,group);
         db.addBase(base);
         return "Base was added";
     }

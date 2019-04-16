@@ -10,7 +10,7 @@ public interface UserService {
      *
      * @return user pojo
      */
-    public User getUserId();
+    public User getUser();
 
 
 }
