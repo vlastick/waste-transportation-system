@@ -44,6 +44,14 @@ public interface Database {
 
     public Vessel getVesselById(Integer id);
 
+
+    /**
+     * get group that contains point with coordinates
+     *
+     * @return group pojo
+     */
+    public Group getGroupByCoordinates(Double latitude, Double longitude);
+
     //update requests
 
     public void updateUser(User user);

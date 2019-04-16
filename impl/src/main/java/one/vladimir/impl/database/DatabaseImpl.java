@@ -88,6 +88,7 @@ public class DatabaseImpl implements Database {
 //        System.out.println(this.getVesselById(13).getCurrRoute());
 //        System.out.println(pointRepo.findById(8).get());
         System.out.println("DB initialized");
+        System.out.println(groupRepo.findGroupByCoordinates(150.0,150.0).getGroupId());
 
 
     }
@@ -425,4 +426,9 @@ public class DatabaseImpl implements Database {
         vesselRepo.save(vesselEnt);
     }
 
+    public Group getGroupByCoordinates(Double latitude, Double longitude) {
+        Group group;
+        group = groupRepo.findGroupByCoordinates(latitude, longitude).getGroup();
+        return group;
+    }
 }
