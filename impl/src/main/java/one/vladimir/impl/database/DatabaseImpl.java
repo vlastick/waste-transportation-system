@@ -88,7 +88,7 @@ public class DatabaseImpl implements Database {
 //        System.out.println(this.getVesselById(13).getCurrRoute());
 //        System.out.println(pointRepo.findById(8).get());
         System.out.println("DB initialized");
-        System.out.println(this.getAllDumps().get(0).getId());
+//        System.out.println(this.getAllBases().size());
 
 
     }
@@ -443,5 +443,18 @@ public class DatabaseImpl implements Database {
         }
         return dumps;
     }
+
+    public List<Base> getAllBases() {
+        List<BaseEntity> baseEnts;
+        List<Base> bases = new Vector<Base>();
+        baseEnts = baseRepo.findAllBases();
+        for (BaseEntity baseEnt : baseEnts) {
+            Base base = baseEnt.getBase();
+            baseEnt.getPoint().getPoint(base);
+            bases.add(base);
+        }
+        return bases;
+    }
+
 
 }
