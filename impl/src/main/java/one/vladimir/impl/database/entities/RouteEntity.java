@@ -1,7 +1,7 @@
 package one.vladimir.impl.database.entities;
 
 import one.vladimir.api.pojo.Route;
-import one.vladimir.api.pojo.RouteStatus;
+import one.vladimir.api.enums.RouteStatus;
 
 import javax.persistence.*;
 import java.util.Collection;

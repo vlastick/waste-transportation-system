@@ -1,4 +1,4 @@
-package one.vladimir.api.pojo;
+package one.vladimir.api.enums;
 
 public enum RoutePointStatus {
     AWAITING,

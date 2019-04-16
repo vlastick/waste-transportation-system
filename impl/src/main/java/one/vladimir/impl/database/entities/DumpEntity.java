@@ -1,8 +1,8 @@
 package one.vladimir.impl.database.entities;
 
 import one.vladimir.api.pojo.Dump;
-import one.vladimir.api.pojo.DumpStatus;
-import one.vladimir.api.pojo.DumpType;
+import one.vladimir.api.enums.DumpStatus;
+import one.vladimir.api.enums.DumpType;
 
 
 import javax.persistence.*;

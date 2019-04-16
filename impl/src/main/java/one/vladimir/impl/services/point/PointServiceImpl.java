@@ -3,6 +3,8 @@ package one.vladimir.impl.services.point;
 import one.vladimir.api.Database;
 import one.vladimir.api.Geo;
 import one.vladimir.api.PointService;
+import one.vladimir.api.enums.DumpStatus;
+import one.vladimir.api.enums.DumpType;
 import one.vladimir.api.pojo.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -10,10 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;

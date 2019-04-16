@@ -1,5 +1,7 @@
 package one.vladimir.api.pojo;
 
+import one.vladimir.api.enums.RouteStatus;
+
 import java.util.Set;
 
 public class Route {

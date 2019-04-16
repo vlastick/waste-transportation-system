@@ -1,5 +1,8 @@
 package one.vladimir.api.pojo;
 
+import one.vladimir.api.enums.DumpStatus;
+import one.vladimir.api.enums.DumpType;
+
 public class Dump extends Point {
 
     private Integer id;

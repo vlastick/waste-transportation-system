@@ -1,7 +1,7 @@
 package one.vladimir.impl.database.entities;
 
 import one.vladimir.api.pojo.RoutePoint;
-import one.vladimir.api.pojo.RoutePointStatus;
+import one.vladimir.api.enums.RoutePointStatus;
 
 import javax.persistence.*;
 

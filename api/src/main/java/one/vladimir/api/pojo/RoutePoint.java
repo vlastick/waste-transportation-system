@@ -1,5 +1,7 @@
 package one.vladimir.api.pojo;
 
+import one.vladimir.api.enums.RoutePointStatus;
+
 public class RoutePoint {
 
     private Integer id;
