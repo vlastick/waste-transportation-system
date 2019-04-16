@@ -363,6 +363,13 @@ public class DatabaseImpl implements Database {
         pointRepo.save(pointEnt);
     }
 
+    public void updatePoint(Point point) {
+        PointEntity pointEnt;
+        pointEnt = pointRepo.findById(point.getPointId()).get();
+        pointEnt.setPoint(point);
+        pointRepo.save(pointEnt);
+    }
+
     public void updateGroup(Group group) {
         GroupEntity groupEnt;
         groupEnt = groupRepo.findById(group.getId()).get();

@@ -4,6 +4,8 @@ import one.vladimir.api.pojo.*;
 
 public interface Database {
 
+    //add requests
+
     public void addUser(User user);
 
     public void addPoint(Point point, User creator, Group group);
@@ -21,6 +23,8 @@ public interface Database {
     public void addRoutePoint(RoutePoint routePoint, Route route);
 
     public void addVessel(Vessel vessel);
+
+    //get requests
 
     public User getUserById(Integer id);
 
@@ -40,9 +44,13 @@ public interface Database {
 
     public Vessel getVesselById(Integer id);
 
+    //update requests
+
     public void updateUser(User user);
 
     public void updatePoint(Point point, User creator, Group group);
+
+    public void updatePoint(Point point);
 
     public void updateGroup(Group group);
 
