@@ -94,12 +94,16 @@ public class PointServiceImpl implements PointService {
 
     @Override
     public String updateDump(Dump dump) {
-        return null;
+        db.updatePoint(dump);
+        db.updateDump(dump);
+        return "Dump was updated";
     }
 
     @Override
     public String updateBase(Base base) {
-        return null;
+        db.updatePoint(base);
+        db.updateBase(base);
+        return "Base was updated";
     }
 
     @Override
