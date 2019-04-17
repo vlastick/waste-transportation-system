@@ -19,6 +19,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Vector;
 
 @Service("pointService")
 public class PointServiceImpl implements PointService {
@@ -158,20 +159,40 @@ public class PointServiceImpl implements PointService {
     // There is and example below. How to parse JsonNode you can see in RestImplementation
     public String getDumps(JsonNode filter) {
 
-        List<Dump> dumpList = new ArrayList<>();
-        Dump testDump = new Dump();
-        testDump.setPriority(99);
-        testDump.setStatus(DumpStatus.REMOVED);
-        testDump.setType(DumpType.LIQUID);
-
-        for (int i = 0; i < 10; i++) {
-            dumpList.add(testDump);
+        // TODO: parse ids from json
+        List<Integer> dumpIds = new Vector<Integer>();
+        List<Dump> dumps;
+        if (dumpIds.isEmpty() == true){
+            dumps = db.getAllDumps();
+        } else {
+            dumps = db.getDumpsByIds(dumpIds);
         }
 
         String answerJson = "Error";
         ObjectMapper mapper = new ObjectMapper();
         try {
-            answerJson = mapper.writeValueAsString(dumpList);
+            answerJson = mapper.writeValueAsString(dumps);
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return answerJson;
+    }
+
+    public String getBases(JsonNode filter) {
+
+        // TODO: parse ids from json
+        List<Integer> baseIds = new Vector<Integer>();
+        List<Base> bases;
+        if (baseIds.isEmpty() == true){
+            bases = db.getAllBases();
+        } else {
+            bases = db.getBasesByIds(baseIds);
+        }
+
+        String answerJson = "Error";
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            answerJson = mapper.writeValueAsString(bases);
         } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
             e.printStackTrace();
         }
