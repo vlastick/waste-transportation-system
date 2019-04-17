@@ -152,7 +152,7 @@ public class RestService {
 
             } catch (NumberFormatException e) {
 
-                answerJSON = "Error. Given ID doesn't a numb";
+                answerJSON = "Error. Given ID doesn't a dumb";
                 e.printStackTrace();
             } catch (JsonProcessingException e) {
                 answerJSON = "Can't parse class to JSON";

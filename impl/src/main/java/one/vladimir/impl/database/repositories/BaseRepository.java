@@ -11,4 +11,6 @@ public interface BaseRepository extends CrudRepository<BaseEntity, Integer> {
     @Query("Select b FROM BaseEntity b")
     List<BaseEntity> findAllBases();
 
+    List<BaseEntity> findBasesByBaseIdIn(List<Integer> ids);
+
 }

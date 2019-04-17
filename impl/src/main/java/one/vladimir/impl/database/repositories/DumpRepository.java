@@ -12,4 +12,6 @@ public interface DumpRepository extends CrudRepository<DumpEntity, Integer> {
     @Query("Select d FROM DumpEntity d")
     List<DumpEntity> findAllDumps();
 
+    List<DumpEntity> findDumpsByDumpIdIn(List<Integer> ids);
+
 }

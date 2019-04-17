@@ -2,6 +2,8 @@ package one.vladimir.api;
 
 import one.vladimir.api.pojo.*;
 
+import java.util.List;
+
 public interface Database {
 
     //add requests
@@ -51,6 +53,14 @@ public interface Database {
      * @return group pojo
      */
     public Group getGroupByCoordinates(Double latitude, Double longitude);
+
+    public List<Dump> getAllDumps();
+
+    public List<Base> getAllBases();
+
+    public List<Dump> getDumpsByIds(List<Integer> ids);
+
+    public List<Base> getBasesByIds(List<Integer> ids);
 
     //update requests
 

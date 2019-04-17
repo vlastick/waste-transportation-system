@@ -89,6 +89,11 @@ public class DatabaseImpl implements Database {
 //        System.out.println(pointRepo.findById(8).get());
         System.out.println("DB initialized");
 //        System.out.println(this.getAllBases().size());
+//        List<Integer> ids = new Vector<Integer>();
+//        ids.add(11);
+//        ids.add(12);
+//        ids.add(111);
+//        System.out.println(dumpRepo.findDumpsByDumpIdIn(ids).size());
 
 
     }
@@ -448,6 +453,30 @@ public class DatabaseImpl implements Database {
         List<BaseEntity> baseEnts;
         List<Base> bases = new Vector<Base>();
         baseEnts = baseRepo.findAllBases();
+        for (BaseEntity baseEnt : baseEnts) {
+            Base base = baseEnt.getBase();
+            baseEnt.getPoint().getPoint(base);
+            bases.add(base);
+        }
+        return bases;
+    }
+
+    public List<Dump> getDumpsByIds(List<Integer> ids){
+        List<DumpEntity> dumpEnts;
+        List<Dump> dumps = new Vector<Dump>();
+        dumpEnts = dumpRepo.findDumpsByDumpIdIn(ids);
+        for (DumpEntity dumpEnt : dumpEnts) {
+            Dump dump = dumpEnt.getDump();
+            dumpEnt.getPoint().getPoint(dump);
+            dumps.add(dump);
+        }
+        return dumps;
+    }
+
+    public List<Base> getBasesByIds(List<Integer> ids){
+        List<BaseEntity> baseEnts;
+        List<Base> bases = new Vector<Base>();
+        baseEnts = baseRepo.findBasesByBaseIdIn(ids);
         for (BaseEntity baseEnt : baseEnts) {
             Base base = baseEnt.getBase();
             baseEnt.getPoint().getPoint(base);
