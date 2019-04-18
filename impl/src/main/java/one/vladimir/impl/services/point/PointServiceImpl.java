@@ -182,11 +182,24 @@ public class PointServiceImpl implements PointService {
 
     @Override
     public String testGeo(String request) {
-
         return geo.getResult(request);
     }
 
+    public String addGroup(Group group){
+        db.addGroup(group);
+        return "Group added";
+    }
 
+    public String updateGroup(Group group){
+        db.updateGroup(group);
+        return "Group updated";
+    }
+
+    public Group getGroup(Integer id){
+        Group group;
+        group = db.getGroupById(id);
+        return group;
+    }
 
 
 

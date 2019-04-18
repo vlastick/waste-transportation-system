@@ -298,7 +298,7 @@ public class RestService {
             try {
 
                 Integer id = Integer.parseInt(strId);
-                Vessel vessel = transportService.getVessel(id.toString());
+                Vessel vessel = transportService.getVessel(id);
 
                 if (vessel != null) {
                     ObjectMapper mapper = new ObjectMapper();

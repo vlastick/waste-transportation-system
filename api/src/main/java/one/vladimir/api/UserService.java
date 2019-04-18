@@ -12,7 +12,7 @@ public interface UserService {
      */
     public User getUser();
 
-    public User getUser(String strId);
+    public User getUser(Integer id);
 
     public String addUser(User user);
 

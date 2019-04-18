@@ -29,17 +29,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(String strId){
-        return new User();
+    public User getUser(Integer id){
+        User user = db.getUserById(id);
+        return user;
     }
 
     @Override
     public String addUser(User user){
+        db.addUser(user);
         return "User added";
     }
 
     @Override
     public String updateUser(User user){
+        db.updateUser(user);
         return "User updated";
     }
 

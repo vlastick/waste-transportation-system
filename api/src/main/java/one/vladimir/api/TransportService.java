@@ -4,7 +4,7 @@ import one.vladimir.api.pojo.Vessel;
 
 public interface TransportService {
 
-    public Vessel getVessel(String strId);
+    public Vessel getVessel(Integer id);
 
     public String addVessel(Vessel vessel);
 

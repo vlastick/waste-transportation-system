@@ -1,10 +1,7 @@
 package one.vladimir.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import one.vladimir.api.pojo.Base;
-import one.vladimir.api.pojo.Dump;
-import one.vladimir.api.pojo.Route;
-import one.vladimir.api.pojo.Vessel;
+import one.vladimir.api.pojo.*;
 
 import java.util.List;
 
@@ -39,5 +36,11 @@ public interface PointService {
     String getBases(JsonNode filter);
 
     String testGeo(String request);
+
+    String addGroup(Group group);
+
+    String updateGroup(Group group);
+
+    Group getGroup(Integer id);
 
 }
