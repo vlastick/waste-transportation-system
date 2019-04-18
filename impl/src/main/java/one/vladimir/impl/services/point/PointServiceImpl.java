@@ -47,7 +47,7 @@ public class PointServiceImpl implements PointService {
         Group group;
         creator = userService.getUser();
         group = db.getGroupByCoordinates(dump.getLatitude(), dump.getLongitude());
-        db.addPoint(dump, creator,group);
+        dump.setPointId(db.addPoint(dump, creator, group));
         db.addDump(dump);
         return "New dump was added";
     }
@@ -58,7 +58,7 @@ public class PointServiceImpl implements PointService {
         Group group;
         creator = userService.getUser();
         group = db.getGroupByCoordinates(base.getLatitude(), base.getLongitude());
-        db.addPoint(base, creator,group);
+        base.setPointId(db.addPoint(base, creator, group));
         db.addBase(base);
         return "Base was added";
     }
@@ -155,11 +155,10 @@ public class PointServiceImpl implements PointService {
         return null;
     }
 
-    // TODO - write more functions to get all types of entities.
     // There is and example below. How to parse JsonNode you can see in RestImplementation
     public String getDumps(JsonNode filter) {
 
-        // TODO: parse ids from json
+        // TODO: parse ids from json filter
         List<Integer> dumpIds = new Vector<Integer>();
         List<Dump> dumps;
         if (dumpIds.isEmpty() == true){
@@ -180,7 +179,7 @@ public class PointServiceImpl implements PointService {
 
     public String getBases(JsonNode filter) {
 
-        // TODO: parse ids from json
+        // TODO: parse ids from json filter
         List<Integer> baseIds = new Vector<Integer>();
         List<Base> bases;
         if (baseIds.isEmpty() == true){

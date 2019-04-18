@@ -8,23 +8,23 @@ public interface Database {
 
     //add requests
 
-    public void addUser(User user);
+    public Integer addUser(User user);
 
-    public void addPoint(Point point, User creator, Group group);
+    public Integer addPoint(Point point, User creator, Group group);
 
-    public void addGroup(Group group);
+    public Integer addGroup(Group group);
 
-    public void addDump(Dump dump);
+    public Integer addDump(Dump dump);
 
-    public void addBase(Base base);
+    public Integer addBase(Base base);
 
-    public void addCrewman(Crewman crewman);
+    public Integer addCrewman(Crewman crewman);
 
-    public void addRoute(Route route, Vessel vessel);
+    public Integer addRoute(Route route, Vessel vessel);
 
-    public void addRoutePoint(RoutePoint routePoint, Route route);
+    public Integer addRoutePoint(RoutePoint routePoint, Route route);
 
-    public void addVessel(Vessel vessel);
+    public Integer addVessel(Vessel vessel);
 
     //get requests
 

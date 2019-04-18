@@ -53,6 +53,7 @@ public class DatabaseImpl implements Database {
 //        Group g = new Group();
 //        User u  = new User();
 //        u.setUserId(1);
+//        this.addUser(u);
 //        g.setId(7);
 //        g.setKoef(111);
 //        this.addGroup(g);
@@ -101,14 +102,17 @@ public class DatabaseImpl implements Database {
 
 //    Basic Queries
 
-    public void addUser(User user) {
-        if (userRepo.findAllEmails().contains(user.getEmail())) {
-            throw new IllegalArgumentException("User with this email already exists");
-        }
+    public Integer addUser(User user) {
+//        if (userRepo.findAllEmails().contains(user.getEmail())) {
+//            throw new IllegalArgumentException("User with this email already exists");
+//        }
         UserEntity userEnt = new UserEntity();
         userEnt.setUser(user);
+//        System.out.println("before" + userEnt.getUserId());
         userEnt.setUserId(null);
         userRepo.save(userEnt);
+        return userEnt.getUserId();
+//        System.out.println("after" + userEnt.getUserId());
     }
 
     public User getUserById(Integer id) {
@@ -122,7 +126,7 @@ public class DatabaseImpl implements Database {
         return user;
     }
 
-    public void addPoint(Point point, User creator, Group group) {
+    public Integer addPoint(Point point, User creator, Group group) {
         if (!userRepo.findAllIds().contains(creator.getUserId())) {
             throw new IllegalArgumentException("User with id " + creator.getUserId() + " not found");
         }
@@ -140,6 +144,7 @@ public class DatabaseImpl implements Database {
         pointEnt.setGroup(groupEnt);
         pointEnt.setPointId(null);
         pointRepo.save(pointEnt);
+        return pointEnt.getPointId();
     }
 
     public Point getPointById(Integer id) {
@@ -156,11 +161,12 @@ public class DatabaseImpl implements Database {
         return point;
     }
 
-    public void addGroup(Group group) {
+    public Integer addGroup(Group group) {
         GroupEntity groupEnt = new GroupEntity();
         groupEnt.setGroup(group);
         groupEnt.setGroupId(null);
         groupRepo.save(groupEnt);
+        return groupEnt.getGroupId();
     }
 
     public Group getGroupById(Integer id) {
@@ -175,7 +181,7 @@ public class DatabaseImpl implements Database {
     }
 
     //TODO: add object uniqueness check for exact point
-    public void addDump(Dump dump) {
+    public Integer addDump(Dump dump) {
         if (!pointRepo.findAllIds().contains(dump.getPointId())) {
             throw new IllegalArgumentException("Point with id " + dump.getPointId() + " not found");
         }
@@ -191,6 +197,7 @@ public class DatabaseImpl implements Database {
         dumpEnt.setPoint(pointEnt);
         dumpEnt.setDumpId(null);
         dumpRepo.save(dumpEnt);
+        return dumpEnt.getDumpId();
     }
 
     public Dump getDumpById(Integer id) {
@@ -205,7 +212,7 @@ public class DatabaseImpl implements Database {
         return dump;
     }
 
-    public void addBase(Base base) {
+    public Integer addBase(Base base) {
         PointEntity pointEnt;
         try {
             pointEnt = pointRepo.findById(base.getPointId()).get();
@@ -217,6 +224,7 @@ public class DatabaseImpl implements Database {
         baseEnt.setPoint(pointEnt);
         baseEnt.setBaseId(null);
         baseRepo.save(baseEnt);
+        return baseEnt.getBaseId();
     }
 
 
@@ -232,7 +240,7 @@ public class DatabaseImpl implements Database {
         return base;
     }
 
-    public void addCrewman(Crewman crewman) {
+    public Integer addCrewman(Crewman crewman) {
         UserEntity userEnt;
         VesselEntity vesselEnt;
 
@@ -251,6 +259,7 @@ public class DatabaseImpl implements Database {
         crewmanEnt.setUser(userEnt);
         crewmanEnt.setVessel(vesselEnt);
         crewmanRepo.save(crewmanEnt);
+        return crewmanEnt.getCrewmanId();
     }
 
     public Crewman getCrewmanById(Integer id) {
@@ -266,7 +275,7 @@ public class DatabaseImpl implements Database {
         return crewman;
     }
 
-    public void addRoute(Route route, Vessel vessel) {
+    public Integer addRoute(Route route, Vessel vessel) {
         VesselEntity vesselEnt;
         try {
             vesselEnt = vesselRepo.findById(vessel.getId()).get();
@@ -278,6 +287,7 @@ public class DatabaseImpl implements Database {
         routeEnt.setVessel(vesselEnt);
         routeEnt.setRouteId(null);
         routeRepo.save(routeEnt);
+        return routeEnt.getRouteId();
     }
 
     public Route getRouteById(Integer id) {
@@ -297,7 +307,7 @@ public class DatabaseImpl implements Database {
         return new Route();
     }
 
-    public void addRoutePoint(RoutePoint routePoint, Route route) {
+    public Integer addRoutePoint(RoutePoint routePoint, Route route) {
         PointEntity pointEnt;
         RouteEntity routeEnt;
         try {
@@ -316,6 +326,7 @@ public class DatabaseImpl implements Database {
         routePointEnt.setPoint(pointEnt);
         routePointEnt.setRoutePointId(null);
         routePointRepo.save(routePointEnt);
+        return routePointEnt.getRoutePointId();
     }
 
     public RoutePoint getRoutePointById(Integer id) {
@@ -330,11 +341,12 @@ public class DatabaseImpl implements Database {
         return routePoint;
     }
 
-    public void addVessel(Vessel vessel) {
+    public Integer addVessel(Vessel vessel) {
         VesselEntity vesselEnt = new VesselEntity();
         vesselEnt.setVessel(vessel);
         vesselEnt.setVesselId(null);
         vesselRepo.save(vesselEnt);
+        return vesselEnt.getVesselId();
     }
 
 
