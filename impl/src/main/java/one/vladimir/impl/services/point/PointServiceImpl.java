@@ -93,32 +93,26 @@ public class PointServiceImpl implements PointService {
 
     @Override
     public List<Dump> getDumps() {
-        return null;
+        List<Integer> dumpIds = new Vector<Integer>();
+        List<Dump> dumps;
+        if (dumpIds.isEmpty() == true){
+            dumps = db.getAllDumps();
+        } else {
+            dumps = db.getDumpsByIds(dumpIds);
+        }
+        return dumps;
     }
 
     @Override
     public List<Base> getBases() {
-        return null;
-    }
-
-    @Override
-    public Route getRoute(Integer id) {
-        Route route = db.getRouteById(id);
-        if(route == null){
-            route = new Route();
-            System.out.println("Route was empty");
+        List<Integer> baseIds = new Vector<Integer>();
+        List<Base> bases;
+        if (baseIds.isEmpty() == true){
+            bases = db.getAllBases();
+        } else {
+            bases = db.getBasesByIds(baseIds);
         }
-        return route;
-    }
-
-    @Override
-    public List<Route> getRoutes() {
-        return null;
-    }
-
-    @Override
-    public String addRoute(Route route) {
-        return null;
+        return bases;
     }
 
     @Override
@@ -141,32 +135,7 @@ public class PointServiceImpl implements PointService {
         return "Base was updated";
     }
 
-    @Override
-    public String updateRoute(Route route) {
-        return null;
-    }
 
-    @Override
-    public String addVessel(Vessel vessel) {
-
-        db.addVessel(vessel);
-        return "Vessel was added";
-    }
-
-    @Override
-    public Vessel getVessel(Integer id) {
-        Vessel vessel = db.getVesselById(id);
-        if(vessel == null){
-            vessel = new Vessel();
-            System.out.println("Vessel was empty");
-        }
-        return vessel;
-    }
-
-    @Override
-    public String updateVessel(Vessel vessel) {
-        return null;
-    }
 
     // There is and example below. How to parse JsonNode you can see in RestImplementation
     public String getDumps(JsonNode filter) {
@@ -217,29 +186,7 @@ public class PointServiceImpl implements PointService {
         return geo.getResult(request);
     }
 
-    @Override
-    public String addUser(String strLogin, String strRole, String strPassword){
 
-        User user = new User();
-        user.setLogin(strLogin);
-        user.setRole(strRole);
-        user.setPassword(strPassword);
-        db.addUser(user);
-        return "User added";
-    }
-
-    @Override
-    public String getUser(String strId){
-
-        Integer id = Integer.valueOf(strId);
-        User user;
-        try{
-            user = db.getUserById(id);
-        } catch (NoSuchElementException e){
-            return e.getMessage();
-        }
-        return user.getLogin();
-    }
 
 
 
