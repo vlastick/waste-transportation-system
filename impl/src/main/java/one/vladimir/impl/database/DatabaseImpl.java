@@ -209,6 +209,9 @@ public class DatabaseImpl implements Database {
         }
         Dump dump = dumpEnt.getDump();
         dumpEnt.getPoint().getPoint(dump);
+        dump.setUpdatedBy(dumpEnt.getPoint().getUpdatedBy().getUser());
+        dump.setCreatedBy(dumpEnt.getPoint().getCreatedBy().getUser());
+        dump.setGroup(dumpEnt.getPoint().getGroup().getGroup());
         return dump;
     }
 
@@ -237,6 +240,9 @@ public class DatabaseImpl implements Database {
         }
         Base base = baseEnt.getBase();
         baseEnt.getPoint().getPoint(base);
+        base.setUpdatedBy(baseEnt.getPoint().getUpdatedBy().getUser());
+        base.setCreatedBy(baseEnt.getPoint().getCreatedBy().getUser());
+        base.setGroup(baseEnt.getPoint().getGroup().getGroup());
         return base;
     }
 
@@ -382,10 +388,13 @@ public class DatabaseImpl implements Database {
         pointRepo.save(pointEnt);
     }
 
-    public void updatePoint(Point point) {
+    public void updatePoint(Point point, User updater) {
         PointEntity pointEnt;
+        UserEntity userEnt;
         pointEnt = pointRepo.findById(point.getPointId()).get();
+        userEnt = userRepo.findById(updater.getUserId()).get();
         pointEnt.setPoint(point);
+        pointEnt.setUpdatedBy(userEnt);
         pointRepo.save(pointEnt);
     }
 

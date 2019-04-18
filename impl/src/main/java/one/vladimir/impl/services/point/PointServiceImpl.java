@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -47,6 +48,9 @@ public class PointServiceImpl implements PointService {
         Group group;
         creator = userService.getUser();
         group = db.getGroupByCoordinates(dump.getLatitude(), dump.getLongitude());
+        dump.setCreatedBy(creator);
+        dump.setCreatedWhen(new Timestamp(System.currentTimeMillis()));
+        dump.setUpdatedWhen(new Timestamp(System.currentTimeMillis()));
         dump.setPointId(db.addPoint(dump, creator, group));
         db.addDump(dump);
         return "New dump was added";
@@ -58,6 +62,9 @@ public class PointServiceImpl implements PointService {
         Group group;
         creator = userService.getUser();
         group = db.getGroupByCoordinates(base.getLatitude(), base.getLongitude());
+        base.setCreatedBy(creator);
+        base.setCreatedWhen(new Timestamp(System.currentTimeMillis()));
+        base.setUpdatedWhen(new Timestamp(System.currentTimeMillis()));
         base.setPointId(db.addPoint(base, creator, group));
         db.addBase(base);
         return "Base was added";
@@ -116,14 +123,20 @@ public class PointServiceImpl implements PointService {
 
     @Override
     public String updateDump(Dump dump) {
-        db.updatePoint(dump);
+        User updater = userService.getUser();
+        dump.setUpdatedBy(updater);
+        dump.setUpdatedWhen(new Timestamp(System.currentTimeMillis()));
+        db.updatePoint(dump, updater);
         db.updateDump(dump);
         return "Dump was updated";
     }
 
     @Override
     public String updateBase(Base base) {
-        db.updatePoint(base);
+        User updater = userService.getUser();
+        base.setUpdatedBy(updater);
+        base.setUpdatedWhen(new Timestamp(System.currentTimeMillis()));
+        db.updatePoint(base, updater);
         db.updateBase(base);
         return "Base was updated";
     }

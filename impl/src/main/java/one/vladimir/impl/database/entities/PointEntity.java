@@ -73,6 +73,8 @@ public class PointEntity {
         point.setPointId(this.pointId);
         point.setLatitude(this.latitude);
         point.setLongitude(this.longitude);
+        point.setCreatedWhen(this.createdWhen);
+        point.setUpdatedWhen(this.updatedWhen);
     }
 
     public Integer getPointId() {

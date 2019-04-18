@@ -68,7 +68,7 @@ public interface Database {
 
     public void updatePoint(Point point, User creator, Group group);
 
-    public void updatePoint(Point point);
+    public void updatePoint(Point point, User updater);
 
     public void updateGroup(Group group);
 
