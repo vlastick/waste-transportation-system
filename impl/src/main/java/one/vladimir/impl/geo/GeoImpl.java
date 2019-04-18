@@ -3,8 +3,19 @@ package one.vladimir.impl.geo;
 import one.vladimir.api.Geo;
 import one.vladimir.api.pojo.Point;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.DataOutputStream;
+import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -19,13 +30,33 @@ public class GeoImpl implements Geo {
     private final String OPENSTREETMAP_API_06 = "http://www.openstreetmap.org/api/0.6/";
 
 
+    public static String toString(Document doc) {
+        try {
+            StringWriter sw = new StringWriter();
+            TransformerFactory tf = TransformerFactory.newInstance();
+            Transformer transformer = tf.newTransformer();
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+            transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+
+            transformer.transform(new DOMSource(doc), new StreamResult(sw));
+            return sw.toString();
+        } catch (Exception ex) {
+            throw new RuntimeException("Error converting to String", ex);
+        }
+    }
+
+
     public String getResult(String query) {
 
         System.out.println(query);
 
         String hostname = OVERPASS_API;
-        String queryString = query;//"is_in(47.4959374,19.1174585)";
+        String queryString = query = "is_in(61.2246,30.05194);out;";
         String resultString = "";
+
+        System.out.println("There is an input for geo: " + queryString);
 
         try {
             URL osm = new URL(hostname);
@@ -39,7 +70,18 @@ public class GeoImpl implements Geo {
             printout.flush();
             printout.close();
 
-            resultString = connection.getInputStream().readAllBytes().toString();
+            DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
+            Document d = docBuilder.parse(connection.getInputStream());
+
+            resultString = toString(d);
+
+        }
+        catch (ParserConfigurationException e){
+            e.printStackTrace();
+        }
+        catch (SAXException e){
+            e.printStackTrace();
         }
         catch (MalformedURLException e){
             e.printStackTrace();

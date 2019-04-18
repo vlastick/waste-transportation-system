@@ -572,4 +572,11 @@ public class RestService {
 
         return new ResponseEntity(pointService.testGeo(data), OK);
     }*/
+
+    @RequestMapping(method = GET, value = "/test_geo")
+    public ResponseEntity<String> testGeo(
+            @RequestParam(name = "command", defaultValue = "")   String command) {
+
+        return new ResponseEntity(pointService.testGeo(command), OK);
+    }
 }

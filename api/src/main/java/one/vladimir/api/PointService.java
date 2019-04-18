@@ -1,6 +1,5 @@
 package one.vladimir.api;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import one.vladimir.api.pojo.*;
 
 import java.util.List;
@@ -31,9 +30,9 @@ public interface PointService {
     // Put point
     String updateBase(Base base);
 
-    String getDumps(JsonNode filter);
+    //String getDumps(JsonNode filter);
 
-    String getBases(JsonNode filter);
+    //String getBases(JsonNode filter);
 
     String testGeo(String request);
 
