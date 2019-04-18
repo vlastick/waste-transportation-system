@@ -405,13 +405,154 @@ public class RestService {
     */
 
 
-    // Test DB methods
+    // Test methods
 
-    /*
-    @RequestMapping(method = GET, value = "/add_user/")
+    @RequestMapping(method = POST, value = "/user/")
+    @ResponseBody
+    public ResponseEntity<String> addUser(@RequestBody String configJSON) {
+
+        String answerJSON = "";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        try {
+
+            ObjectMapper mapper = new ObjectMapper();
+            User user = mapper.readValue(configJSON, User.class);
+            answerJSON = userService.addUser(user);
+            status = CREATED;
+
+        } catch (com.fasterxml.jackson.core.JsonParseException e) {
+
+            answerJSON = "JSON parsing exception: can't read JSON structure because there are some mistakes!";
+            e.printStackTrace();
+
+        } catch (com.fasterxml.jackson.databind.JsonMappingException e) {
+
+            answerJSON = "JSON init exception." +
+                    "JSON body contains values which don't exist in vessel class.";
+            e.printStackTrace();
+
+        } catch (java.io.IOException e) {
+
+            System.out.println("Java IO Exception");
+            e.printStackTrace();
+        }
+
+        return new ResponseEntity<>(answerJSON, status);
+    }
+
+    @RequestMapping(method = GET, value = "/user/{strId}")
+    @ResponseBody
+    public ResponseEntity<String> getUser(@PathVariable String strId) {
+
+        String answerJSON = "";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        if (strId.isEmpty()) {
+            answerJSON = "Error. ID isn't given";
+        } else {
+
+            try {
+
+                Integer id = Integer.parseInt(strId);
+                User user = userService.getUser(id);
+
+                if (user != null) {
+                    ObjectMapper mapper = new ObjectMapper();
+                    answerJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(user);
+                    status = OK;
+                } else {
+                    answerJSON = "User with id=" + strId + "  not found";
+                    status = NOT_FOUND;
+                }
+            } catch (NumberFormatException e) {
+
+                answerJSON = "Error. Given ID doesn't a numb";
+                e.printStackTrace();
+            } catch (JsonProcessingException e) {
+                answerJSON = "Can't parse class to JSON";
+                e.printStackTrace();
+            }
+        }
+
+        return new ResponseEntity<>(answerJSON, status);
+    }
+
+    @RequestMapping(method = POST, value = "/group/")
+    @ResponseBody
+    public ResponseEntity<String> addGroup(@RequestBody String configJSON) {
+
+        String answerJSON = "";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        try {
+
+            ObjectMapper mapper = new ObjectMapper();
+            Group group = mapper.readValue(configJSON, Group.class);
+            answerJSON = pointService.addGroup(group);
+            status = CREATED;
+
+        } catch (com.fasterxml.jackson.core.JsonParseException e) {
+
+            answerJSON = "JSON parsing exception: can't read JSON structure because there are some mistakes!";
+            e.printStackTrace();
+
+        } catch (com.fasterxml.jackson.databind.JsonMappingException e) {
+
+            answerJSON = "JSON init exception." +
+                    "JSON body contains values which don't exist in vessel class.";
+            e.printStackTrace();
+
+        } catch (java.io.IOException e) {
+
+            System.out.println("Java IO Exception");
+            e.printStackTrace();
+        }
+
+        return new ResponseEntity<>(answerJSON, status);
+    }
+
+    @RequestMapping(method = GET, value = "/group/{strId}")
+    @ResponseBody
+    public ResponseEntity<String> getGroup(@PathVariable String strId) {
+
+        String answerJSON = "";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        if (strId.isEmpty()) {
+            answerJSON = "Error. ID isn't given";
+        } else {
+
+            try {
+
+                Integer id = Integer.parseInt(strId);
+                Group group = pointService.getGroup(id);
+
+                if (group != null) {
+                    ObjectMapper mapper = new ObjectMapper();
+                    answerJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(group);
+                    status = OK;
+                } else {
+                    answerJSON = "Group with id=" + strId + "  not found";
+                    status = NOT_FOUND;
+                }
+            } catch (NumberFormatException e) {
+
+                answerJSON = "Error. Given ID doesn't a numb";
+                e.printStackTrace();
+            } catch (JsonProcessingException e) {
+                answerJSON = "Can't parse class to JSON";
+                e.printStackTrace();
+            }
+        }
+
+        return new ResponseEntity<>(answerJSON, status);
+    }
+
+    /*@RequestMapping(method = GET, value = "/add_user/")
     public ResponseEntity<String> addUser() {
 
-        String result = pointService.addUser("MyleneFarmer", "User", "1123");
+        String result = UserService.addUser();
         return new ResponseEntity<>(result, OK);
     }
 
@@ -420,8 +561,8 @@ public class RestService {
 
 
         // It works but you should chose the correct ID
-        String result = pointService.getUser("1");
-        return new ResponseEntity<>(result, OK);
+        User user = userService.getUser(1);
+        return new ResponseEntity<>(user, OK);
     }
 
     @RequestMapping(method = GET, value = "/test_geo")
