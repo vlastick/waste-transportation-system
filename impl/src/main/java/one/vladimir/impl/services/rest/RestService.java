@@ -1,6 +1,9 @@
 package one.vladimir.impl.services.rest;
 
 import one.vladimir.api.PointService;
+import one.vladimir.api.RouteService;
+import one.vladimir.api.TransportService;
+import one.vladimir.api.UserService;
 import one.vladimir.api.pojo.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -31,6 +34,18 @@ public class RestService {
     @Autowired
     @Qualifier("pointService")
     private PointService pointService;
+
+    @Autowired
+    @Qualifier("routeService")
+    private RouteService routeService;
+
+    @Autowired
+    @Qualifier("transportService")
+    private TransportService transportService;
+
+    @Autowired
+    @Qualifier("userService")
+    private UserService userService;
 
     @PostConstruct
     public void postConstructLog(){
@@ -174,7 +189,7 @@ public class RestService {
 
             ObjectMapper mapper = new ObjectMapper();
             Route route = mapper.readValue(configJSON, Route.class);
-            answerJSON = pointService.addRoute(route);
+            answerJSON = routeService.addRoute(route);
             status = CREATED;
 
         } catch (com.fasterxml.jackson.core.JsonParseException e) {
@@ -211,7 +226,7 @@ public class RestService {
             try {
 
                 Integer id = Integer.parseInt(strId);
-                Route route = pointService.getRoute(id);
+                Route route = routeService.getRoute(id.toString());
 
                 if (route != null) {
                     ObjectMapper mapper = new ObjectMapper();
@@ -246,7 +261,7 @@ public class RestService {
 
             ObjectMapper mapper = new ObjectMapper();
             Vessel vessel = mapper.readValue(configJSON, Vessel.class);
-            answerJSON = pointService.addVessel(vessel);
+            answerJSON = transportService.addVessel(vessel);
             status = CREATED;
 
         } catch (com.fasterxml.jackson.core.JsonParseException e) {
@@ -283,7 +298,7 @@ public class RestService {
             try {
 
                 Integer id = Integer.parseInt(strId);
-                Vessel vessel = pointService.getVessel(id);
+                Vessel vessel = transportService.getVessel(id.toString());
 
                 if (vessel != null) {
                     ObjectMapper mapper = new ObjectMapper();
@@ -392,6 +407,7 @@ public class RestService {
 
     // Test DB methods
 
+    /*
     @RequestMapping(method = GET, value = "/add_user/")
     public ResponseEntity<String> addUser() {
 
@@ -414,5 +430,5 @@ public class RestService {
 
 
         return new ResponseEntity(pointService.testGeo(data), OK);
-    }
+    }*/
 }
