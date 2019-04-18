@@ -2,27 +2,29 @@ package one.vladimir.api;
 
 import one.vladimir.api.pojo.*;
 
+import java.util.List;
+
 public interface Database {
 
     //add requests
 
-    public void addUser(User user);
+    public Integer addUser(User user);
 
-    public void addPoint(Point point, User creator, Group group);
+    public Integer addPoint(Point point, User creator, Group group);
 
-    public void addGroup(Group group);
+    public Integer addGroup(Group group);
 
-    public void addDump(Dump dump);
+    public Integer addDump(Dump dump);
 
-    public void addBase(Base base);
+    public Integer addBase(Base base);
 
-    public void addCrewman(Crewman crewman);
+    public Integer addCrewman(Crewman crewman);
 
-    public void addRoute(Route route, Vessel vessel);
+    public Integer addRoute(Route route, Vessel vessel);
 
-    public void addRoutePoint(RoutePoint routePoint, Route route);
+    public Integer addRoutePoint(RoutePoint routePoint, Route route);
 
-    public void addVessel(Vessel vessel);
+    public Integer addVessel(Vessel vessel);
 
     //get requests
 
@@ -44,13 +46,29 @@ public interface Database {
 
     public Vessel getVesselById(Integer id);
 
+
+    /**
+     * get group that contains point with coordinates
+     *
+     * @return group pojo
+     */
+    public Group getGroupByCoordinates(Double latitude, Double longitude);
+
+    public List<Dump> getAllDumps();
+
+    public List<Base> getAllBases();
+
+    public List<Dump> getDumpsByIds(List<Integer> ids);
+
+    public List<Base> getBasesByIds(List<Integer> ids);
+
     //update requests
 
     public void updateUser(User user);
 
     public void updatePoint(Point point, User creator, Group group);
 
-    public void updatePoint(Point point);
+    public void updatePoint(Point point, User updater);
 
     public void updateGroup(Group group);
 

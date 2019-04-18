@@ -1,10 +1,7 @@
 package one.vladimir.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import one.vladimir.api.pojo.Base;
-import one.vladimir.api.pojo.Dump;
-import one.vladimir.api.pojo.Route;
-import one.vladimir.api.pojo.Vessel;
+import one.vladimir.api.pojo.*;
 
 import java.util.List;
 
@@ -28,39 +25,22 @@ public interface PointService {
     // Get points
     List <Base> getBases();
 
-    // Get route
-    Route getRoute(Integer id);
-
-    // Get routes
-    List<Route> getRoutes();
-
-    // Post route
-    String addRoute(Route route);
-
     // Put point
     String updateDump(Dump dump);
 
     // Put point
     String updateBase(Base base);
 
-    // Put route
-    String updateRoute(Route route);
-
-    // Post vessel
-    String addVessel(Vessel vessel);
-
-    // Get vessel
-    Vessel getVessel(Integer id);
-
-    // Put vessel
-    String updateVessel(Vessel vessel);
-
     String getDumps(JsonNode filter);
+
+    String getBases(JsonNode filter);
 
     String testGeo(String request);
 
-    String addUser(String strLogin, String strRole, String strPassword);
+    String addGroup(Group group);
 
-    String getUser(String strId);
+    String updateGroup(Group group);
+
+    Group getGroup(Integer id);
 
 }

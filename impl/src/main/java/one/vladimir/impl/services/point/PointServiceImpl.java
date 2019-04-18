@@ -10,13 +10,17 @@ import one.vladimir.api.pojo.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import one.vladimir.impl.services.user.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Vector;
 
 @Service("pointService")
 public class PointServiceImpl implements PointService {
@@ -29,14 +33,39 @@ public class PointServiceImpl implements PointService {
     @Qualifier("geo")
     private Geo geo;
 
+    @Autowired
+    @Qualifier("userService")
+    private UserServiceImpl userService;
+
+    @PostConstruct
+    public void postConstructLog(){
+        System.out.println("pointService initialized");
+    }
+
     @Override
     public String addDump(Dump dump) {
+        User creator;
+        Group group;
+        creator = userService.getUser();
+        group = db.getGroupByCoordinates(dump.getLatitude(), dump.getLongitude());
+        dump.setCreatedBy(creator);
+        dump.setCreatedWhen(new Timestamp(System.currentTimeMillis()));
+        dump.setUpdatedWhen(new Timestamp(System.currentTimeMillis()));
+        dump.setPointId(db.addPoint(dump, creator, group));
         db.addDump(dump);
         return "New dump was added";
     }
 
     @Override
     public String addBase(Base base) {
+        User creator;
+        Group group;
+        creator = userService.getUser();
+        group = db.getGroupByCoordinates(base.getLatitude(), base.getLongitude());
+        base.setCreatedBy(creator);
+        base.setCreatedWhen(new Timestamp(System.currentTimeMillis()));
+        base.setUpdatedWhen(new Timestamp(System.currentTimeMillis()));
+        base.setPointId(db.addPoint(base, creator, group));
         db.addBase(base);
         return "Base was added";
     }
@@ -64,93 +93,87 @@ public class PointServiceImpl implements PointService {
 
     @Override
     public List<Dump> getDumps() {
-        return null;
+        List<Integer> dumpIds = new Vector<Integer>();
+        List<Dump> dumps;
+        if (dumpIds.isEmpty() == true){
+            dumps = db.getAllDumps();
+        } else {
+            dumps = db.getDumpsByIds(dumpIds);
+        }
+        return dumps;
     }
 
     @Override
     public List<Base> getBases() {
-        return null;
-    }
-
-    @Override
-    public Route getRoute(Integer id) {
-        Route route = db.getRouteById(id);
-        if(route == null){
-            route = new Route();
-            System.out.println("Route was empty");
+        List<Integer> baseIds = new Vector<Integer>();
+        List<Base> bases;
+        if (baseIds.isEmpty() == true){
+            bases = db.getAllBases();
+        } else {
+            bases = db.getBasesByIds(baseIds);
         }
-        return route;
-    }
-
-    @Override
-    public List<Route> getRoutes() {
-        return null;
-    }
-
-    @Override
-    public String addRoute(Route route) {
-        return null;
+        return bases;
     }
 
     @Override
     public String updateDump(Dump dump) {
-        db.updatePoint(dump);
+        User updater = userService.getUser();
+        dump.setUpdatedBy(updater);
+        dump.setUpdatedWhen(new Timestamp(System.currentTimeMillis()));
+        db.updatePoint(dump, updater);
         db.updateDump(dump);
         return "Dump was updated";
     }
 
     @Override
     public String updateBase(Base base) {
-        db.updatePoint(base);
+        User updater = userService.getUser();
+        base.setUpdatedBy(updater);
+        base.setUpdatedWhen(new Timestamp(System.currentTimeMillis()));
+        db.updatePoint(base, updater);
         db.updateBase(base);
         return "Base was updated";
     }
 
-    @Override
-    public String updateRoute(Route route) {
-        return null;
-    }
 
-    @Override
-    public String addVessel(Vessel vessel) {
 
-        db.addVessel(vessel);
-        return "Vessel was added";
-    }
-
-    @Override
-    public Vessel getVessel(Integer id) {
-        Vessel vessel = db.getVesselById(id);
-        if(vessel == null){
-            vessel = new Vessel();
-            System.out.println("Vessel was empty");
-        }
-        return vessel;
-    }
-
-    @Override
-    public String updateVessel(Vessel vessel) {
-        return null;
-    }
-
-    // TODO - write more functions to get all types of entities.
     // There is and example below. How to parse JsonNode you can see in RestImplementation
     public String getDumps(JsonNode filter) {
 
-        List<Dump> dumpList = new ArrayList<>();
-        Dump testDump = new Dump();
-        testDump.setPriority(99);
-        testDump.setStatus(DumpStatus.REMOVED);
-        testDump.setType(DumpType.LIQUID);
-
-        for (int i = 0; i < 10; i++) {
-            dumpList.add(testDump);
+        // TODO: parse ids from json filter
+        List<Integer> dumpIds = new Vector<Integer>();
+        List<Dump> dumps;
+        if (dumpIds.isEmpty() == true){
+            dumps = db.getAllDumps();
+        } else {
+            dumps = db.getDumpsByIds(dumpIds);
         }
 
         String answerJson = "Error";
         ObjectMapper mapper = new ObjectMapper();
         try {
-            answerJson = mapper.writeValueAsString(dumpList);
+            answerJson = mapper.writeValueAsString(dumps);
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return answerJson;
+    }
+
+    public String getBases(JsonNode filter) {
+
+        // TODO: parse ids from json filter
+        List<Integer> baseIds = new Vector<Integer>();
+        List<Base> bases;
+        if (baseIds.isEmpty() == true){
+            bases = db.getAllBases();
+        } else {
+            bases = db.getBasesByIds(baseIds);
+        }
+
+        String answerJson = "Error";
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            answerJson = mapper.writeValueAsString(bases);
         } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -159,32 +182,23 @@ public class PointServiceImpl implements PointService {
 
     @Override
     public String testGeo(String request) {
-
         return geo.getResult(request);
     }
 
-    @Override
-    public String addUser(String strLogin, String strRole, String strPassword){
-
-        User user = new User();
-        user.setLogin(strLogin);
-        user.setRole(strRole);
-        user.setPassword(strPassword);
-        db.addUser(user);
-        return "User added";
+    public String addGroup(Group group){
+        db.addGroup(group);
+        return "Group added";
     }
 
-    @Override
-    public String getUser(String strId){
+    public String updateGroup(Group group){
+        db.updateGroup(group);
+        return "Group updated";
+    }
 
-        Integer id = Integer.valueOf(strId);
-        User user;
-        try{
-            user = db.getUserById(id);
-        } catch (NoSuchElementException e){
-            return e.getMessage();
-        }
-        return user.getLogin();
+    public Group getGroup(Integer id){
+        Group group;
+        group = db.getGroupById(id);
+        return group;
     }
 
 
