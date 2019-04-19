@@ -1,6 +1,7 @@
 package one.vladimir.api;
 
 import one.vladimir.api.pojo.Route;
+import one.vladimir.api.pojo.Vessel;
 
 public interface RouteService {
 
@@ -8,6 +9,8 @@ public interface RouteService {
 
     public String updateRoute(Route route);
 
-    public Route getRoute(String strId);
+    public Route getRoute(Integer id);
+
+    public Route createRoute(Integer vesselId);
 
 }

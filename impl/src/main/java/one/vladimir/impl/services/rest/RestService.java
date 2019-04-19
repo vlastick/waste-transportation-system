@@ -226,7 +226,7 @@ public class RestService {
             try {
 
                 Integer id = Integer.parseInt(strId);
-                Route route = routeService.getRoute(id.toString());
+                Route route = routeService.getRoute(id);
 
                 if (route != null) {
                     ObjectMapper mapper = new ObjectMapper();
