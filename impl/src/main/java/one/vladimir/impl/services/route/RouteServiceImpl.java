@@ -14,10 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 @Service("routeService")
 public class RouteServiceImpl implements RouteService {
@@ -56,9 +53,11 @@ public class RouteServiceImpl implements RouteService {
         List<Dump> dumps = db.getAllDumps();
         Set<RoutePoint> routePoints = new HashSet<RoutePoint>();
         Integer counter = 1;
-        RoutePoint currRoutePoint = new RoutePoint();
-        currRoutePoint.setStatus(RoutePointStatus.AWAITING);
+        RoutePoint currRoutePoint;
+
         for (Dump dump : dumps) {
+            currRoutePoint = new RoutePoint();
+            currRoutePoint.setStatus(RoutePointStatus.AWAITING);
             currRoutePoint.setNumber(counter);
             currRoutePoint.setContainedPoint(dump);
             currRoutePoint.setId(db.addRoutePoint(currRoutePoint, route));

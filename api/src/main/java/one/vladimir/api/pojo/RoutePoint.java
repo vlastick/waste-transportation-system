@@ -2,6 +2,8 @@ package one.vladimir.api.pojo;
 
 import one.vladimir.api.enums.RoutePointStatus;
 
+import java.util.Objects;
+
 public class RoutePoint {
 
     private Integer id;
@@ -44,5 +46,18 @@ public class RoutePoint {
 
     public void setNumber(Integer number) {
         this.number = number;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RoutePoint that = (RoutePoint) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
