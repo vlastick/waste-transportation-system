@@ -15,7 +15,6 @@
     <modules>
         <module>api</module>
         <module>impl</module>
-        <module>web</module>
     </modules>
 
     <groupId>one.vladimir</groupId>

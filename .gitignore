@@ -31,3 +31,9 @@
 /src/main/resources/application.properties
 ### Target folders
 */target/**
+
+### Web building files ###
+/.cache/
+/dist/
+/node_modules/
+package-lock.json
