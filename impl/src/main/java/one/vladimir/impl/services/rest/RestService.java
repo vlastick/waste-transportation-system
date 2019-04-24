@@ -549,6 +549,43 @@ public class RestService {
         return new ResponseEntity<>(answerJSON, status);
     }
 
+    @RequestMapping(method = GET, value = "/create_route/{strId}")
+    @ResponseBody
+    public ResponseEntity<String> testRoute(@PathVariable String strId) {
+
+        String answerJSON = "";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        if (strId.isEmpty()) {
+            answerJSON = "Error. ID isn't given";
+        } else {
+
+            try {
+
+                Integer id = Integer.parseInt(strId);
+                Route route = routeService.createRoute(id);
+
+                if (route != null) {
+                    ObjectMapper mapper = new ObjectMapper();
+                    answerJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(route);
+                    status = OK;
+                } else {
+                    answerJSON = "Group with id=" + strId + "  not found";
+                    status = NOT_FOUND;
+                }
+            } catch (NumberFormatException e) {
+
+                answerJSON = "Error. Given ID doesn't a numb";
+                e.printStackTrace();
+            } catch (JsonProcessingException e) {
+                answerJSON = "Can't parse class to JSON";
+                e.printStackTrace();
+            }
+        }
+
+        return new ResponseEntity<>(answerJSON, status);
+    }
+
     /*@RequestMapping(method = GET, value = "/add_user/")
     public ResponseEntity<String> addUser() {
 
