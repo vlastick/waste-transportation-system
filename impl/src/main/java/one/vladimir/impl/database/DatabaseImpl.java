@@ -1,14 +1,25 @@
 package one.vladimir.impl.database;
 
+import javassist.expr.Instanceof;
 import one.vladimir.api.Database;
 import one.vladimir.api.pojo.*;
 import one.vladimir.impl.database.entities.*;
 import one.vladimir.impl.database.repositories.*;
 
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContexts;
+import javax.persistence.criteria.*;
 import java.util.*;
 import java.util.List;
 
@@ -42,60 +53,33 @@ public class DatabaseImpl implements Database {
     @Autowired
     private CrewmanRepository crewmanRepo;
 
+    @PersistenceContext
+    EntityManager entityManager;
+
+    private static final Logger log = Logger.getLogger(DatabaseImpl.class);
+
     //For DB testing
     @PostConstruct
     public void testDBService() {
-
-//        pointRepo.findPointsByCreator(userEnt).forEach(point -> System.out.println(point.getPointId()));
-//        pointRepo.findPointsByCreatorId(1).forEach(point -> System.out.println(point.getPointId()));
-//        this.getUserById(1).getCreatedPoints().forEach(x->System.out.println(x.getLatitude()));
-//        Point p = new Point();
-//        Group g = new Group();
-//        User u  = new User();
-//        u.setUserId(1);
-//        this.addUser(u);
-//        g.setId(7);
-//        g.setKoef(111);
-//        this.addGroup(g);
-//        p.setPointId(8);
-//        p.setLongitude(1111.1);
-//        this.addPoint(p, u, g);
-//        System.out.println(this.getPointById(14).getLatitude().toString() + this.getPointById(19).getLongitude().toString());
-
-//        DumpStatus s = null;
-//        System.out.println(s.toString());
-//        DumpStatus d = DumpStatus.valueOf("removed");
-//        System.out.println(s);
-//        System.out.println(d);
-//        System.out.println(this.getGroupById(23).getKoef());
-//        PointEntity p = pointRepo.findById(8).get();
-//        DumpEntity d = dumpRepo.findById(11).get();
-//        Dump p1 = d.getDump();
-//        d.getPoint().getPoint(p1);
-//        Dump p1 = this.getDumpById(11);
-//        System.out.println(p1.getStatus() + p1.getType().toString() + p1.getPointId().toString() + p1.getLatitude().toString());
-
-//        Dump d = new Dump();
-//        d.setType(DumpType.MIXED);
-//        d.setStatus(DumpStatus.UNCONFIRMED);
-//        d.setPointId(8);
-//        d.setLatitude(133.0);
-//        d.setPriority(1);
-//        this.addDump(d);
-//        GroupEntity groupEnt = new GroupEntity();
-//        groupEnt.setGroupId(7);
-//        pointRepo.findPointsByGroup(groupEnt).forEach(point -> System.out.println(point.getPointId()));
-//        System.out.println(this.getGroupById(7).getContainedPoints());
-//        System.out.println(this.getVesselById(13).getCurrRoute());
-//        System.out.println(pointRepo.findById(8).get());
         System.out.println("DB initialized");
-//        System.out.println(this.getAllBases().size());
-//        List<Integer> ids = new Vector<Integer>();
-//        ids.add(11);
-//        ids.add(12);
-//        ids.add(111);
-//        System.out.println(dumpRepo.findDumpsByDumpIdIn(ids).size());
+        String message = "DB initialized";
+        log.info(message);
 
+
+        //Example of multicriterial query
+       /* CriteriaBuilder b = entityManager.getCriteriaBuilder();
+        CriteriaQuery<PointEntity> c = b.createQuery(PointEntity.class);
+        Root<PointEntity> root = c.from(PointEntity.class);
+        c.select(root);
+        List<Integer> i = new Vector<>();
+        i.add(3);
+        i.add(5);
+        Expression<Integer> idExpr = root.get("pointId");
+        Predicate idPred = idExpr.in(i);
+        c.where(idPred);
+        c.where(b.equal(root.get("pointId"), 5));
+        List<PointEntity> pl = entityManager.createQuery(c).getResultList();
+        System.out.println(pl.size());*/
 
     }
 
@@ -113,6 +97,7 @@ public class DatabaseImpl implements Database {
         userRepo.save(userEnt);
         return userEnt.getUserId();
 //        System.out.println("after" + userEnt.getUserId());
+
     }
 
     public User getUserById(Integer id) {
@@ -482,7 +467,7 @@ public class DatabaseImpl implements Database {
         return bases;
     }
 
-    public List<Dump> getDumpsByIds(List<Integer> ids){
+    public List<Dump> getDumpsByIds(List<Integer> ids) {
         List<DumpEntity> dumpEnts;
         List<Dump> dumps = new Vector<Dump>();
         dumpEnts = dumpRepo.findDumpsByDumpIdIn(ids);
@@ -494,7 +479,7 @@ public class DatabaseImpl implements Database {
         return dumps;
     }
 
-    public List<Base> getBasesByIds(List<Integer> ids){
+    public List<Base> getBasesByIds(List<Integer> ids) {
         List<BaseEntity> baseEnts;
         List<Base> bases = new Vector<Base>();
         baseEnts = baseRepo.findBasesByBaseIdIn(ids);
