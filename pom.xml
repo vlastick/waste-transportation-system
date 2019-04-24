@@ -26,7 +26,7 @@
     </properties>
 
     <build>
-        <finalName>wts_app_web</finalName>
+        <finalName>wts_app_rest</finalName>
     </build>
 
 </project>
