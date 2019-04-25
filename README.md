@@ -32,18 +32,18 @@ Default database name: wtsdb
 Default name: springuser
 Default password: 123456
 ```
-3. Open the project in the Intellij idea
+3. Open the project in the Intellij Idea
 4. Build and run Java REST service
 ```
-Main function is located in **impl/src/main/java/one.vladimir.impl/Application.java**
+Main function is located in impl/src/main/java/one.vladimir.impl/Application.java
 ```
 5. REST service will be run on the 8080 port
 ```
 Default link http://localhost:8080
 ```
-5. Build and run JS Web application which sends messages to the REST service
-```
+5. Build and run JS Web application which sends messages to the REST service.
 Open terminal in the **Idea** and write the next commands
+```
 cd web
 npm install ol
 npm install --save-dev parcel-bundler
@@ -63,7 +63,7 @@ mvn package clean
 ```
 wts_rest_app.war is located in impl/taget/wts_app.war
 ```
-You can do it via scp on the Linux development machine where tomcat is located in server home folder
+You can do it via scp on the Linux development machine where tomcat is located in the server home folder
 ```
 scp wts_app.war username@server_ip:~/tomcat/webapps
 ```
