@@ -3,6 +3,7 @@ package one.vladimir.api;
 import one.vladimir.api.pojo.*;
 
 import java.util.List;
+import java.util.Set;
 
 public interface Database {
 
@@ -61,6 +62,8 @@ public interface Database {
     public List<Dump> getDumpsByIds(List<Integer> ids);
 
     public List<Base> getBasesByIds(List<Integer> ids);
+
+    public Set<RoutePoint> getRoutePointsByRouteId(Integer id);
 
     public List<Dump> getDumpsByFilter(DumpFilter dumpFilter);
 

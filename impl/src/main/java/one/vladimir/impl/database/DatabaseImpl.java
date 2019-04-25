@@ -580,11 +580,22 @@ public class DatabaseImpl implements Database {
         List<Route> routes = new Vector<Route>();
         for (RouteEntity routeEnt : routeEntities) {
             Route route = routeEnt.getRoute();
+            route.setRoutePoints(this.getRoutePointsByRouteId(route.getId()));
             routes.add(route);
         }
 
         return routes;
     }
 
-
+    public Set<RoutePoint> getRoutePointsByRouteId(Integer id) {
+        List<RoutePointEntity> routePointEntities;
+        routePointEntities = routePointRepo.findRoutePointsByRouteRouteId(id);
+        Set<RoutePoint> routePoints = new HashSet<>();
+        for (RoutePointEntity routePointEntity : routePointEntities) {
+            RoutePoint routePoint = routePointEntity.getRoutePoint();
+            routePoint.setContainedPoint(routePointEntity.getPoint().getPoint());
+            routePoints.add(routePoint);
+        }
+        return routePoints;
+    }
 }
