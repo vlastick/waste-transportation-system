@@ -2,6 +2,7 @@ package one.vladimir.impl.database;
 
 import javassist.expr.Instanceof;
 import one.vladimir.api.Database;
+import one.vladimir.api.enums.DumpType;
 import one.vladimir.api.pojo.*;
 import one.vladimir.impl.database.entities.*;
 import one.vladimir.impl.database.repositories.*;
@@ -20,6 +21,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContexts;
 import javax.persistence.criteria.*;
+import javax.persistence.metamodel.EntityType;
 import java.util.*;
 import java.util.List;
 
@@ -67,7 +69,7 @@ public class DatabaseImpl implements Database {
 
 
         //Example of multicriterial query
-       /* CriteriaBuilder b = entityManager.getCriteriaBuilder();
+        /*CriteriaBuilder b = entityManager.getCriteriaBuilder();
         CriteriaQuery<PointEntity> c = b.createQuery(PointEntity.class);
         Root<PointEntity> root = c.from(PointEntity.class);
         c.select(root);
@@ -491,5 +493,109 @@ public class DatabaseImpl implements Database {
         return bases;
     }
 
+    public List<Dump> getDumpsByFilter(DumpFilter dumpFilter) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<DumpEntity> query = builder.createQuery(DumpEntity.class);
+        Root<DumpEntity> dumpEntity = query.from(DumpEntity.class);
+        Join<DumpEntity, PointEntity> pointEntity = dumpEntity.join("point");
+        Join<PointEntity, GroupEntity> groupEntity = pointEntity.join("group");
 
+        Predicate pointIdPred;
+        Predicate groupIdPred;
+        Predicate dumpTypePred;
+        Predicate isActivePred;
+
+        Expression<Integer> pointIdExpr = pointEntity.get("pointId");
+        pointIdPred = pointIdExpr.isNotNull();
+        if (dumpFilter.getPointIdList() != null) {
+            pointIdPred = pointIdExpr.in(dumpFilter.getPointIdList());
+        }
+
+        Expression<Integer> groupIdExpr = groupEntity.get("groupId");
+        groupIdPred = groupIdExpr.isNotNull();
+        if (dumpFilter.getGroupidList() != null) {
+            groupIdPred = groupIdExpr.in(dumpFilter.getGroupidList());
+        }
+
+        Expression<String> dumpTypeExpr = dumpEntity.get("type");
+        dumpTypePred = dumpTypeExpr.isNotNull();
+        if (dumpFilter.getDumpTypeList() != null) {
+            dumpTypePred = dumpTypeExpr.in(dumpFilter.getDumpTypeList());
+        }
+
+        isActivePred = pointEntity.get("isActive").isNotNull();
+        if (dumpFilter.getActive() != null) {
+            isActivePred = builder.equal(pointEntity.get("isActive"), dumpFilter.getActive());
+        }
+
+        query.where(pointIdPred, groupIdPred, dumpTypePred, isActivePred);
+
+        List<DumpEntity> dumpEntities = entityManager.createQuery(query).getResultList();
+        List<Dump> dumps = new Vector<Dump>();
+        for (DumpEntity dumpEnt : dumpEntities) {
+            Dump dump = dumpEnt.getDump();
+            dumpEnt.getPoint().getPoint(dump);
+            Point currPoint = this.getPointById(dump.getPointId());
+            dump.setGroup(currPoint.getGroup());
+            dump.setCreatedBy(currPoint.getCreatedBy());
+            dump.setUpdatedBy(currPoint.getUpdatedBy());
+            dumps.add(dump);
+        }
+
+        return dumps;
+    }
+
+    public List<Route> getRoutesByFilter(RouteFilter routeFilter) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<RouteEntity> query = builder.createQuery(RouteEntity.class);
+        Root<RouteEntity> routeEntity = query.from(RouteEntity.class);
+        Join<RouteEntity, VesselEntity> vesselEntity = routeEntity.join("vessel");
+
+        Predicate routeIdPred;
+        Predicate vesselIdPred;
+        Predicate routeStatusPred;
+
+
+        Expression<Integer> routeIdExpr = routeEntity.get("routeId");
+        routeIdPred = routeIdExpr.isNotNull();
+        if (routeFilter.getRouteIdList() != null) {
+            routeIdPred = routeIdExpr.in(routeFilter.getRouteIdList());
+        }
+
+        Expression<Integer> vesselIdExpr = vesselEntity.get("vesselId");
+        vesselIdPred = vesselIdExpr.isNotNull();
+        if (routeFilter.getVesselIdList() != null) {
+            vesselIdPred = vesselIdExpr.in(routeFilter.getVesselIdList());
+        }
+
+        Expression<String> routeStatusExpr = routeEntity.get("status");
+        routeStatusPred = routeStatusExpr.isNotNull();
+        if (routeFilter.getRouteStatusList() != null) {
+            routeStatusPred = routeStatusExpr.in(routeFilter.getRouteStatusList());
+        }
+
+        query.where(routeIdPred, vesselIdPred, routeStatusPred);
+
+        List<RouteEntity> routeEntities = entityManager.createQuery(query).getResultList();
+        List<Route> routes = new Vector<Route>();
+        for (RouteEntity routeEnt : routeEntities) {
+            Route route = routeEnt.getRoute();
+            route.setRoutePoints(this.getRoutePointsByRouteId(route.getId()));
+            routes.add(route);
+        }
+
+        return routes;
+    }
+
+    public Set<RoutePoint> getRoutePointsByRouteId(Integer id) {
+        List<RoutePointEntity> routePointEntities;
+        routePointEntities = routePointRepo.findRoutePointsByRouteRouteId(id);
+        Set<RoutePoint> routePoints = new HashSet<>();
+        for (RoutePointEntity routePointEntity : routePointEntities) {
+            RoutePoint routePoint = routePointEntity.getRoutePoint();
+            routePoint.setContainedPoint(routePointEntity.getPoint().getPoint());
+            routePoints.add(routePoint);
+        }
+        return routePoints;
+    }
 }

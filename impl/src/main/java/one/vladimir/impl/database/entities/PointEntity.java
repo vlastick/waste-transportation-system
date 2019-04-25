@@ -22,6 +22,8 @@ public class PointEntity {
 
     private Timestamp createdWhen;
 
+    private Boolean isActive;
+
     @ManyToOne
     @JoinColumn(name = "CreatorId")
     private UserEntity createdBy;
@@ -55,6 +57,7 @@ public class PointEntity {
         this.latitude = point.getLatitude();
         this.updatedWhen = point.getUpdatedWhen();
         this.createdWhen = point.getCreatedWhen();
+        this.isActive = point.getActive();
     }
 
     //POJO getter
@@ -65,6 +68,7 @@ public class PointEntity {
         point.setLongitude(this.longitude);
         point.setCreatedWhen(this.createdWhen);
         point.setUpdatedWhen(this.updatedWhen);
+        point.setActive(this.isActive);
         return point;
     }
 
@@ -75,6 +79,7 @@ public class PointEntity {
         point.setLongitude(this.longitude);
         point.setCreatedWhen(this.createdWhen);
         point.setUpdatedWhen(this.updatedWhen);
+        point.setActive(this.isActive);
     }
 
     public Integer getPointId() {
@@ -139,5 +144,13 @@ public class PointEntity {
 
     public void setGroup(GroupEntity group) {
         this.group = group;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
     }
 }

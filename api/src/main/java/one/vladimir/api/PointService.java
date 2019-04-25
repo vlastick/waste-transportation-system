@@ -19,7 +19,7 @@ public interface PointService {
     Base getBase(Integer id);
 
     // Get points
-    List <Dump> getDumps();
+    List <Dump> getDumpsByFilter(DumpFilter dumpFilter);
 
     // Get points
     List <Base> getBases();
