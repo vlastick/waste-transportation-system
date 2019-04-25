@@ -6,13 +6,13 @@ import java.util.List;
 
 public class DumpFilter extends PointFilter {
 
-    private List<DumpType> dumpTypeList;
+    private List<String> dumpTypeList;
 
-    public List<DumpType> getDumpTypeList() {
+    public List<String> getDumpTypeList() {
         return dumpTypeList;
     }
 
-    public void setDumpTypeList(List<DumpType> dumpTypeList) {
+    public void setDumpTypeList(List<String> dumpTypeList) {
         this.dumpTypeList = dumpTypeList;
     }
 }

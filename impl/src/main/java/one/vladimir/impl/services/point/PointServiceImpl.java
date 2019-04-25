@@ -49,6 +49,7 @@ public class PointServiceImpl implements PointService {
         creator = userService.getUser();
         group = db.getGroupByCoordinates(dump.getLatitude(), dump.getLongitude());
         dump.setCreatedBy(creator);
+        dump.setActive(true);
         dump.setCreatedWhen(new Timestamp(System.currentTimeMillis()));
         dump.setUpdatedWhen(new Timestamp(System.currentTimeMillis()));
         dump.setPointId(db.addPoint(dump, creator, group));
@@ -63,6 +64,7 @@ public class PointServiceImpl implements PointService {
         creator = userService.getUser();
         group = db.getGroupByCoordinates(base.getLatitude(), base.getLongitude());
         base.setCreatedBy(creator);
+        base.setActive(true);
         base.setCreatedWhen(new Timestamp(System.currentTimeMillis()));
         base.setUpdatedWhen(new Timestamp(System.currentTimeMillis()));
         base.setPointId(db.addPoint(base, creator, group));
@@ -92,14 +94,9 @@ public class PointServiceImpl implements PointService {
     }
 
     @Override
-    public List<Dump> getDumps() {
-        List<Integer> dumpIds = new Vector<Integer>();
+    public List<Dump> getDumpsByFilter(DumpFilter dumpFilter) {
         List<Dump> dumps;
-        if (dumpIds.isEmpty() == true){
-            dumps = db.getAllDumps();
-        } else {
-            dumps = db.getDumpsByIds(dumpIds);
-        }
+        dumps = db.getDumpsByFilter(dumpFilter);
         return dumps;
     }
 

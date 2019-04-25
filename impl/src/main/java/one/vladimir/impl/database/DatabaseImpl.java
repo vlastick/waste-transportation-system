@@ -2,6 +2,7 @@ package one.vladimir.impl.database;
 
 import javassist.expr.Instanceof;
 import one.vladimir.api.Database;
+import one.vladimir.api.enums.DumpType;
 import one.vladimir.api.pojo.*;
 import one.vladimir.impl.database.entities.*;
 import one.vladimir.impl.database.repositories.*;
@@ -20,6 +21,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContexts;
 import javax.persistence.criteria.*;
+import javax.persistence.metamodel.EntityType;
 import java.util.*;
 import java.util.List;
 
@@ -67,7 +69,7 @@ public class DatabaseImpl implements Database {
 
 
         //Example of multicriterial query
-       /* CriteriaBuilder b = entityManager.getCriteriaBuilder();
+        /*CriteriaBuilder b = entityManager.getCriteriaBuilder();
         CriteriaQuery<PointEntity> c = b.createQuery(PointEntity.class);
         Root<PointEntity> root = c.from(PointEntity.class);
         c.select(root);
@@ -489,6 +491,58 @@ public class DatabaseImpl implements Database {
             bases.add(base);
         }
         return bases;
+    }
+
+    public List<Dump> getDumpsByFilter(DumpFilter dumpFilter) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<DumpEntity> query = builder.createQuery(DumpEntity.class);
+        Root<DumpEntity> dumpEntity = query.from(DumpEntity.class);
+        Join<DumpEntity, PointEntity> pointEntity = dumpEntity.join("point");
+        Join<PointEntity, GroupEntity> groupEntity = pointEntity.join("group");
+
+        Predicate pointIdPred ;
+        Predicate groupIdPred;
+        Predicate dumpTypePred;
+        Predicate isActivePred;
+
+        Expression<Integer> pointIdExpr = pointEntity.get("pointId");
+        pointIdPred = pointIdExpr.isNotNull();
+        if (dumpFilter.getPointIdList() != null) {
+            pointIdPred = pointIdExpr.in(dumpFilter.getPointIdList());
+        }
+
+        Expression<Integer> groupIdExpr = groupEntity.get("groupId");
+        groupIdPred = groupIdExpr.isNotNull();
+        if (dumpFilter.getGroupidList() != null) {
+            groupIdPred = groupIdExpr.in(dumpFilter.getGroupidList());
+        }
+
+        Expression<String> dumpTypeExpr = dumpEntity.get("type");
+        dumpTypePred = dumpTypeExpr.isNotNull();
+        if (dumpFilter.getDumpTypeList() != null) {
+            dumpTypePred = dumpTypeExpr.in(dumpFilter.getDumpTypeList());
+        }
+
+        isActivePred = pointEntity.get("isActive").isNotNull();
+        if (dumpFilter.getActive() != null) {
+            isActivePred = builder.equal(pointEntity.get("isActive"), dumpFilter.getActive());
+        }
+
+        query.where(pointIdPred, groupIdPred, dumpTypePred, isActivePred);
+
+        List<DumpEntity> dumpEntities = entityManager.createQuery(query).getResultList();
+        List<Dump> dumps = new Vector<Dump>();
+        for (DumpEntity dumpEnt : dumpEntities) {
+            Dump dump = dumpEnt.getDump();
+            dumpEnt.getPoint().getPoint(dump);
+            Point currPoint = this.getPointById(dump.getPointId());
+            dump.setGroup(currPoint.getGroup());
+            dump.setCreatedBy(currPoint.getCreatedBy());
+            dump.setUpdatedBy(currPoint.getUpdatedBy());
+            dumps.add(dump);
+        }
+
+        return dumps;
     }
 
 

@@ -30,7 +30,7 @@ public class FilterServiceImpl implements FilterService {
         DumpFilter dumpFilter = new DumpFilter();
         List<Integer> pointIdList = null;
         List<Integer> groupIdList = null;
-        List<DumpType> dumpTypeList = null;
+        List<String> dumpTypeList = null;
         Boolean isActive = null;
         try {
             Object object = jsonParser.parse(jsonString);
@@ -49,6 +49,9 @@ public class FilterServiceImpl implements FilterService {
                     Integer id = ((Long) idJson.get("id")).intValue();
                     pointIdList.add(id);
                 }
+                if (pointIdList.size() == 0) {
+                    pointIdList = null;
+                }
             }
             if (groupIdsJson != null) {
                 iterator = groupIdsJson.iterator();
@@ -58,15 +61,20 @@ public class FilterServiceImpl implements FilterService {
                     Integer id = ((Long) idJson.get("id")).intValue();
                     groupIdList.add(id);
                 }
+                if (groupIdList.size() == 0) {
+                    groupIdList = null;
+                }
             }
             if (dumpTypesJson != null) {
                 iterator = dumpTypesJson.iterator();
-                dumpTypeList = new Vector<DumpType>();
+                dumpTypeList = new Vector<String>();
                 while (iterator.hasNext()) {
                     JSONObject dumptypeJson = (JSONObject) iterator.next();
-                    DumpType dumpType = DumpType.valueOf((String) dumptypeJson.get("dumpType"));
+                    String dumpType = (String) dumptypeJson.get("dumpType");
                     dumpTypeList.add(dumpType);
-                    System.out.println(dumpType.toString());
+                }
+                if (dumpTypeList.size() == 0) {
+                    dumpTypeList = null;
                 }
             }
 
