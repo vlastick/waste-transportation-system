@@ -1,9 +1,6 @@
 package one.vladimir.impl.services.rest;
 
-import one.vladimir.api.PointService;
-import one.vladimir.api.RouteService;
-import one.vladimir.api.TransportService;
-import one.vladimir.api.UserService;
+import one.vladimir.api.*;
 import one.vladimir.api.pojo.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -34,6 +31,10 @@ public class RestService {
     @Autowired
     @Qualifier("pointService")
     private PointService pointService;
+
+    @Autowired
+    @Qualifier("filterService")
+    private FilterService filterService;
 
     @Autowired
     @Qualifier("routeService")
