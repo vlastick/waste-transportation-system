@@ -33,8 +33,7 @@
 */target/**
 
 ### Web building files ###
-/.cache/
-/dist/
-/node_modules/
-package-lock.json
-log_file.log
+*/.cache/**
+*/dist/**
+*/node_modules/**
+**/package-lock.json
