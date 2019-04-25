@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 
+import java.util.List;
+
 import static com.fasterxml.jackson.databind.node.JsonNodeType.OBJECT;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -617,4 +619,50 @@ public class RestService {
 
         return new ResponseEntity(pointService.testGeo(command), OK);
     }
+
+
+    @RequestMapping(method = GET, value = "/points/")
+    @ResponseBody
+    public ResponseEntity<String> getPoints(
+
+            @RequestParam(name = "type", defaultValue = "not given") String type,
+            @RequestBody String configJSON) {
+
+        String answerJSON = "";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+//        System.out.println(configJSON);
+        DumpFilter dumpFilter = filterService.createDumpFilterFromJson(configJSON);
+        List<Dump> dumps = pointService.getDumpsByFilter(dumpFilter);
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            answerJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(dumps);
+            status = HttpStatus.OK;
+        } catch (JsonProcessingException e) {
+            //TODO: implement exception handling
+        }
+        return new ResponseEntity<>(answerJSON, status);
+    }
+
+
+    @RequestMapping(method = GET, value = "/routes/")
+    @ResponseBody
+    public ResponseEntity<String> getRoutes(
+            @RequestBody String configJSON) {
+
+        String answerJSON = "";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        System.out.println(configJSON);
+        RouteFilter routeFilter = filterService.createRouteFilterFromJson(configJSON);
+        List<Route> routes = routeService.getRoutesByFilter(routeFilter);
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            answerJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(routes);
+            status = HttpStatus.OK;
+        } catch (JsonProcessingException e) {
+            //TODO: implement exception handling
+        }
+        return new ResponseEntity<>(answerJSON, status);
+    }
+
+
 }
