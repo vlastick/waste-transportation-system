@@ -69,8 +69,8 @@ public class FilterServiceImpl implements FilterService {
                 iterator = dumpTypesJson.iterator();
                 dumpTypeList = new Vector<String>();
                 while (iterator.hasNext()) {
-                    JSONObject dumptypeJson = (JSONObject) iterator.next();
-                    String dumpType = (String) dumptypeJson.get("dumpType");
+                    JSONObject dumpTypeJson = (JSONObject) iterator.next();
+                    String dumpType = (String) dumpTypeJson.get("dumpType");
                     dumpTypeList.add(dumpType);
                 }
                 if (dumpTypeList.size() == 0) {
@@ -91,7 +91,65 @@ public class FilterServiceImpl implements FilterService {
     }
 
     public RouteFilter createRouteFilterFromJson(String jsonString) {
-        return new RouteFilter();
+        JSONParser jsonParser = new JSONParser();
+        RouteFilter routeFilter = new RouteFilter();
+        List<Integer> routeIdList = null;
+        List<Integer> vesselIdList = null;
+        List<String> routeStatusList = null;
+        try {
+            Object object = jsonParser.parse(jsonString);
+            JSONObject jsonObject = (JSONObject) object;
+            JSONArray routeIdsJson = (JSONArray) jsonObject.get("routeIdList");
+            JSONArray vesselIdsJson = (JSONArray) jsonObject.get("vesselIdList");
+            JSONArray routeStatusesJson = (JSONArray) jsonObject.get("routeStatusList");
+
+            Iterator iterator;
+            if (routeIdsJson != null) {
+                iterator = routeIdsJson.iterator();
+                routeIdList = new Vector<Integer>();
+                while (iterator.hasNext()) {
+                    JSONObject idJson = (JSONObject) iterator.next();
+                    Integer id = ((Long) idJson.get("id")).intValue();
+                    routeIdList.add(id);
+                }
+                if (routeIdList.size() == 0) {
+                    routeIdList = null;
+                }
+            }
+            if (vesselIdsJson != null) {
+                iterator = vesselIdsJson.iterator();
+                vesselIdList = new Vector<Integer>();
+                while (iterator.hasNext()) {
+                    JSONObject idJson = (JSONObject) iterator.next();
+                    Integer id = ((Long) idJson.get("id")).intValue();
+                    vesselIdList.add(id);
+                }
+                if (vesselIdList.size() == 0) {
+                    vesselIdList = null;
+                }
+            }
+            if (routeStatusesJson != null) {
+                iterator = routeStatusesJson.iterator();
+                routeStatusList = new Vector<String>();
+                while (iterator.hasNext()) {
+                    JSONObject routeStatusJson = (JSONObject) iterator.next();
+                    String routeStatus = (String) routeStatusJson.get("routeStatus");
+                    routeStatusList.add(routeStatus);
+                }
+                if (routeStatusList.size() == 0) {
+                    routeStatusList = null;
+                }
+            }
+
+
+        } catch (ParseException e) {
+            System.out.println("Parsing exception");
+        }
+
+        routeFilter.setRouteIdList(routeIdList);
+        routeFilter.setVesselIdList(vesselIdList);
+        routeFilter.setRouteStatusList(routeStatusList);
+        return routeFilter;
     }
 
 

@@ -10,7 +10,7 @@ public class RouteFilter {
 
     private List<Integer> vesselIdList;
 
-    private List<RouteStatus> routeStatusList;
+    private List<String> routeStatusList;
 
     public List<Integer> getRouteIdList() {
         return routeIdList;
@@ -28,11 +28,11 @@ public class RouteFilter {
         this.vesselIdList = vesselIdList;
     }
 
-    public List<RouteStatus> getRouteStatusList() {
+    public List<String> getRouteStatusList() {
         return routeStatusList;
     }
 
-    public void setRouteStatusList(List<RouteStatus> routeStatusList) {
+    public void setRouteStatusList(List<String> routeStatusList) {
         this.routeStatusList = routeStatusList;
     }
 }
