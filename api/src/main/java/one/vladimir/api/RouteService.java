@@ -1,7 +1,10 @@
 package one.vladimir.api;
 
 import one.vladimir.api.pojo.Route;
+import one.vladimir.api.pojo.RouteFilter;
 import one.vladimir.api.pojo.Vessel;
+
+import java.util.List;
 
 public interface RouteService {
 
@@ -12,5 +15,7 @@ public interface RouteService {
     public Route getRoute(Integer id);
 
     public Route createRoute(Integer vesselId);
+
+    public List<Route> getRoutesByFilter(RouteFilter routeFilter);
 
 }

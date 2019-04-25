@@ -62,6 +62,10 @@ public interface Database {
 
     public List<Base> getBasesByIds(List<Integer> ids);
 
+    public List<Dump> getDumpsByFilter(DumpFilter dumpFilter);
+
+    public List<Route> getRoutesByFilter(RouteFilter routeFilter);
+
     //update requests
 
     public void updateUser(User user);

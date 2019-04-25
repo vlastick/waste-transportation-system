@@ -20,6 +20,8 @@ public class Point {
 
     private Timestamp updatedWhen;
 
+    private Boolean isActive;
+
     //    getters and setters
     public Integer getPointId() {
         return id;
@@ -84,4 +86,13 @@ public class Point {
     public void setGroup(Group group) {
         this.group = group;
     }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
+
 }
