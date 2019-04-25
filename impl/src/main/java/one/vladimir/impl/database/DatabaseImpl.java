@@ -500,7 +500,7 @@ public class DatabaseImpl implements Database {
         Join<DumpEntity, PointEntity> pointEntity = dumpEntity.join("point");
         Join<PointEntity, GroupEntity> groupEntity = pointEntity.join("group");
 
-        Predicate pointIdPred ;
+        Predicate pointIdPred;
         Predicate groupIdPred;
         Predicate dumpTypePred;
         Predicate isActivePred;
@@ -543,6 +543,47 @@ public class DatabaseImpl implements Database {
         }
 
         return dumps;
+    }
+
+    public List<Route> getRoutesByFilter(RouteFilter routeFilter) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<RouteEntity> query = builder.createQuery(RouteEntity.class);
+        Root<RouteEntity> routeEntity = query.from(RouteEntity.class);
+        Join<RouteEntity, VesselEntity> vesselEntity = routeEntity.join("vessel");
+
+        Predicate routeIdPred;
+        Predicate vesselIdPred;
+        Predicate routeStatusPred;
+
+
+        Expression<Integer> routeIdExpr = routeEntity.get("routeId");
+        routeIdPred = routeIdExpr.isNotNull();
+        if (routeFilter.getRouteIdList() != null) {
+            routeIdPred = routeIdExpr.in(routeFilter.getRouteIdList());
+        }
+
+        Expression<Integer> vesselIdExpr = vesselEntity.get("vesselId");
+        vesselIdPred = vesselIdExpr.isNotNull();
+        if (routeFilter.getVesselIdList() != null) {
+            vesselIdPred = vesselIdExpr.in(routeFilter.getVesselIdList());
+        }
+
+        Expression<String> routeStatusExpr = routeEntity.get("status");
+        routeStatusPred = routeStatusExpr.isNotNull();
+        if (routeFilter.getRouteStatusList() != null) {
+            routeStatusPred = routeStatusExpr.in(routeFilter.getRouteStatusList());
+        }
+
+        query.where(routeIdPred, vesselIdPred, routeStatusPred);
+
+        List<RouteEntity> routeEntities = entityManager.createQuery(query).getResultList();
+        List<Route> routes = new Vector<Route>();
+        for (RouteEntity routeEnt : routeEntities) {
+            Route route = routeEnt.getRoute();
+            routes.add(route);
+        }
+
+        return routes;
     }
 
 
