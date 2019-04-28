@@ -12,7 +12,6 @@ These instructions will get you a copy of the project up and running on your loc
 * OS: Windows 10 or Ubuntu/Debian Linux
 * MySQL Community Server 8.0.15
 * Apache Tomcat 9.0.19 container
-* Node.js 10.15.3
 * Optional: MySql Workbench 8.0.15
 
 #### Local machine configuration
@@ -41,17 +40,9 @@ Main function is located in impl/src/main/java/one.vladimir.impl/Application.jav
 ```
 Default link http://localhost:8080
 ```
-5. Build and run JS Web application which sends messages to the REST service.
-Open terminal in the **Idea** and write the next commands
-```
-cd web
-npm install ol
-npm install --save-dev parcel-bundler
-npm start
-```
 6. Web interface will be run on the 1234 port
 ```
-Default link http://localhost:1234/
+Default link http://localhost:8080/
 ```
 
 ## Run the application on the deployment server

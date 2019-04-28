@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Tourist page</title>
+
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+          integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+            integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+            crossorigin=""></script>
+</head>
+<body>
+
+<div align="center">
+
+    <div id="mapid" style="width: 600px; height: 400px;"></div>
+    <form class="form-inline">
+
+        <p>Longitude:
+            <output id="long">none</output>
+        </p>
+        <p>Latitude:
+            <output id="lat">none</output>
+        </p>
+
+        <textarea rows="10" cols="82" id="pointDescription"></textarea></p>
+
+        <button type="button" onclick="postPoint()">Post point</button>
+        <button type="button" onclick="getPoints()">Get points</button>
+        <button type="button" onclick="clearPoints()">Clear</button>
+
+    </form>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript">
+
+    var pointDescription = document.getElementById('pointDescription');
+    var longField = document.getElementById('long');
+    var latField = document.getElementById('lat');
+
+
+    var mymap = L.map('mapid').setView([61.2302, 30.0495], 13);
+
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+        maxZoom: 18,
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+            '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+            'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        id: 'mapbox.outdoors'
+    }).addTo(mymap);
+
+
+    var markerGroup = L.layerGroup().addTo(mymap);
+
+
+    function onMapClick(e) {
+
+        L.marker(e.latlng).addTo(markerGroup)
+            .bindPopup("<b>New marker</b><br />Describe this point to make a new request.").openPopup()
+            .on('click', selectMarker);
+
+        longField.value = e.latlng.lat;
+        latField.value = e.latlng.lng;
+    }
+
+    function selectMarker(e) {
+        longField.value = e.latlng.lat;
+        latField.value = e.latlng.lng;
+        pointDescription.value = "";
+    }
+
+    var postPoint = function () {
+        pointDescription.value = "Point was posted";
+    }
+
+    var getPoints = function () {
+
+        $.ajax({
+            type: 'GET',
+            url: '/test_geo?is_in(61.2246,30.05194);out;',
+            dataType: 'json',
+            async: true,
+            success: function (result) {
+                pointDescription.value = result.message;
+
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                pointDescription.value = jqXHR.status + ' ' + jqXHR.responseText;
+            }
+        });
+
+        L.marker([61.2239082868332, 30.053358078002933]).addTo(markerGroup)
+            .bindPopup("<b>Test point 1</b><br />Test.").openPopup()
+            .on('click', selectMarker);
+
+        L.marker([61.217544692930396, 30.02074241638184]).addTo(markerGroup)
+            .bindPopup("<b>Test point 2</b><br />Test.").openPopup()
+            .on('click', selectMarker);
+
+        L.marker([61.2337404012866, 30.085802078247074]).addTo(markerGroup)
+            .bindPopup("<b>Test point 3</b><br />Test.").openPopup()
+            .on('click', selectMarker);
+
+        L.marker([61.23638380702161, 30.03275871276856]).addTo(markerGroup)
+            .bindPopup("<b>Test point 4</b><br />Test.").openPopup()
+            .on('click', selectMarker);
+
+
+    }
+
+    var clearPoints = function () {
+        markerGroup.clearLayers();
+    }
+
+    mymap.on('click', onMapClick);
+
+</script>
+
+
+</body>
+</html>
