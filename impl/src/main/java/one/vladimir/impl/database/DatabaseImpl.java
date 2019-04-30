@@ -588,7 +588,7 @@ public class DatabaseImpl implements Database {
 
     public Set<RoutePoint> getRoutePointsByRouteId(Integer id) {
         List<RoutePointEntity> routePointEntities;
-        routePointEntities = routePointRepo.findRoutePointsByRouteRouteId(id);
+        routePointEntities = routePointRepo.findRoutePointsByRouteRouteIdOrderByNumber(id);
         Set<RoutePoint> routePoints = new HashSet<>();
         for (RoutePointEntity routePointEntity : routePointEntities) {
             RoutePoint routePoint = routePointEntity.getRoutePoint();

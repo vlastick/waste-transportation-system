@@ -18,4 +18,6 @@ public interface RouteService {
 
     public List<Route> getRoutesByFilter(RouteFilter routeFilter);
 
+    public Route buildroute(Integer vesselID);
+
 }
