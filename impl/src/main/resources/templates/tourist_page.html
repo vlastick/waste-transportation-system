@@ -30,9 +30,29 @@
 
         <textarea rows="10" cols="82" id="pointDescription"></textarea></p>
 
-        <button type="button" onclick="postPoint()">Post point</button>
-        <button type="button" onclick="getPoints()">Get points</button>
-        <button type="button" onclick="clearPoints()">Clear</button>
+        <p>
+            <select id="pointType">
+                <option value="LIQUID">LIQUID</option>
+                <option value="SOLID">SOLID</option>
+                <option value="ORGANIC">ORGANIC</option>
+                <option value="MIXED">MIXED</option>
+            </select>
+            <select id="pointStatus">
+                <option value="UNCONFIRMED">UNCONFIRMED</option>
+                <option value="UNREMOVED">UNREMOVED</option>
+                <option value="REMOVED">REMOVED</option>
+            </select>
+            <button type="button" onclick="postPoint()">Post point</button>
+        </p>
+        <p>
+            <button type="button" onclick="getPoint()">Get point</button>
+            ID: <input type="text" id="point_id" value="1" size="6"></p>
+        <p>
+            <button type="button" onclick="getPoints()">Get points</button>
+        </p>
+        <p>
+            <button type="button" onclick="clearPoints()">Clear</button>
+        </p>
 
     </form>
 </div>
@@ -43,6 +63,9 @@
     var pointDescription = document.getElementById('pointDescription');
     var longField = document.getElementById('long');
     var latField = document.getElementById('lat');
+    var pointID = document.getElementById('point_id');
+    var pointType = document.getElementById('pointType');
+    var pointStatus = document.getElementById('pointStatus');
 
 
     var mymap = L.map('mapid').setView([61.2302, 30.0495], 13);
@@ -76,18 +99,82 @@
     }
 
     var postPoint = function () {
-        pointDescription.value = "Point was posted";
+        if (longField.value == 'none' || latField.value == 'none') {
+            pointDescription.value =
+                pointDescription.value + '\nCould not post point because of incorrect lat and long';
+        } else {
+
+            $.ajax({
+                type: 'POST',
+                url: '/point/?type=dump',
+                data: JSON.stringify({
+                    "longitude": longField.value,
+                    "latitude": latField.value,
+                    "status": pointStatus.value,
+                    "type": pointType.value
+                }),
+                contentType: "application/json",
+                async: true,
+
+                success: function (result) {
+
+                    pointDescription.value =
+                        "Point was posted with long " + longField.value + ' and lat ' + latField.value;
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    pointDescription.value = jqXHR.status + ' ' + jqXHR.responseText;
+                }
+            });
+
+            markerGroup.clearLayers();
+        }
     }
+
+
+    var getPoint = function () {
+
+        $.ajax({
+            type: 'GET',
+            url: '/point/' + pointID.value + '?type=dump',
+            contentType: "application/json",
+            async: true,
+            success: function (result) {
+
+                pointDescription.value = result
+
+                var obj = JSON.parse(result);
+                latField.value =  obj.latitude;
+                longField.value = obj.longitude;
+
+                L.marker([longField.value, latField.value]).addTo(markerGroup)
+                    .bindPopup("<b>Saved point</b><br />Test.").openPopup()
+                    .on('click', selectMarker);
+
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                pointDescription.value = jqXHR.status + ' ' + jqXHR.responseText;
+            }
+        });
+    }
+
 
     var getPoints = function () {
 
         $.ajax({
             type: 'GET',
-            url: '/test_geo?is_in(61.2246,30.05194);out;',
-            dataType: 'json',
+            url: '/points/',
+            data: JSON.stringify({
+            }),
+            contentType: "application/json",
             async: true,
             success: function (result) {
                 pointDescription.value = result.message;
+
+                pointDescription.value = result
+
+                var obj = JSON.parse(result);
+
 
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -95,26 +182,10 @@
             }
         });
 
-        L.marker([61.2239082868332, 30.053358078002933]).addTo(markerGroup)
-            .bindPopup("<b>Test point 1</b><br />Test.").openPopup()
-            .on('click', selectMarker);
-
-        L.marker([61.217544692930396, 30.02074241638184]).addTo(markerGroup)
-            .bindPopup("<b>Test point 2</b><br />Test.").openPopup()
-            .on('click', selectMarker);
-
-        L.marker([61.2337404012866, 30.085802078247074]).addTo(markerGroup)
-            .bindPopup("<b>Test point 3</b><br />Test.").openPopup()
-            .on('click', selectMarker);
-
-        L.marker([61.23638380702161, 30.03275871276856]).addTo(markerGroup)
-            .bindPopup("<b>Test point 4</b><br />Test.").openPopup()
-            .on('click', selectMarker);
-
-
     }
 
     var clearPoints = function () {
+        pointDescription.value = "";
         markerGroup.clearLayers();
     }
 
