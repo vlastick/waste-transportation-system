@@ -10,8 +10,7 @@ public class Vessel {
 
     private Integer capacity;
 
-    private Integer length, width;
-
+    private Integer currentLoad;
 
     //    getters and setters
     public Integer getId() {
@@ -46,19 +45,11 @@ public class Vessel {
         this.capacity = capacity;
     }
 
-    public Integer getLength() {
-        return length;
+    public Integer getCurrentLoad() {
+        return currentLoad;
     }
 
-    public void setLength(Integer length) {
-        this.length = length;
-    }
-
-    public Integer getWidth() {
-        return width;
-    }
-
-    public void setWidth(Integer width) {
-        this.width = width;
+    public void setCurrentLoad(Integer currentLoad) {
+        this.currentLoad = currentLoad;
     }
 }

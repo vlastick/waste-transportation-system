@@ -13,6 +13,8 @@ public class Dump extends Point {
 
     private DumpType type;
 
+    private Integer size;
+
     //    getters and setters
     public Integer getId() {
         return id;
@@ -44,5 +46,13 @@ public class Dump extends Point {
 
     public DumpType getType() {
         return type;
+    }
+
+    public Integer getSize() {
+        return size;
+    }
+
+    public void setSize(Integer size) {
+        this.size = size;
     }
 }

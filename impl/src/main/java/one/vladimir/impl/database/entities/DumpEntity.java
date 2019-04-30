@@ -19,6 +19,8 @@ public class DumpEntity {
 
     private String type;
 
+    private Integer size;
+
     @OneToOne
     @JoinColumn(name = "PointId")
     private PointEntity point;
@@ -32,6 +34,7 @@ public class DumpEntity {
         this.setPriority(dump.getPriority());
         this.setStatus(dump.getStatus().toString());
         this.setType(dump.getType().toString());
+        this.setSize(dump.getSize());
     }
 
     //POJO getter
@@ -41,6 +44,7 @@ public class DumpEntity {
         dump.setPriority(this.getPriority());
         dump.setStatus(DumpStatus.valueOf(this.getStatus()));
         dump.setType(DumpType.valueOf(this.getType()));
+        dump.setSize(this.getSize());
         return dump;
     }
 
@@ -82,5 +86,13 @@ public class DumpEntity {
 
     public void setPoint(PointEntity point) {
         this.point = point;
+    }
+
+    public Integer getSize() {
+        return size;
+    }
+
+    public void setSize(Integer size) {
+        this.size = size;
     }
 }

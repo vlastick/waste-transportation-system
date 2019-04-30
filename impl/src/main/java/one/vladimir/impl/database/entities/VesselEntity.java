@@ -13,6 +13,10 @@ public class VesselEntity {
 
     private String name;
 
+    private Integer capacity;
+
+    private Integer currentLoad;
+
     @OneToMany(mappedBy = "vessel", cascade = CascadeType.ALL)
     private Collection<CrewmanEntity> crewmans;
 
@@ -26,6 +30,8 @@ public class VesselEntity {
     public void setVessel(Vessel vessel) {
         this.vesselId = vessel.getId();
         this.name = vessel.getName();
+        this.currentLoad = vessel.getCurrentLoad();
+        this.capacity = vessel.getCapacity();
     }
 
     //POJO getter
@@ -33,6 +39,8 @@ public class VesselEntity {
         Vessel vessel = new Vessel();
         vessel.setId(this.getVesselId());
         vessel.setName(this.getName());
+        vessel.setCapacity(this.getCapacity());
+        vessel.setCurrentLoad(this.getCurrentLoad());
         return vessel;
     }
 
@@ -50,5 +58,21 @@ public class VesselEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Integer getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(Integer capacity) {
+        this.capacity = capacity;
+    }
+
+    public Integer getCurrentLoad() {
+        return currentLoad;
+    }
+
+    public void setCurrentLoad(Integer currentLoad) {
+        this.currentLoad = currentLoad;
     }
 }
