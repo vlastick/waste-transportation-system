@@ -17,26 +17,35 @@ public class TransportServiceImpl implements TransportService {
     private Database db;
 
     @PostConstruct
-    public void postConstructLog(){
+    public void postConstructLog() {
         System.out.println("transportService initialized");
     }
 
     @Override
-    public Vessel getVessel(Integer id){
+    public Vessel getVessel(Integer id) {
         Vessel vessel = db.getVesselById(id);
         return new Vessel();
     }
 
     @Override
-    public String addVessel(Vessel vessel){
+    public String addVessel(Vessel vessel) {
         db.addVessel(vessel);
         return "Vessel added";
     }
 
     @Override
-    public String updateVessel(Vessel vessel){
+    public String updateVessel(Vessel vessel) {
         db.updateVessel(vessel);
         return "Vessel updated";
+    }
+
+    @Override
+    public String updateCoordinates(Integer vesselId, Double latitude, Double longitude) {
+        Vessel vessel = db.getVesselById(vesselId);
+        vessel.setLongitude(longitude);
+        vessel.setLatitude(latitude);
+        db.updateVessel(vessel);
+        return "Vessel coordinates updated";
     }
 
 }

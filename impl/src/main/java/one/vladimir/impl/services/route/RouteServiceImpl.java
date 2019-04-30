@@ -71,5 +71,16 @@ public class RouteServiceImpl implements RouteService {
         return routes;
     }
 
+    private boolean routePointWithPointIdAlreadyExists(Integer pointId){
+        List<RoutePoint> routePoints = db.getRoutePointsByPointId(pointId);
+        for (RoutePoint routePoint : routePoints) {
+            if (routePoint.getStatus() == RoutePointStatus.AWAITING ||
+                    routePoint.getStatus() == RoutePointStatus.IN_PROGRESS) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
 }

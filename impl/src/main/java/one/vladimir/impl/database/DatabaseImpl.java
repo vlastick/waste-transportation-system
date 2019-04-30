@@ -167,7 +167,6 @@ public class DatabaseImpl implements Database {
         return group;
     }
 
-    //TODO: add object uniqueness check for exact point
     public Integer addDump(Dump dump) {
         if (!pointRepo.findAllIds().contains(dump.getPointId())) {
             throw new IllegalArgumentException("Point with id " + dump.getPointId() + " not found");
@@ -598,4 +597,17 @@ public class DatabaseImpl implements Database {
         }
         return routePoints;
     }
+
+    public List<RoutePoint> getRoutePointsByPointId(Integer id) {
+        List<RoutePointEntity> routePointEntities;
+        routePointEntities = routePointRepo.findRoutePointsByPointPointId(id);
+        List<RoutePoint> routePoints = new Vector<>();
+        for (RoutePointEntity routePointEntity : routePointEntities) {
+            RoutePoint routePoint = routePointEntity.getRoutePoint();
+            routePoint.setContainedPoint(routePointEntity.getPoint().getPoint());
+            routePoints.add(routePoint);
+        }
+        return routePoints;
+    }
+
 }
