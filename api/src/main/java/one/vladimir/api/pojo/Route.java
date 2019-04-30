@@ -37,4 +37,8 @@ public class Route {
     public void setStatus(RouteStatus status) {
         this.status = status;
     }
+
+    public void addRoutePoint(RoutePoint routePoint) {
+        this.routePoints.add(routePoint);
+    }
 }

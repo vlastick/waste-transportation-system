@@ -350,7 +350,11 @@ public class DatabaseImpl implements Database {
             throw new NoSuchElementException("Vessel with id " + id + " not found");
         }
         Vessel vessel = vesselEnt.getVessel();
-        vessel.setCurrRoute(routeRepo.findRouteByVessel(vesselEnt).getRoute());
+        try {
+            vessel.setCurrRoute(routeRepo.findRouteByVessel(vesselEnt).getRoute());
+        } catch (NullPointerException e) {
+            vessel.setCurrRoute(null);
+        }
         return vessel;
     }
 

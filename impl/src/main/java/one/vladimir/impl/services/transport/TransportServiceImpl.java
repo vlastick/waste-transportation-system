@@ -24,7 +24,7 @@ public class TransportServiceImpl implements TransportService {
     @Override
     public Vessel getVessel(Integer id) {
         Vessel vessel = db.getVesselById(id);
-        return new Vessel();
+        return vessel;
     }
 
     @Override

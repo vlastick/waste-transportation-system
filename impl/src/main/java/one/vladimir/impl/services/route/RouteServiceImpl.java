@@ -32,11 +32,10 @@ public class RouteServiceImpl implements RouteService {
 
     @PostConstruct
     public void postConstructLog() {
-
         ObjectMapper mapper = new ObjectMapper();
         String testJSON = null;
         try {
-            testJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this.buildroute(4));
+            testJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this.buildroute(9));
             System.out.println(testJSON);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -94,12 +93,12 @@ public class RouteServiceImpl implements RouteService {
 
 
     @Override
-    public Route buildroute(Integer vesselID) {
+    public Route buildroute(Integer vesselId) {
 
         RouteFilter filter = new RouteFilter();
 
         List<Integer> vesselIdList = new Vector<>();
-        vesselIdList.add(vesselID);
+        vesselIdList.add(vesselId);
 
         List<String> statusList = new Vector<>();
         statusList.add(RouteStatus.IN_PROGRESS.toString());
@@ -117,6 +116,7 @@ public class RouteServiceImpl implements RouteService {
         if (routes.size() == 0) {
             currentRoute = new Route();
             currentRoute.setStatus(RouteStatus.IN_PROGRESS);
+            currentRoute.setRoutePoints(new HashSet<>());
         } else {
             currentRoute = routes.get(0);
         }
@@ -127,23 +127,26 @@ public class RouteServiceImpl implements RouteService {
             dumpFilter.setActive(true);
 
             List<Integer> groupIdList = new Vector<>();
-            vesselIdList.add(2);
+            groupIdList.add(2);
 
             dumpFilter.setGroupidList(groupIdList); // TODO - write group correctly
 
             List<Dump> avaliableDumps = pointService.getDumpsByFilter(dumpFilter);
+            if (avaliableDumps.size() == 0) {
+                throw new NoSuchElementException("No dumps available");
+            }
 
             // get current coordinate
-            Vessel vessel = transportService.getVessel(vesselID);
+            Vessel vessel = transportService.getVessel(vesselId);
 
             Double latitude = vessel.getLatitude();
             Double longitude = vessel.getLongitude();
 
             while (currentRoute.getRoutePoints().size() < numberOfRoutePoints && avaliableDumps.size() != 0) {
                 Integer lastPointNumber = 0;
-                if(currentRoute.getRoutePoints().size() != 0){
-                    for(RoutePoint currentPoint:currentRoute.getRoutePoints()){
-                        if(lastPointNumber < currentPoint.getNumber()){
+                if (currentRoute.getRoutePoints().size() != 0) {
+                    for (RoutePoint currentPoint : currentRoute.getRoutePoints()) {
+                        if (lastPointNumber < currentPoint.getNumber()) {
                             latitude = currentPoint.getContainedPoint().getLatitude();
                             longitude = currentPoint.getContainedPoint().getLongitude();
                         }
@@ -155,7 +158,7 @@ public class RouteServiceImpl implements RouteService {
 
                 Dump nearestDump = avaliableDumps.get(0);
 
-                for(Dump candidateDump:avaliableDumps){
+                for (Dump candidateDump : avaliableDumps) {
                     Double currentDistance =
                             Math.sqrt(
                                     Math.pow(nearestDump.getLatitude() - latitude, 2) +
@@ -166,13 +169,15 @@ public class RouteServiceImpl implements RouteService {
                                     Math.pow(candidateDump.getLatitude() - latitude, 2) +
                                             Math.pow(candidateDump.getLongitude() - longitude, 2)
                             );
-                    if(candidateDistance < currentDistance){
+                    if (candidateDistance < currentDistance) {
                         nearestDump = candidateDump;
                     }
                 }
 
                 routePoint.setContainedPoint(nearestDump);
-                currentRoute.getRoutePoints().add(routePoint);
+                currentRoute.addRoutePoint(routePoint);
+                avaliableDumps.remove(nearestDump);
+
             }
 
         }
