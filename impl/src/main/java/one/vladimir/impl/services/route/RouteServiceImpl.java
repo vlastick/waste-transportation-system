@@ -35,7 +35,7 @@ public class RouteServiceImpl implements RouteService {
         ObjectMapper mapper = new ObjectMapper();
         String testJSON = null;
         try {
-            testJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this.buildroute(9));
+            testJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this.buildroute(14));
             System.out.println(testJSON);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -132,9 +132,19 @@ public class RouteServiceImpl implements RouteService {
             dumpFilter.setGroupidList(groupIdList); // TODO - write group correctly
 
             List<Dump> avaliableDumps = pointService.getDumpsByFilter(dumpFilter);
+            List<Dump> usedDumps = new Vector<>();
+            for (Dump dump : avaliableDumps) {
+                if (this.routePointWithPointIdAlreadyExists(dump.getPointId())) {
+                    usedDumps.add(dump);
+                }
+            }
+            for (Dump dump : usedDumps) {
+                avaliableDumps.remove(dump);
+            }
             if (avaliableDumps.size() == 0) {
                 throw new NoSuchElementException("No dumps available");
             }
+
 
             // get current coordinate
             Vessel vessel = transportService.getVessel(vesselId);
@@ -149,6 +159,7 @@ public class RouteServiceImpl implements RouteService {
                         if (lastPointNumber < currentPoint.getNumber()) {
                             latitude = currentPoint.getContainedPoint().getLatitude();
                             longitude = currentPoint.getContainedPoint().getLongitude();
+                            lastPointNumber = currentPoint.getNumber();
                         }
                     }
                 }
