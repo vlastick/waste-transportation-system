@@ -621,16 +621,14 @@ public class RestService {
     }
 
 
-    @RequestMapping(method = GET, value = "/points/")
+    @RequestMapping(method = POST, value = "/points/")
     @ResponseBody
     public ResponseEntity<String> getPoints(
 
-            @RequestParam(name = "type", defaultValue = "not given") String type,
             @RequestBody String configJSON) {
 
         String answerJSON = "";
         HttpStatus status = HttpStatus.BAD_REQUEST;
-//        System.out.println(configJSON);
         DumpFilter dumpFilter = filterService.createDumpFilterFromJson(configJSON);
         List<Dump> dumps = pointService.getDumpsByFilter(dumpFilter);
         try {

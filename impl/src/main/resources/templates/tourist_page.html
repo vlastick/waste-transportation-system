@@ -144,7 +144,7 @@
                 pointDescription.value = result
 
                 var obj = JSON.parse(result);
-                latField.value =  obj.latitude;
+                latField.value = obj.latitude;
                 longField.value = obj.longitude;
 
                 L.marker([longField.value, latField.value]).addTo(markerGroup)
@@ -162,26 +162,25 @@
     var getPoints = function () {
 
         $.ajax({
-            type: 'GET',
+            type: 'POST',
             url: '/points/',
-            data: JSON.stringify({
-            }),
+            contentType: "application/json",
+            data: JSON.stringify({"pointIdList":[]}),
             contentType: "application/json",
             async: true,
             success: function (result) {
-                pointDescription.value = result.message;
-
-                pointDescription.value = result
 
                 var obj = JSON.parse(result);
+                obj.forEach(function(item, index, array) {
 
-
+                    L.marker([item.longitude, item.latitude]).addTo(markerGroup)
+                        .bindPopup("<b>Saved "+ index+ "point</b><br />Test.").openPopup()
+                        .on('click', selectMarker);
+                });
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                pointDescription.value = jqXHR.status + ' ' + jqXHR.responseText;
             }
         });
-
     }
 
     var clearPoints = function () {
