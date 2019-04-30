@@ -598,4 +598,17 @@ public class DatabaseImpl implements Database {
         }
         return routePoints;
     }
+
+    public List<RoutePoint> getRoutePointsByPointId(Integer id) {
+        List<RoutePointEntity> routePointEntities;
+        routePointEntities = routePointRepo.findRoutePointsByPointPointId(id);
+        List<RoutePoint> routePoints = new Vector<>();
+        for (RoutePointEntity routePointEntity : routePointEntities) {
+            RoutePoint routePoint = routePointEntity.getRoutePoint();
+            routePoint.setContainedPoint(routePointEntity.getPoint().getPoint());
+            routePoints.add(routePoint);
+        }
+        return routePoints;
+    }
+
 }

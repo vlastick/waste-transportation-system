@@ -69,6 +69,8 @@ public interface Database {
 
     public List<Route> getRoutesByFilter(RouteFilter routeFilter);
 
+    public List<RoutePoint> getRoutePointsByPointId(Integer id);
+
     //update requests
 
     public void updateUser(User user);

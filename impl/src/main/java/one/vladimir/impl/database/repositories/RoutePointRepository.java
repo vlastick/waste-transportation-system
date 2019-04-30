@@ -12,4 +12,6 @@ public interface RoutePointRepository extends CrudRepository<RoutePointEntity, I
 
     List<RoutePointEntity> findRoutePointsByRouteRouteId(Integer routeId);
 
+    List<RoutePointEntity> findRoutePointsByPointPointId(Integer routeId);
+
 }
