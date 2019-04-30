@@ -167,7 +167,6 @@ public class DatabaseImpl implements Database {
         return group;
     }
 
-    //TODO: add object uniqueness check for exact point
     public Integer addDump(Dump dump) {
         if (!pointRepo.findAllIds().contains(dump.getPointId())) {
             throw new IllegalArgumentException("Point with id " + dump.getPointId() + " not found");

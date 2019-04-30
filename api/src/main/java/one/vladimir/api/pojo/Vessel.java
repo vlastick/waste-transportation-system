@@ -12,6 +12,10 @@ public class Vessel {
 
     private Integer currentLoad;
 
+    private Double longitude;
+
+    private Double latitude;
+
     //    getters and setters
     public Integer getId() {
         return id;
@@ -51,5 +55,21 @@ public class Vessel {
 
     public void setCurrentLoad(Integer currentLoad) {
         this.currentLoad = currentLoad;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
     }
 }

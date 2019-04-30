@@ -10,5 +10,6 @@ public interface TransportService {
 
     public String updateVessel(Vessel vessel);
 
+    public String updateCoordinates(Integer vesselId, Double latitude, Double longitude);
 
 }
