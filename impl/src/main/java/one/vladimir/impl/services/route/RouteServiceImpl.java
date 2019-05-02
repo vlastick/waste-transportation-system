@@ -32,14 +32,14 @@ public class RouteServiceImpl implements RouteService {
 
     @PostConstruct
     public void postConstructLog() {
-        ObjectMapper mapper = new ObjectMapper();
+        /*ObjectMapper mapper = new ObjectMapper();
         String testJSON = null;
         try {
-            testJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this.buildroute(3));
+            testJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this.buildroute(1));
             System.out.println(testJSON);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     private Integer numberOfRoutePoints = 2;
@@ -117,6 +117,9 @@ public class RouteServiceImpl implements RouteService {
             currentRoute = new Route();
             currentRoute.setStatus(RouteStatus.IN_PROGRESS);
             currentRoute.setRoutePoints(new HashSet<>());
+            Vessel vessel = new Vessel();
+            vessel.setId(vesselId);
+            currentRoute.setId(db.addRoute(currentRoute, vessel));
         } else {
             currentRoute = routes.get(0);
         }
@@ -215,13 +218,13 @@ public class RouteServiceImpl implements RouteService {
                 }
                 routePoint.setContainedPoint(nearestDump);
                 plannedLoad += nearestDump.getSize();
-                System.out.println(plannedLoad);
                 newRoutePoints.add(routePoint);
                 avaliableDumps.remove(nearestDump);
             }
 
             for (RoutePoint routePoint : newRoutePoints) {
                 currentRoute.addRoutePoint(routePoint);
+                db.addRoutePoint(routePoint, currentRoute);
             }
 
         }
