@@ -9,7 +9,7 @@ import java.util.Collection;
 @Entity
 public class RouteEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer routeId;
 
     private String status;

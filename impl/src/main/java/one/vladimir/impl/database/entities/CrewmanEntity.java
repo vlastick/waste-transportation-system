@@ -7,7 +7,7 @@ import javax.persistence.*;
 @Entity
 public class CrewmanEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer crewmanId;
 
     @OneToOne

@@ -11,7 +11,7 @@ import java.util.Collection;
 @Entity
 public class PointEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer pointId;
 
     private Double longitude;

@@ -9,7 +9,7 @@ import java.util.Collection;
 @Table(name = "pointGroupEntity")
 public class GroupEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer groupId;
 
     private Integer Koef;

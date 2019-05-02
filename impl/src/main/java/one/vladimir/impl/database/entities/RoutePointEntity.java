@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity
 public class RoutePointEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer routePointId;
 
     private Integer number;

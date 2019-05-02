@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Entity
 public class DumpEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer dumpId;
 
     private String status;

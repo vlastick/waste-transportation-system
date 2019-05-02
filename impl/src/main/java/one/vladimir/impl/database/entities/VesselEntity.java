@@ -8,7 +8,7 @@ import java.util.Collection;
 @Entity
 public class VesselEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer vesselId;
 
     private String name;

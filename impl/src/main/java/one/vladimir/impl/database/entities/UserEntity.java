@@ -8,7 +8,7 @@ import java.util.Collection;
 @Entity
 public class UserEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userId;
 
     private String role;
