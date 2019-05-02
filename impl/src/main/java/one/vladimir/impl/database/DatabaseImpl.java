@@ -507,6 +507,7 @@ public class DatabaseImpl implements Database {
         Predicate groupIdPred;
         Predicate dumpTypePred;
         Predicate isActivePred;
+        Predicate maxSizePred;
 
         Expression<Integer> pointIdExpr = pointEntity.get("pointId");
         pointIdPred = pointIdExpr.isNotNull();
@@ -531,7 +532,12 @@ public class DatabaseImpl implements Database {
             isActivePred = builder.equal(pointEntity.get("isActive"), dumpFilter.getActive());
         }
 
-        query.where(pointIdPred, groupIdPred, dumpTypePred, isActivePred);
+        maxSizePred = dumpEntity.get("size").isNotNull();
+        if (dumpFilter.getMaxSize() != null) {
+            maxSizePred = builder.le(dumpEntity.get("size"), dumpFilter.getMaxSize());
+        }
+
+        query.where(pointIdPred, groupIdPred, dumpTypePred, isActivePred, maxSizePred);
 
         List<DumpEntity> dumpEntities = entityManager.createQuery(query).getResultList();
         List<Dump> dumps = new Vector<Dump>();

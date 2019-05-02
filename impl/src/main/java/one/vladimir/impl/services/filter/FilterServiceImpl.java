@@ -32,6 +32,7 @@ public class FilterServiceImpl implements FilterService {
         List<Integer> groupIdList = null;
         List<String> dumpTypeList = null;
         Boolean isActive = null;
+        Integer maxSize = null;
         try {
             Object object = jsonParser.parse(jsonString);
             JSONObject jsonObject = (JSONObject) object;
@@ -40,6 +41,19 @@ public class FilterServiceImpl implements FilterService {
             JSONArray dumpTypesJson = (JSONArray) jsonObject.get("dumpTypeList");
 
             isActive = (Boolean) jsonObject.get("isActive");
+            Long maxSizeLong = (Long) jsonObject.get("maxSize");
+
+            if (maxSizeLong != null) {
+                maxSize = maxSizeLong.intValue();
+            }
+
+//            try {
+//                maxSize = ((Long) jsonObject.get("maxSize")).intValue();
+//            } catch (NullPointerException e) {
+//                maxSize = null;
+//            }
+
+
             Iterator iterator;
             if (pointIdsJson != null) {
                 iterator = pointIdsJson.iterator();
@@ -87,6 +101,7 @@ public class FilterServiceImpl implements FilterService {
         dumpFilter.setGroupidList(groupIdList);
         dumpFilter.setDumpTypeList(dumpTypeList);
         dumpFilter.setActive(isActive);
+        dumpFilter.setMaxSize(maxSize);
         return dumpFilter;
     }
 
