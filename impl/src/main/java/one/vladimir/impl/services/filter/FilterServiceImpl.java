@@ -47,13 +47,6 @@ public class FilterServiceImpl implements FilterService {
                 maxSize = maxSizeLong.intValue();
             }
 
-//            try {
-//                maxSize = ((Long) jsonObject.get("maxSize")).intValue();
-//            } catch (NullPointerException e) {
-//                maxSize = null;
-//            }
-
-
             Iterator iterator;
             if (pointIdsJson != null) {
                 iterator = pointIdsJson.iterator();

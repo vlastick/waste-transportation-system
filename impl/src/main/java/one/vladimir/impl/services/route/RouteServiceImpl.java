@@ -35,7 +35,7 @@ public class RouteServiceImpl implements RouteService {
         ObjectMapper mapper = new ObjectMapper();
         String testJSON = null;
         try {
-            testJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this.buildroute(14));
+            testJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this.buildroute(3));
             System.out.println(testJSON);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -111,7 +111,7 @@ public class RouteServiceImpl implements RouteService {
 
         Route currentRoute;
         if (routes.size() > 1) {
-            throw new IllegalArgumentException("There more than one route. Something was wrong");
+            throw new IllegalArgumentException("There are more than one current route. Something was wrong");
         }
         if (routes.size() == 0) {
             currentRoute = new Route();
@@ -121,13 +121,31 @@ public class RouteServiceImpl implements RouteService {
             currentRoute = routes.get(0);
         }
 
-        if (currentRoute.getRoutePoints().size() < numberOfRoutePoints) {
+        Integer plannedLoad = 0;
+        Integer lastPointNumber = currentRoute.getRoutePoints().size();
+
+        //RoutePoints of currents vessel with statuses AWAITING and IN_PROGRESS
+        List<RoutePoint> activeRoutePoints = new Vector<>();
+        for (RoutePoint routePoint : currentRoute.getRoutePoints()) {
+            if (routePoint.getStatus() == RoutePointStatus.IN_PROGRESS
+                    || routePoint.getStatus() == RoutePointStatus.AWAITING) {
+                activeRoutePoints.add(routePoint);
+                plannedLoad += db.getDumpById(routePoint.getContainedPoint().getPointId()).getSize();
+            }
+        }
+
+        if (activeRoutePoints.size() < numberOfRoutePoints) {
             // Get all avaliable dumps
             DumpFilter dumpFilter = new DumpFilter();
             dumpFilter.setActive(true);
+            Vessel vessel = transportService.getVessel(vesselId);
 
+            Double latitude = vessel.getLatitude();
+            Double longitude = vessel.getLongitude();
+
+            dumpFilter.setMaxSize(vessel.getCapacity() - vessel.getCurrentLoad() - plannedLoad);
             List<Integer> groupIdList = new Vector<>();
-            groupIdList.add(2);
+            groupIdList.add(db.getGroupByCoordinates(latitude, longitude).getId());
 
             dumpFilter.setGroupidList(groupIdList); // TODO - write group correctly
 
@@ -145,17 +163,24 @@ public class RouteServiceImpl implements RouteService {
                 throw new NoSuchElementException("No dumps available");
             }
 
+            if (activeRoutePoints.size() != 0) {
+                for (RoutePoint currentPoint : activeRoutePoints) {
+                    if (currentPoint.getNumber() == lastPointNumber) {
+                        latitude = currentPoint.getContainedPoint().getLatitude();
+                        longitude = currentPoint.getContainedPoint().getLongitude();
+                    }
+                }
+            }
 
-            // get current coordinate
-            Vessel vessel = transportService.getVessel(vesselId);
+            List<RoutePoint> newRoutePoints = new Vector<>();
+            Boolean noMoreAvailableDumps = false;
+            while (activeRoutePoints.size() + newRoutePoints.size() < numberOfRoutePoints
+                    && avaliableDumps.size() != 0
+                    && noMoreAvailableDumps == false) {
 
-            Double latitude = vessel.getLatitude();
-            Double longitude = vessel.getLongitude();
-
-            while (currentRoute.getRoutePoints().size() < numberOfRoutePoints && avaliableDumps.size() != 0) {
-                Integer lastPointNumber = 0;
-                if (currentRoute.getRoutePoints().size() != 0) {
-                    for (RoutePoint currentPoint : currentRoute.getRoutePoints()) {
+                noMoreAvailableDumps = true;
+                if (newRoutePoints.size() != 0) {
+                    for (RoutePoint currentPoint : newRoutePoints) {
                         if (lastPointNumber < currentPoint.getNumber()) {
                             latitude = currentPoint.getContainedPoint().getLatitude();
                             longitude = currentPoint.getContainedPoint().getLongitude();
@@ -180,15 +205,23 @@ public class RouteServiceImpl implements RouteService {
                                     Math.pow(candidateDump.getLatitude() - latitude, 2) +
                                             Math.pow(candidateDump.getLongitude() - longitude, 2)
                             );
-                    if (candidateDistance < currentDistance) {
+                    if (candidateDistance <= currentDistance && candidateDump.getSize() <= (vessel.getCapacity() - vessel.getCurrentLoad() - plannedLoad)) {
                         nearestDump = candidateDump;
+                        noMoreAvailableDumps = false;
                     }
                 }
-
+                if (noMoreAvailableDumps) {
+                    break;
+                }
                 routePoint.setContainedPoint(nearestDump);
-                currentRoute.addRoutePoint(routePoint);
+                plannedLoad += nearestDump.getSize();
+                System.out.println(plannedLoad);
+                newRoutePoints.add(routePoint);
                 avaliableDumps.remove(nearestDump);
+            }
 
+            for (RoutePoint routePoint : newRoutePoints) {
+                currentRoute.addRoutePoint(routePoint);
             }
 
         }
