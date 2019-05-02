@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Waste transportation system</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/business-casual.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+          integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+            integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+            crossorigin=""></script>
+
+</head>
+<body>
+
+<div class="brand"><font color="#6495ed">Waste transportation system</font></div>
+<div class="address-bar"><font color="#6495ed">Rest slow and clean</font></div>
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">WTS. Request</a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="index.html">About us</a>
+                </li>
+                <li>
+                    <a href="/request.html">Make request</a>
+                </li>
+                <li>
+                    <a href="boat.html">Boat page</a>
+                </li>
+                <li>
+                    <a href="statistics.html">Statistics page</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="box">
+        <form>
+            <div class="form-group row">
+                <h2 class="intro-text text-center">Garbage collection request</h2>
+
+                <br>
+                <div class="col-sm-7 text-center">
+                    <div id="map" style="height: 400px;"></div>
+                    <br>
+                    <div class="form-group col">
+                        <input type="text" readonly class="form-control-plaintext" id="latitude" value="Latitude">
+                        <input type="text" readonly class="form-control-plaintext" id="longitude" value="Longitude">
+                    </div>
+                </div>
+
+                <div class="col-sm-4 text-center" id="controlLayer">
+                    <div class="row">
+                        <label for="type">Dump type</label>
+                        <select id="type" class="form-control">
+                            <option selected>LIQUID</option>
+                            <option>SOLID</option>
+                            <option>ORGANIC</option>
+                            <option>MIXED</option>
+                        </select>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label for="size">Dump size in packages</label>
+                        <input type="text" class="form-control" id="size" placeholder="1">
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label for="description">Dump description</label>
+                        <textarea class="form-control rounded-0" id="description" rows="5"
+                                  placeholder="Write your own description. E.g: Camp landmark, time, skerries and seafloor features."></textarea>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <button type="button" class="btn btn-primary mb-2" id="submit" onclick="postPoint()">Submit</button>
+                        <button type="button" class="btn btn-primary mb-2" id="cancel" onclick="onCancel()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="container">
+    <div class="box">
+        <textarea readonly class="form-control rounded-0" id="answer"  rows="5"
+                  placeholder="Answer information"></textarea>
+    </div>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript">
+
+    // Create map
+    var map = L.map('map').setView([61.2302, 30.0495], 13);
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+        maxZoom: 18,
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+            '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+            'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        id: 'mapbox.outdoors'
+    }).addTo(map);
+
+    // Create layer group to draw markers
+    var markerGroup = L.layerGroup().addTo(map);
+
+
+    // Get interface elements
+    var longitude = document.getElementById('longitude');
+    var latitude = document.getElementById('latitude');
+    var dumpType = document.getElementById('type');
+    var dumpSize = document.getElementById('size');
+    var dumpDescription = document.getElementById('description');
+    var submitButton = document.getElementById('submit');
+    var cancelButton = document.getElementById('cancel');
+    var answer = document.getElementById('answer');
+    var enableTap = true;
+
+    // Function to lock/unlock control page elements
+    function setControlEnabled(status) {
+        if (status == true) {
+            dumpSize.disabled = false;
+            dumpType.disabled = false;
+            dumpDescription.disabled = false;
+            submitButton.disabled = false;
+            cancelButton.disabled = false;
+        } else {
+            dumpSize.disabled = true;
+            dumpType.disabled = true;
+            dumpDescription.disabled = true;
+            submitButton.disabled = true;
+            cancelButton.disabled = true;
+        }
+    }
+    setControlEnabled(false);
+
+    // Function to lock/unlock map
+    function setMapEnabled(status) {
+        if (status == true) {
+
+            map.dragging.enable();
+            map.touchZoom.enable();
+            map.doubleClickZoom.enable();
+            map.scrollWheelZoom.enable();
+            map.boxZoom.enable();
+            map.keyboard.enable();
+            enableTap = true;
+
+            latitude.disabled = false;
+            longitude.disabled = false;
+        } else {
+
+            map.dragging.disable();
+            map.touchZoom.disable();
+            map.doubleClickZoom.disable();
+            map.scrollWheelZoom.disable();
+            map.boxZoom.disable();
+            map.keyboard.disable();
+            enableTap = false;
+
+            latitude.disabled = true;
+            longitude.disabled = true;
+        }
+    }
+
+    function printAnswer(value){
+        answer.value = answer.value + '\n' + value;
+        answer.scrollTop = answer.scrollHeight;
+    }
+
+    function setDefaulValues(){
+        latitude.value = 'Latitude';
+        longitude.value = 'Longitude';
+        dumpDescription.value = '';
+        dumpType.value = 'LIQUID';
+        dumpSize.value = '';
+    }
+
+    function onCancel() {
+        setControlEnabled(false);
+        setMapEnabled(true);
+        markerGroup.clearLayers();
+        getPoints();
+    }
+
+    function onMapClick(e) {
+
+        if (enableTap) {
+
+            L.marker(e.latlng).addTo(markerGroup)
+                .bindPopup('<b>New dump</b><br />Describe one and make a request').openPopup()
+                .on('click', selectMarker);
+
+            longitude.value = e.latlng.lat;
+            latitude.value = e.latlng.lng;
+
+            printAnswer('Marker was added with latitude = '
+                + latitude.value + ' and longitude ' + longitude.value + ' coordinate');
+
+            setControlEnabled(true)
+            setMapEnabled(false);
+        }
+    }
+    map.on('click', onMapClick);
+
+    function selectMarker(e) {
+        longitude.value = e.latlng.lat;
+        latitude.value = e.latlng.lng;
+        // TODO - Write get point request
+    }
+
+    var postPoint = function () {
+
+        if (longitude.value == 'none' || latitude.value == 'none') {
+            printAnswer('Could not post point because of incorrect latitude and longitude');
+        } else {
+
+            $.ajax({
+                type: 'POST',
+                url: '/point/?type=dump',
+                data: JSON.stringify({
+                    'longitude': longitude.value,
+                    'latitude': latitude.value,
+                    'type': dumpType.value
+                }),
+                contentType: 'application/json',
+                async: true,
+
+                success: function (result) {
+
+                    printAnswer('Point was posted with longitude '
+                        + longitude.value + ' and latitude ' + latitude.value + ' coordinate');
+
+                    setDefaulValues();
+                    setControlEnabled(false);
+                    setMapEnabled(true);
+                    markerGroup.clearLayers();
+                    getPoints();
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    printAnswer('Post dump error: ' +
+                        jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+                }
+            });
+        }
+    }
+
+
+    var getPoints = function () {
+
+        $.ajax({
+            type: 'POST',
+            url: '/points/',
+            contentType: 'application/json',
+            data: JSON.stringify({'pointIdList': []}),
+            contentType: 'application/json',
+            async: true,
+            success: function (result) {
+
+                var obj = JSON.parse(result);
+                obj.forEach(function (item, index, array) {
+
+                    L.marker([item.longitude, item.latitude]).addTo(markerGroup)
+                        .bindPopup("<b>Saved " + index + "point</b><br />Test.").openPopup()
+                        .on('click', selectMarker);
+                });
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                printAnswer('Get dumps error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+    }
+
+    getPoints();
+
+    var getPoint = function () {
+
+        $.ajax({
+            type: 'GET',
+            url: '/point/' + pointID.value + '?type=dump',
+            contentType: "application/json",
+            async: true,
+            success: function (result) {
+
+                pointDescription.value = result
+
+                var obj = JSON.parse(result);
+                latField.value = obj.latitude;
+                longField.value = obj.longitude;
+
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                printAnswer('Get dumps error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+    }
+
+
+
+</script>
+
+</body>
+</html>
