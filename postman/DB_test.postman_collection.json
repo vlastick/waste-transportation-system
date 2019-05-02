@@ -1,0 +1,63 @@
+{
+	"info": {
+		"_postman_id": "cf137651-28e4-4eea-bdcb-c89b8ba53806",
+		"name": "DBTest",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "DumpFilter Test",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"pointIdList\":[\n\t{\n\t\"id\":3\n\t},\n\t{\n\t\"id\":5\n\t},\n\t{\n\t\"id\":7\n\t}\n],\n\"groupIdList\":[\n\t{\n\t\"id\":4\n\t},\n\t{\n\t\"id\":3\n\t}\n\n],\n\"dumpTypeList\":[\n\t{\n\t\"dumpType\":\"ORGANIC\"\n\t},\n\t{\n\t\"dumpType\":\"MIXED\"\n\t}\n\n],\n\"isActive\":true\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/points/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"points",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RouteFilter Test",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"routeIdList\":[\n\t{\n\t\"id\":3\n\t},\n\t{\n\t\"id\":23\n\t},\n\t{\n\t\"id\":17\n\t}\n],\n\"vesselIdList\":[\n\t{\n\t\"id\":15\n\t},\n\t{\n\t\"id\":16\n\t}\n\n],\n\"routeStatusList\":[\n\t{\n\t\"routeStatus\":\"IN_PROGRESS\"\n\t},\n\t{\n\t\"routeStatus\":\"COMPLETED\"\n\t}\n\n]\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/routes/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"routes",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,280 @@
+{
+	"info": {
+		"_postman_id": "45241e0b-3740-4fbf-802c-1d87907bb8d9",
+		"name": "DB init",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "add user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"login\":\"Admin\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/user/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"user",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add group",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"leftLongitude\":\"0\",\n\"topLatitude\":\"0\",\n\"rightLongitude\":\"1000\",\n\"bottomLatitude\":\"1000\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/group/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"group",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add dump",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"longitude\":\"177\",\n\"latitude\":\"177\",\n\"status\":\"REMOVED\",\n\"type\":\"ORGANIC\",\n\"size\":12\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/point/?type=dump",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"point",
+						""
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": "dump"
+						}
+					]
+				},
+				"description": "add dump"
+			},
+			"response": []
+		},
+		{
+			"name": "add base",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"longitude\":\"155\",\n\"latitude\":\"155\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/point/?type=base",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"point",
+						""
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": "base"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add vessel",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"name\":\"newVessel\",\n\"capacity\":130,\n\"currentLoad\":0,\n\"longitude\":\"170\",\n\"latitude\":\"170\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/vessel/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"vessel",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get user",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"id\":\"1\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/user/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"user",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get group",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/group/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"group",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get dump",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/point/4?type=dump",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"point",
+						"4"
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": "dump"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get base",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/point/6?type=base",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"point",
+						"6"
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": "base"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create route (alpha)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/create_route/16",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"create_route",
+						"16"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
