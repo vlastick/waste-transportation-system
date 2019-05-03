@@ -14,8 +14,8 @@ public class WebService {
     public String AboutPage() {
         return "index";
     }
-    @GetMapping("/")
-    public String touristPage() {
-        return "tourist_page";
-    }
+    //@GetMapping("/")
+    //public String touristPage() {
+    //    return "tourist_page";
+    //}
 }
