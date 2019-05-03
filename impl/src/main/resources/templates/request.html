@@ -243,7 +243,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: '/point/?type=dump',
+                url: 'point/?type=dump',
                 data: JSON.stringify({
                     'longitude': longitude.value,
                     'latitude': latitude.value,
@@ -279,7 +279,7 @@
 
         $.ajax({
             type: 'POST',
-            url: '/points/',
+            url: 'points/',
             contentType: 'application/json',
             data: JSON.stringify({'pointIdList': []}),
             contentType: 'application/json',
@@ -306,7 +306,7 @@
 
         $.ajax({
             type: 'GET',
-            url: '/point/' + pointID.value + '?type=dump',
+            url: 'point/' + pointID.value + '?type=dump',
             contentType: "application/json",
             async: true,
             success: function (result) {
