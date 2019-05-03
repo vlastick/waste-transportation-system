@@ -40,7 +40,7 @@
                     <a href="index.html">About us</a>
                 </li>
                 <li>
-                    <a href="/request.html">Make request</a>
+                    <a href="request.html">Make request</a>
                 </li>
                 <li>
                     <a href="boat.html">Boat page</a>
@@ -82,7 +82,7 @@
                     <br>
                     <div class="row">
                         <label for="size">Dump size in packages</label>
-                        <input type="text" class="form-control" id="size" placeholder="1">
+                        <input type="text" class="form-control" id="size" placeholder="1" value="1">
                     </div>
                     <br>
                     <div class="row">
@@ -105,6 +105,7 @@
     <div class="box">
         <textarea readonly class="form-control rounded-0" id="answer"  rows="5"
                   placeholder="Answer information"></textarea>
+        <button type="button" class="btn btn-primary mb-2" id="clearLog" onclick="onClearLog()">Clear</button>
     </div>
 </div>
 
@@ -193,7 +194,7 @@
         longitude.value = 'Longitude';
         dumpDescription.value = '';
         dumpType.value = 'LIQUID';
-        dumpSize.value = '';
+        dumpSize.value = '1';
     }
 
     function onCancel() {
@@ -201,6 +202,11 @@
         setMapEnabled(true);
         markerGroup.clearLayers();
         getPoints();
+    }
+
+    function onClearLog() {
+        answer.value ='';
+        answer.scrollTop = answer.scrollHeight;
     }
 
     function onMapClick(e) {
@@ -242,6 +248,7 @@
                     'longitude': longitude.value,
                     'latitude': latitude.value,
                     'type': dumpType.value,
+                    'size': dumpSize.value,
                     'status': 'UNCONFIRMED'
                 }),
                 contentType: 'application/json',
