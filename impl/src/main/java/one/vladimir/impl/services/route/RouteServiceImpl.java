@@ -40,6 +40,7 @@ public class RouteServiceImpl implements RouteService {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }*/
+        //System.out.println(this.updateRoutePointStatus(1, 1, RoutePointStatus.CANCELED));
     }
 
     private Integer numberOfRoutePoints = 2;
@@ -231,6 +232,25 @@ public class RouteServiceImpl implements RouteService {
 
 
         return currentRoute;
+    }
+
+    public String updateRoutePointStatus(Integer routePointId, Integer vesselId, RoutePointStatus status){
+        RoutePoint routePoint = db.getRoutePointById(routePointId);
+        if (routePoint.getStatus() == RoutePointStatus.CANCELED
+            || routePoint.getStatus() == RoutePointStatus.COMPLETED) {
+            return "This RoutePoint can't be updated";
+        }
+        if (status == RoutePointStatus.IN_PROGRESS
+        || status == RoutePointStatus.COMPLETED) {
+            transportService.updateCoordinates(vesselId, routePoint.getContainedPoint().getLatitude(), routePoint.getContainedPoint().getLongitude());
+            routePoint.setStatus(status);
+        } else if (status == RoutePointStatus.CANCELED) {
+            routePoint.setStatus(status);
+        } else {
+            return "RoutePoint can't be updated";
+        }
+        db.updateRoutePoint(routePoint);
+        return "RoutePoint updated";
     }
 
     private boolean routePointWithPointIdAlreadyExists(Integer pointId) {

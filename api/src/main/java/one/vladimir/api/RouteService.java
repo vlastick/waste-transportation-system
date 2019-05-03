@@ -1,5 +1,6 @@
 package one.vladimir.api;
 
+import one.vladimir.api.enums.RoutePointStatus;
 import one.vladimir.api.pojo.Route;
 import one.vladimir.api.pojo.RouteFilter;
 import one.vladimir.api.pojo.Vessel;
@@ -19,5 +20,7 @@ public interface RouteService {
     public List<Route> getRoutesByFilter(RouteFilter routeFilter);
 
     public Route buildroute(Integer vesselID);
+
+    public String updateRoutePointStatus(Integer routePointId, Integer vesselId, RoutePointStatus status);
 
 }
