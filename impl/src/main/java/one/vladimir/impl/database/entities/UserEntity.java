@@ -1,5 +1,6 @@
 package one.vladimir.impl.database.entities;
 
+import one.vladimir.api.enums.UserRole;
 import one.vladimir.api.pojo.User;
 
 import javax.persistence.*;
@@ -34,7 +35,7 @@ public class UserEntity {
     //POJO setter
     public void setUser(User user) {
         this.userId = user.getUserId();
-        this.role = user.getRole();
+        this.role = user.getRole().toString();
         this.login = user.getLogin();
         this.password = user.getPassword();
         this.email = user.getEmail();
@@ -47,7 +48,7 @@ public class UserEntity {
         user.setUserId(this.userId);
         user.setLogin(this.login);
         user.setPassword(this.password);
-        user.setRole(this.role);
+        user.setRole(UserRole.valueOf(this.role));
         user.setEmail(this.email);
         return user;
     }
@@ -57,7 +58,7 @@ public class UserEntity {
         user.setUserId(this.userId);
         user.setLogin(this.login);
         user.setPassword(this.password);
-        user.setRole(this.role);
+        user.setRole(UserRole.valueOf(this.role));
         user.setEmail(this.email);
     }
 

@@ -1,12 +1,14 @@
 package one.vladimir.api.pojo;
 
+import one.vladimir.api.enums.UserRole;
+
 public class User {
 
     private Integer id;
 
     private String login;
 
-    private String role;
+    private UserRole role;
 
     private String password;
 
@@ -30,11 +32,11 @@ public class User {
         this.login = login;
     }
 
-    public String getRole() {
+    public UserRole getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(UserRole role) {
         this.role = role;
     }
 
