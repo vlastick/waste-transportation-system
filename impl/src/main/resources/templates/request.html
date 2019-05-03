@@ -241,7 +241,8 @@
                 data: JSON.stringify({
                     'longitude': longitude.value,
                     'latitude': latitude.value,
-                    'type': dumpType.value
+                    'type': dumpType.value,
+                    'status': 'UNCONFIRMED'
                 }),
                 contentType: 'application/json',
                 async: true,
@@ -277,7 +278,6 @@
             contentType: 'application/json',
             async: true,
             success: function (result) {
-
                 var obj = JSON.parse(result);
                 obj.forEach(function (item, index, array) {
 
