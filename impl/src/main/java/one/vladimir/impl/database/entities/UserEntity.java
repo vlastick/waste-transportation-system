@@ -20,6 +20,8 @@ public class UserEntity {
 
     private String email;
 
+    private boolean active;
+
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL)
     private Collection<PointEntity> createdPoints;
 
