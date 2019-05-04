@@ -7,10 +7,10 @@ import java.util.List;
 public interface PointService {
 
     // Post point
-    String addDump(Dump dump);
+    String addDump(Dump dump, User creator);
 
     // Post point
-    String addBase(Base base);
+    String addBase(Base base, User creator);
 
     // Get point
     Dump getDump(Integer id);
@@ -25,10 +25,10 @@ public interface PointService {
     List <Base> getBases();
 
     // Put point
-    String updateDump(Dump dump);
+    String updateDump(Dump dump, User updater);
 
     // Put point
-    String updateBase(Base base);
+    String updateBase(Base base, User updater);
 
     //String getDumps(JsonNode filter);
 

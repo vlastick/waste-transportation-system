@@ -589,14 +589,14 @@ public class RestService {
                     case "dump":
 
                         Dump dump = mapper.readValue(configJSON, Dump.class);
-                        answerJSON = pointService.addDump(dump);
+                        answerJSON = pointService.addDump(dump, userService.getAuthenticatedUser());
                         status = CREATED;
                         break;
 
                     case "base":
 
                         Base base = mapper.readValue(configJSON, Base.class);
-                        answerJSON = pointService.addBase(base);
+                        answerJSON = pointService.addBase(base, userService.getAuthenticatedUser());
                         status = CREATED;
                         break;
 
@@ -633,7 +633,6 @@ public class RestService {
     public ResponseEntity<String> getPoints(
             @RequestBody String configJSON ){
 
-        userService.getUser();
 
         String answerJSON = "";
         HttpStatus status = HttpStatus.BAD_REQUEST;

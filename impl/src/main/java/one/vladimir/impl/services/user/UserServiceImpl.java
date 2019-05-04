@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(){
+    public User getAuthenticatedUser(){
         User user;
         String login;
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();

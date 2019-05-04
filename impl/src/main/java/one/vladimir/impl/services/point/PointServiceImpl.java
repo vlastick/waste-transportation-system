@@ -43,10 +43,8 @@ public class PointServiceImpl implements PointService {
     }
 
     @Override
-    public String addDump(Dump dump) {
-        User creator;
+    public String addDump(Dump dump, User creator) {
         Group group;
-        creator = userService.getUser();
         group = db.getGroupByCoordinates(dump.getLatitude(), dump.getLongitude());
         dump.setCreatedBy(creator);
         dump.setActive(true);
@@ -58,10 +56,8 @@ public class PointServiceImpl implements PointService {
     }
 
     @Override
-    public String addBase(Base base) {
-        User creator;
+    public String addBase(Base base, User creator) {
         Group group;
-        creator = userService.getUser();
         group = db.getGroupByCoordinates(base.getLatitude(), base.getLongitude());
         base.setCreatedBy(creator);
         base.setActive(true);
@@ -113,8 +109,7 @@ public class PointServiceImpl implements PointService {
     }
 
     @Override
-    public String updateDump(Dump dump) {
-        User updater = userService.getUser();
+    public String updateDump(Dump dump, User updater) {
         dump.setUpdatedBy(updater);
         dump.setUpdatedWhen(new Timestamp(System.currentTimeMillis()));
         db.updatePoint(dump, updater);
@@ -123,8 +118,7 @@ public class PointServiceImpl implements PointService {
     }
 
     @Override
-    public String updateBase(Base base) {
-        User updater = userService.getUser();
+    public String updateBase(Base base, User updater) {
         base.setUpdatedBy(updater);
         base.setUpdatedWhen(new Timestamp(System.currentTimeMillis()));
         db.updatePoint(base, updater);
