@@ -14,6 +14,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
@@ -625,7 +628,17 @@ public class RestService {
     @ResponseBody
     public ResponseEntity<String> getPoints(
 
-            @RequestBody String configJSON) {
+            @RequestBody String configJSON ){
+
+        String username;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+             username = ((UserDetails)principal).getUsername();
+        } else {
+             username = principal.toString();
+        }
+
+        System.out.println(username);
 
         String answerJSON = "";
         HttpStatus status = HttpStatus.BAD_REQUEST;
