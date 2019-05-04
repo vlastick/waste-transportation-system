@@ -41,7 +41,7 @@ public class FilterServiceImpl implements FilterService {
             JSONArray pointIdsJson = (JSONArray) jsonObject.get("pointIdList");
             JSONArray groupIdsJson = (JSONArray) jsonObject.get("groupIdList");
             JSONArray dumpTypesJson = (JSONArray) jsonObject.get("dumpTypeList");
-            JSONArray creatorsIdListJdon = (JSONArray) jsonObject.get("creatorsList");
+            JSONArray creatorsIdListJdon = (JSONArray) jsonObject.get("creatorsIdList");
 
             isActive = (Boolean) jsonObject.get("isActive");
             Long maxSizeLong = (Long) jsonObject.get("maxSize");
