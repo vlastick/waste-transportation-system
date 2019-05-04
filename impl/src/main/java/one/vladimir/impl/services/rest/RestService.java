@@ -58,65 +58,7 @@ public class RestService {
         System.out.println("restService initialized");
     }
 
-    @RequestMapping(method = POST, value = "/point/")
-    @ResponseBody
-    public ResponseEntity<String> addPoint(
 
-            @RequestParam(name = "type", defaultValue = "not given") String type,
-            @RequestBody String configJSON) {
-
-        String answerJSON = "";
-        HttpStatus status = HttpStatus.BAD_REQUEST;
-
-        try {
-
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode array = mapper.readValue(configJSON, JsonNode.class);
-
-            if (array.getNodeType() == OBJECT) {
-
-                switch (type) {
-
-                    case "dump":
-
-                        Dump dump = mapper.readValue(configJSON, Dump.class);
-                        answerJSON = pointService.addDump(dump);
-                        status = CREATED;
-                        break;
-
-                    case "base":
-
-                        Base base = mapper.readValue(configJSON, Base.class);
-                        answerJSON = pointService.addBase(base);
-                        status = CREATED;
-                        break;
-
-                    default:
-                        answerJSON = "Error. Unsupported type: type =" + type;
-                        break;
-                }
-
-            }
-
-        } catch (com.fasterxml.jackson.core.JsonParseException e) {
-
-            answerJSON = "JSON parsing exception: can't read JSON structure because there are some mistakes!";
-            e.printStackTrace();
-
-        } catch (com.fasterxml.jackson.databind.JsonMappingException e) {
-
-            answerJSON = "JSON init exception." +
-                    "JSON body contains values which don't exist in type=" + type + " class.";
-            e.printStackTrace();
-
-        } catch (java.io.IOException e) {
-
-            System.out.println("Java IO Exception");
-            e.printStackTrace();
-        }
-
-        return new ResponseEntity<>(answerJSON, status);
-    }
 
     @RequestMapping(method = GET, value = "/point/{strId}")
     @ResponseBody
@@ -623,11 +565,72 @@ public class RestService {
         return new ResponseEntity(pointService.testGeo(command), OK);
     }
 
+    //final methods
+
+    @RequestMapping(method = POST, value = "/point/")
+    @ResponseBody
+    public ResponseEntity<String> addPoint(
+
+            @RequestParam(name = "type", defaultValue = "not given") String type,
+            @RequestBody String configJSON) {
+
+        String answerJSON = "";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        try {
+
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode array = mapper.readValue(configJSON, JsonNode.class);
+
+            if (array.getNodeType() == OBJECT) {
+
+                switch (type) {
+
+                    case "dump":
+
+                        Dump dump = mapper.readValue(configJSON, Dump.class);
+                        answerJSON = pointService.addDump(dump);
+                        status = CREATED;
+                        break;
+
+                    case "base":
+
+                        Base base = mapper.readValue(configJSON, Base.class);
+                        answerJSON = pointService.addBase(base);
+                        status = CREATED;
+                        break;
+
+                    default:
+                        answerJSON = "Error. Unsupported type: type =" + type;
+                        break;
+                }
+
+            }
+
+        } catch (com.fasterxml.jackson.core.JsonParseException e) {
+
+            answerJSON = "JSON parsing exception: can't read JSON structure because there are some mistakes!";
+            e.printStackTrace();
+
+        } catch (com.fasterxml.jackson.databind.JsonMappingException e) {
+
+            answerJSON = "JSON init exception." +
+                    "JSON body contains values which don't exist in type=" + type + " class.";
+            e.printStackTrace();
+
+        } catch (java.io.IOException e) {
+
+            System.out.println("Java IO Exception");
+            e.printStackTrace();
+        }
+
+        return new ResponseEntity<>(answerJSON, status);
+    }
+
 
     @RequestMapping(method = POST, value = "/points/")
     @ResponseBody
     public ResponseEntity<String> getPoints(
-
             @RequestBody String configJSON ){
 
         String username;
@@ -655,7 +658,7 @@ public class RestService {
     }
 
 
-    @RequestMapping(method = GET, value = "/routes/")
+    @RequestMapping(method = POST, value = "/routes/")
     @ResponseBody
     public ResponseEntity<String> getRoutes(
             @RequestBody String configJSON) {
@@ -672,6 +675,59 @@ public class RestService {
         } catch (JsonProcessingException e) {
             //TODO: implement exception handling
         }
+        return new ResponseEntity<>(answerJSON, status);
+    }
+
+    @RequestMapping(method = PUT, value = "/routepoint/")
+    @ResponseBody
+    public ResponseEntity<String> updateRoutePointStatus(
+            @RequestBody String configJSON) {
+
+        String answerJSON = "routePoint updated";
+        HttpStatus status = HttpStatus.OK;
+
+        return new ResponseEntity<>(answerJSON, status);
+    }
+
+    @RequestMapping(method = GET, value = "/route/")
+    @ResponseBody
+    public ResponseEntity<String> buildRoute() {
+
+        String answerJSON = "route built";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        return new ResponseEntity<>(answerJSON, status);
+    }
+
+    @RequestMapping(method = PUT, value = "/route/")
+    @ResponseBody
+    public ResponseEntity<String> updateRouteStatus(
+            @RequestBody String configJSON) {
+
+        String answerJSON = "route status updated";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        return new ResponseEntity<>(answerJSON, status);
+    }
+
+    @RequestMapping(method = PUT, value = "/vessel/")
+    @ResponseBody
+    public ResponseEntity<String> updateVesselCoordinates(
+            @RequestBody String configJSON) {
+
+        String answerJSON = "vessel coordinates updated";
+        HttpStatus status = HttpStatus.OK;
+
+        return new ResponseEntity<>(answerJSON, status);
+    }
+
+    @RequestMapping(method = GET, value = "/vessel/")
+    @ResponseBody
+    public ResponseEntity<String> getCurrentVessel() {
+
+        String answerJSON = "vessel returned";
+        HttpStatus status = HttpStatus.OK;
+
         return new ResponseEntity<>(answerJSON, status);
     }
 
