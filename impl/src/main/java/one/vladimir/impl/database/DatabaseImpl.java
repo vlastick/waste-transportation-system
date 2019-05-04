@@ -63,7 +63,6 @@ public class DatabaseImpl implements Database {
     //For DB testing
     @PostConstruct
     public void testDBService() {
-        System.out.println("DB initialized");
         String message = "DB initialized";
         log.info(message);
 
@@ -112,6 +111,14 @@ public class DatabaseImpl implements Database {
         User user = userEnt.getUser();
         return user;
     }
+
+    public User getUserByLogin(String login) {
+        UserEntity userEnt;
+        userEnt = userRepo.findUserByLogin(login);
+        User user = userEnt.getUser();
+        return user;
+    }
+
 
     public Integer addPoint(Point point, User creator, Group group) {
         if (!userRepo.findAllIds().contains(creator.getUserId())) {

@@ -5,6 +5,8 @@ import one.vladimir.api.UserService;
 import one.vladimir.api.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -23,8 +25,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUser(){
-        User user = new User();
-        user.setUserId(1);
+        User user;
+        String login;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            login = ((UserDetails)principal).getUsername();
+        } else {
+            login = principal.toString();
+        }
+        user = db.getUserByLogin(login);
         return user;
     }
 

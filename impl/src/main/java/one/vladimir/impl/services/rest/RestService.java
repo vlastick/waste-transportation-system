@@ -633,15 +633,7 @@ public class RestService {
     public ResponseEntity<String> getPoints(
             @RequestBody String configJSON ){
 
-        String username;
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof UserDetails) {
-             username = ((UserDetails)principal).getUsername();
-        } else {
-             username = principal.toString();
-        }
-
-        System.out.println(username);
+        userService.getUser();
 
         String answerJSON = "";
         HttpStatus status = HttpStatus.BAD_REQUEST;
