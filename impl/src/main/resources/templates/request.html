@@ -222,8 +222,6 @@
                 .bindPopup('<b>New dump</b><br />Describe one and make a request').openPopup()
                 .on('click', selectMarker);
 
-            tempMarker._icon.style.backgroundColor = 'yellow';
-
             longitude.value = e.latlng.lat;
             latitude.value = e.latlng.lng;
 
@@ -233,6 +231,9 @@
             setControlEnabled(true)
             setMapEnabled(false);
             blockMarkers = true;
+        }else{
+            alert('Please apply or cancel your order before create a new marker');
+            printAnswer('\nPlease apply or cancel your order before create a new marker');
         }
     }
 
@@ -246,10 +247,6 @@
             markers.forEach(function (item, index, array) {
                 if (markerTempId == markers[index]._leaflet_id) {
                     objectId = index;
-                    markers[index].valueOf()._icon.style.backgroundColor = 'white';
-
-                } else {
-                    markers[index].valueOf()._icon.style.backgroundColor = '';
                 }
             });
 
@@ -285,7 +282,8 @@
         }
         else
         {
-            alert('Please apply or cancel your order before select a new marker')
+            alert('Please apply or cancel your order before select a new marker');
+            printAnswer('\nPlease apply or cancel your order before select a new marker');
         }
     }
 
@@ -345,9 +343,9 @@
                 obj.forEach(function (item, index, array) {
 
                     markers[item.id] = L.marker([item.longitude, item.latitude]).addTo(markerGroup)
-                        .bindPopup("<b>Saved " + item.id + " point</b><br />Test.").openPopup()
+                        .bindPopup("<b>Dump "+ item.id + " point</b><br/>Status: "
+                            + item.status +"<br/>Type: " + item.type).openPopup()
                         .on('click', selectMarker);
-
                 });
             },
             error: function (jqXHR, textStatus, errorThrown) {
