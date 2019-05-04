@@ -14,4 +14,6 @@ public interface UserRepository extends CrudRepository<UserEntity, Integer> {
     @Query("SELECT u.userId FROM UserEntity u ")
     List<Integer> findAllIds();
 
+    UserEntity findUserByLogin(String login);
+
 }

@@ -10,7 +10,7 @@ public interface UserService {
      *
      * @return user pojo
      */
-    public User getUser();
+    public User getAuthenticatedUser();
 
     public User getUser(Integer id);
 
