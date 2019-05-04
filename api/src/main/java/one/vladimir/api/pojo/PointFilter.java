@@ -8,6 +8,8 @@ public class PointFilter {
 
     private List<Integer> groupidList;
 
+    private List<Integer> creatorsIdList;
+
     private Boolean isActive;
 
     public List<Integer> getPointIdList() {
@@ -32,5 +34,13 @@ public class PointFilter {
 
     public void setActive(Boolean active) {
         isActive = active;
+    }
+
+    public List<Integer> getCreatorsIdList() {
+        return creatorsIdList;
+    }
+
+    public void setCreatorsIdList(List<Integer> creatorsIdList) {
+        this.creatorsIdList = creatorsIdList;
     }
 }

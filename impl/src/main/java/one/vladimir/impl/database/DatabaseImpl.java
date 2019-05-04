@@ -1,5 +1,7 @@
 package one.vladimir.impl.database;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javassist.expr.Instanceof;
 import one.vladimir.api.Database;
 import one.vladimir.api.enums.DumpType;
@@ -65,6 +67,16 @@ public class DatabaseImpl implements Database {
     public void testDBService() {
         String message = "DB initialized";
         log.info(message);
+
+        /*DumpFilter df = new DumpFilter();
+        List<Integer> ids = new Vector<>();
+        ids.add(2);
+        df.setCreatorsIdList(ids);
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this.getDumpsByFilter(df)));
+        } catch (JsonProcessingException e) {
+        }*/
 
 
         //Example of multicriterial query
@@ -509,10 +521,12 @@ public class DatabaseImpl implements Database {
         Root<DumpEntity> dumpEntity = query.from(DumpEntity.class);
         Join<DumpEntity, PointEntity> pointEntity = dumpEntity.join("point");
         Join<PointEntity, GroupEntity> groupEntity = pointEntity.join("group");
+        Join<PointEntity, UserEntity> userEntity = pointEntity.join("createdBy");
 
         Predicate pointIdPred;
         Predicate groupIdPred;
         Predicate dumpTypePred;
+        Predicate creatorIdPred;
         Predicate isActivePred;
         Predicate maxSizePred;
 
@@ -534,6 +548,12 @@ public class DatabaseImpl implements Database {
             dumpTypePred = dumpTypeExpr.in(dumpFilter.getDumpTypeList());
         }
 
+        Expression<String> creatorIdExpr = userEntity.get("userId");
+        creatorIdPred = creatorIdExpr.isNotNull();
+        if (dumpFilter.getCreatorsIdList() != null) {
+            creatorIdPred = creatorIdExpr.in(dumpFilter.getCreatorsIdList());
+        }
+
         isActivePred = pointEntity.get("isActive").isNotNull();
         if (dumpFilter.getActive() != null) {
             isActivePred = builder.equal(pointEntity.get("isActive"), dumpFilter.getActive());
@@ -544,7 +564,7 @@ public class DatabaseImpl implements Database {
             maxSizePred = builder.le(dumpEntity.get("size"), dumpFilter.getMaxSize());
         }
 
-        query.where(pointIdPred, groupIdPred, dumpTypePred, isActivePred, maxSizePred);
+        query.where(pointIdPred, groupIdPred, dumpTypePred, creatorIdPred, isActivePred, maxSizePred);
 
         List<DumpEntity> dumpEntities = entityManager.createQuery(query).getResultList();
         List<Dump> dumps = new Vector<Dump>();

@@ -5,6 +5,7 @@ import one.vladimir.api.FilterService;
 import one.vladimir.api.enums.DumpType;
 import one.vladimir.api.pojo.DumpFilter;
 import one.vladimir.api.pojo.RouteFilter;
+import one.vladimir.api.pojo.User;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -31,6 +32,7 @@ public class FilterServiceImpl implements FilterService {
         List<Integer> pointIdList = null;
         List<Integer> groupIdList = null;
         List<String> dumpTypeList = null;
+        List<Integer> creatorsIdList = null;
         Boolean isActive = null;
         Integer maxSize = null;
         try {
@@ -39,6 +41,7 @@ public class FilterServiceImpl implements FilterService {
             JSONArray pointIdsJson = (JSONArray) jsonObject.get("pointIdList");
             JSONArray groupIdsJson = (JSONArray) jsonObject.get("groupIdList");
             JSONArray dumpTypesJson = (JSONArray) jsonObject.get("dumpTypeList");
+            JSONArray creatorsIdListJdon = (JSONArray) jsonObject.get("creatorsList");
 
             isActive = (Boolean) jsonObject.get("isActive");
             Long maxSizeLong = (Long) jsonObject.get("maxSize");
@@ -84,6 +87,17 @@ public class FilterServiceImpl implements FilterService {
                     dumpTypeList = null;
                 }
             }
+            if (creatorsIdListJdon != null) {
+                creatorsIdList = new Vector<Integer>();
+                for (Object currentObject : creatorsIdListJdon) {
+                    JSONObject creatorIdJson = (JSONObject) currentObject;
+                    Integer creatorId = ((Long) creatorIdJson.get("id")).intValue();
+                    creatorsIdList.add(creatorId);
+                }
+                if (creatorsIdList.size() == 0) {
+                    creatorsIdList = null;
+                }
+            }
 
 
         } catch (ParseException e) {
@@ -93,6 +107,7 @@ public class FilterServiceImpl implements FilterService {
         dumpFilter.setPointIdList(pointIdList);
         dumpFilter.setGroupidList(groupIdList);
         dumpFilter.setDumpTypeList(dumpTypeList);
+        dumpFilter.setCreatorsIdList(creatorsIdList);
         dumpFilter.setActive(isActive);
         dumpFilter.setMaxSize(maxSize);
         return dumpFilter;
