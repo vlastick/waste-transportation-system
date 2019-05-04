@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Waste transportation system</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/business-casual.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+          integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+            integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+            crossorigin=""></script>
+
+</head>
+<body>
+
+<div class="brand"><font color="#6495ed">Waste transportation system</font></div>
+<div class="address-bar"><font color="#6495ed">Rest slow and clean</font></div>
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">WTS. Request</a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="index">About us</a>
+                </li>
+                <li>
+                    <a href="request">Make request</a>
+                </li>
+                <li>
+                    <a href="crewman">Boat page</a>
+                </li>
+                <li>
+                    <a href="statistics">Statistics page</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="box">
+        <form>
+            <div class="form-group col">
+                <h3 class="intro-text text-center" id="vesselInfo">Vessel was not loaded
+                </h3>
+                <br>
+                <div class="col-sm-7 text-center">
+                    <div id="map" style="height: 400px;"></div>
+                    <br>
+                    <div class="form-group col">
+                        <input type="text" readonly class="form-control-plaintext" id="latitude" value="Latitude">
+                        <input type="text" readonly class="form-control-plaintext" id="longitude" value="Longitude">
+                        <button type="button" class="btn btn-primary mb-2" id="setCoordinates" onclick="onSetCoordinates()">Set boat coordinates
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-sm-4" id="controlLayer">
+
+                    <div class="form-group row">
+                        <label class="col-sm-3">Status</label>
+                        <div class="col-sm-6">
+                            <select id="dumpStatus" class="form-control">
+                                <option selected>UNCONFIRMED</option>
+                                <option>UNREMOVED</option>
+                                <option>REMOVED</option>
+                            </select>
+                        </div>
+                        <button type="button" class="btn btn-primary mb-3" id="acceptButton" onclick="onAccept()">Accept
+                        </button>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-5">Dump type</label>
+                        <div class="col-sm-7">
+                            <input type="text" readonly class="form-control" id="type" value="LIQUID">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-7">Dump size in packages</label>
+                        <div class="col-sm-5">
+                            <input type="text" readonly class="form-control" id="size" placeholder="1">
+                        </div>
+                    </div>
+
+                    <label class="col-sm-7">Dump description</label>
+                    <div class="col-sm-13">
+                            <textarea readonly class="form-control rounded-0" id="description" rows="5"
+                                      placeholder="Dump description."></textarea>
+                    </div>
+
+                    <br>
+                    <div class="form-group row text-center">
+                        <button type="button" class="btn btn-primary mb-3" onclick="onGetRoute()">Get route
+                        </button>
+                        <button type="button" class="btn btn-primary mb-3" onclick="onCloseRoute()">Close
+                            route
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="container">
+    <div class="box">
+        <textarea readonly class="form-control rounded-0" id="answer" rows="5"
+                  placeholder="Answer information"></textarea>
+        <button type="button" class="btn btn-primary mb-2" id="clearLog" onclick="onClearLog()">Clear</button>
+    </div>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript">
+
+    // Create map
+    var map = L.map('map').setView([61.2302, 30.0495], 13);
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Create layer group to draw markers
+    var markerGroup = L.layerGroup().addTo(map);
+
+    // Save all markers to provide it's id
+    var markers = {};
+
+    var vesselInfo = document.getElementById('vesselInfo');
+    var longitude = document.getElementById('longitude');
+    var latitude = document.getElementById('latitude');
+    var dumpType = document.getElementById('type');
+    var dumpSize = document.getElementById('size');
+    var dumpDescription = document.getElementById('description');
+    var answer = document.getElementById('answer');
+    var setCoordinateButton = document.getElementById('setCoordinates');
+    var acceptButton =  document.getElementById('acceptButton');
+    var dumpStatus =  document.getElementById('dumpStatus');
+
+    setCoordinateButton.disabled = true;
+    acceptButton.disabled = true;
+    dumpStatus.disabled = true;
+
+
+    var boatLatitude = '';
+    var boatLongitude = '';
+    var boatLoad = 0;
+    var boatCapacity = 0;
+
+    function printAnswer(value) {
+        answer.value = answer.value + '\n' + value;
+        answer.scrollTop = answer.scrollHeight;
+    }
+
+    function setDefaulValues() {
+        latitude.value = 'Not given';
+        longitude.value = 'Not given';
+        dumpDescription.value = '';
+        dumpType.value = 'Nor given';
+        dumpSize.value = '1';
+    }
+
+
+    function onClearLog() {
+        answer.value = '';
+        answer.scrollTop = answer.scrollHeight;
+    }
+
+    var getVesselInfo = function(){
+        $.ajax({
+            type: 'GET',
+            url: 'vessel/',
+            contentType: 'application/json',
+            async: true,
+
+            success: function (result) {
+
+                var obj = JSON.parse(result);
+                boatLongitude = obj.longitude;
+                boatLatitude  = obj.latitude;
+                latitude.value = boatLatitude;
+                longitude.value = boatLongitude;
+                boatLoad = obj.currentLoad;
+                boatCapacity = obj.capacity;
+
+                vesselInfo.innerText = obj.name + ', load (' + obj.currentLoad + '/' +obj.capacity + ') packets';
+
+                printAnswer('Vessel info was updated '
+                    + longitude.value + ' and latitude ' + latitude.value + ' coordinates');
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                printAnswer('Vessel info was not updated. Error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+    };
+
+    getVesselInfo();
+
+    function onMapClick(e) {
+
+        var tempMarker = L.marker(e.latlng).addTo(markerGroup)
+            .bindPopup('<b>New boat coordinate</b><br />Apply one to save your own coordinate').openPopup()
+            .on('click', selectMarker);
+
+        longitude.value = e.latlng.lng;
+        latitude.value = e.latlng.lat;
+
+        printAnswer('Marker with boat coordinate was added with latitude = '
+            + latitude.value + ' and longitude ' + longitude.value + ' coordinate');
+
+        setCoordinateButton.disabled = false;
+    }
+
+    var onGetRoute = function(){
+        //@RequestMapping(method = GET, value = "/route/")
+        $.ajax({
+            type: 'get',
+            url: 'route/',
+            contentType: 'application/json',
+            async: true,
+
+            success: function (result) {
+                setCoordinateButton.disabled = true;
+                setDefaulValues();
+                markerGroup.clearLayers();
+
+                getVesselInfo();
+                 var boatMarker = L.marker([boatLatitude, boatLongitude]).addTo(markerGroup)
+                    .bindPopup('<b>Current boat coordinate</b><br />Now you are here!').openPopup()
+                    .on('click', selectMarker);
+                boatMarker._icon.style.backgroundColor = 'brown';
+
+
+
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                printAnswer('Vessel route was not updated. Error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+    };
+
+    var onCloseRoute = function(){
+        console.log('close route click');
+    };
+
+    map.on('click', onMapClick);
+
+    function selectMarker(e) {
+
+        var markerTempId = this._leaflet_id;
+        var objectId = 0;
+        markers.forEach(function (item, index, array) {
+            if (markerTempId == markers[index]._leaflet_id) {
+                objectId = index;
+            }
+        });
+
+        $.ajax({
+            type: 'POST',
+            url: 'points/',
+            data: JSON.stringify({
+                "pointIdList": [
+                    {
+                        "id": objectId
+                    }]
+            }),
+            contentType: "application/json",
+            async: true,
+            success: function (result) {
+
+                var obj = JSON.parse(result);
+                obj.forEach(function (item, index, array) {
+
+                    latitude.value = item.latitude;
+                    longitude.value = item.longitude; // TODO - Write answer description
+                    dumpDescription.value = 'New description ';
+                    dumpType.value = item.type;
+                    dumpSize.value = item.size;
+                });
+
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                printAnswer('Get dumps error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+    }
+    
+    var onSetCoordinates = function () {
+        $.ajax({
+            type: 'PUT',
+            url: 'vessel/',
+            data: JSON.stringify({
+                'name': 'VesselName',
+                'capacity': 130,
+                'currentLoad': 0,
+                'longitude': longitude.value,
+                'latitude': latitude.value
+            }),
+            contentType: 'application/json',
+            async: true,
+
+            success: function (result) {
+
+                boatLatitude = latitude.value;
+                boatLongitude = longitude.value;
+                printAnswer('Vessel coordinates were updated '
+                    + longitude.value + ' and latitude ' + latitude.value + ' coordinates');
+
+                setDefaulValues();
+                markerGroup.clearLayers();
+                setCoordinateButton.disabled = true;
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                printAnswer('Vessel coordinates were not updated. Error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+    };
+
+</script>
+
+</body>
+</html>

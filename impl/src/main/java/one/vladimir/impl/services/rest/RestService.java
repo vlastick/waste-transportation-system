@@ -684,8 +684,91 @@ public class RestService {
     @ResponseBody
     public ResponseEntity<String> buildRoute() {
 
-        String answerJSON = "route built";
-        HttpStatus status = HttpStatus.BAD_REQUEST;
+        String answerJSON =
+                "{\n" +
+                    "\"id\" : null,\n" +
+                    "\"routePoints\" : [ {\n" +
+                        "\"id\" : null,\n" +
+                        "\"containedPoint\" : {\n" +
+                            "\"id\" : 14,\n" +
+                            "\"longitude\" : 61.253725645140435,\n" +
+                            "\"latitude\" : 30.05739212036133,\n" +
+                            "\"createdBy\" : {\n" +
+                                "\"login\" : \"Admin\",\n" +
+                                "\"role\" : null,\n" +
+                                "\"password\" : null,\n" +
+                                "\"email\" : null,\n" +
+                                "\"userId\" : 1\n" +
+                            "},\n" +
+                                "\"updatedBy\" : {\n" +
+                                "\"login\" : \"Admin\",\n" +
+                                "\"role\" : null,\n" +
+                                "\"password\" : null,\n" +
+                                "\"email\" : null,\n" +
+                                "\"userId\" : 1\n" +
+                            "},\n" +
+                            "\"group\" : {\n" +
+                                "\"id\" : 2,\n" +
+                                "\"koef\" : null,\n" +
+                                "\"leftLongitude\" : 0.0,\n" +
+                                "\"topLatitude\" : 0.0,\n" +
+                                "\"rightLongitude\" : 1000.0,\n" +
+                                "\"bottomLatitude\" : 1000.0\n" +
+                            "},\n" +
+                            "\"createdWhen\" : 1556640392000,\n" +
+                                "\"updatedWhen\" : 1556640392000,\n" +
+                                "\"status\" : \"UNCONFIRMED\",\n" +
+                                "\"priority\" : null,\n" +
+                                "\"type\" : \"ORGANIC\",\n" +
+                                "\"size\" : null,\n" +
+                                "\"active\" : true,\n" +
+                                "\"pointId\" : 13\n" +
+                            "},\n" +
+                            "\"status\" : \"AWAITING\",\n" +
+                            "\"number\" : 2\n" +
+                            "}, {\n" +
+                        "\"id\" : null,\n" +
+                        "\"containedPoint\" : {\n" +
+                             "\"id\" : 8,\n" +
+                            "\"longitude\" : 61.23754022717303,\n" +
+                            "\"latitude\" : 30.074815750122074,\n" +
+                            "\"createdBy\" : {\n" +
+                                "\"login\" : \"Admin\",\n" +
+                                "\"role\" : null,\n" +
+                                "\"password\" : null,\n" +
+                                "\"email\" : null,\n" +
+                                "\"userId\" : 1\n" +
+                            "},\n" +
+                            "\"updatedBy\" : {\n" +
+                                "\"login\" : \"Admin\",\n" +
+                                "\"role\" : null,\n" +
+                                "\"password\" : null,\n" +
+                                "\"email\" : null,\n" +
+                                "\"userId\" : 1\n" +
+                            "},\n" +
+                            "\"group\" : {\n" +
+                                "\"id\" : 2,\n" +
+                                "\"koef\" : null,\n" +
+                                "\"leftLongitude\" : 0.0,\n" +
+                                "\"topLatitude\" : 0.0,\n" +
+                                "\"rightLongitude\" : 1000.0,\n" +
+                                "\"bottomLatitude\" : 1000.0\n" +
+                            "},\n" +
+                            "\"createdWhen\" : 1556634441000,\n" +
+                            "\"updatedWhen\" : 1556634441000,\n" +
+                            "\"status\" : \"UNCONFIRMED\",\n" +
+                            "\"priority\" : null,\n" +
+                            "\"type\" : \"LIQUID\",\n" +
+                            "\"size\" : null,\n" +
+                            "\"active\" : true,\n" +
+                            "\"pointId\" : 7\n" +
+                        "},\n" +
+                        "\"status\" : \"AWAITING\",\n" +
+                        "\"number\" : 1\n" +
+                    "} ],\n" +
+                    "\"status\" : \"IN_PROGRESS\"\n" +
+                "}";
+        HttpStatus status = HttpStatus.OK;
 
         return new ResponseEntity<>(answerJSON, status);
     }
@@ -716,7 +799,13 @@ public class RestService {
     @ResponseBody
     public ResponseEntity<String> getCurrentVessel() {
 
-        String answerJSON = "vessel returned";
+        String answerJSON = "{\n" +
+                "\"name\":\"newVessel\",\n" +
+                "\"capacity\":130,\n" +
+                "\"currentLoad\":0,\n" +
+                "\"longitude\":\"30.22819519042969\",\n" +
+                "\"latitude\":\"61.239852939915565\"\n" +
+                "}";
         HttpStatus status = HttpStatus.OK;
 
         return new ResponseEntity<>(answerJSON, status);
