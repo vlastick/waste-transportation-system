@@ -66,7 +66,8 @@
                     <div class="form-group col">
                         <input type="text" readonly class="form-control-plaintext" id="latitude" value="Latitude">
                         <input type="text" readonly class="form-control-plaintext" id="longitude" value="Longitude">
-                        <button type="button" class="btn btn-primary mb-2" id="setCoordinates" onclick="onSetCoordinates()">Set boat coordinates
+                        <button type="button" class="btn btn-primary mb-2" id="setCoordinates"
+                                onclick="onSetCoordinates()">Set boat coordinates
                         </button>
                     </div>
                 </div>
@@ -139,6 +140,8 @@
 
     // Create layer group to draw markers
     var markerGroup = L.layerGroup().addTo(map);
+    // Create layer group to draw lines
+    var linesGroup = L.layerGroup().addTo(map);
 
     // Save all markers to provide it's id
     var markers = {};
@@ -151,8 +154,8 @@
     var dumpDescription = document.getElementById('description');
     var answer = document.getElementById('answer');
     var setCoordinateButton = document.getElementById('setCoordinates');
-    var acceptButton =  document.getElementById('acceptButton');
-    var dumpStatus =  document.getElementById('dumpStatus');
+    var acceptButton = document.getElementById('acceptButton');
+    var dumpStatus = document.getElementById('dumpStatus');
 
     setCoordinateButton.disabled = true;
     acceptButton.disabled = true;
@@ -183,7 +186,7 @@
         answer.scrollTop = answer.scrollHeight;
     }
 
-    var getVesselInfo = function(){
+    var getVesselInfo = function () {
         $.ajax({
             type: 'GET',
             url: 'vessel/',
@@ -194,13 +197,13 @@
 
                 var obj = JSON.parse(result);
                 boatLongitude = obj.longitude;
-                boatLatitude  = obj.latitude;
+                boatLatitude = obj.latitude;
                 latitude.value = boatLatitude;
                 longitude.value = boatLongitude;
                 boatLoad = obj.currentLoad;
                 boatCapacity = obj.capacity;
 
-                vesselInfo.innerText = obj.name + ', load (' + obj.currentLoad + '/' +obj.capacity + ') packets';
+                vesselInfo.innerText = obj.name + ', load (' + obj.currentLoad + '/' + obj.capacity + ') packets';
 
                 printAnswer('Vessel info was updated '
                     + longitude.value + ' and latitude ' + latitude.value + ' coordinates');
@@ -229,7 +232,7 @@
         setCoordinateButton.disabled = false;
     }
 
-    var onGetRoute = function(){
+    var onGetRoute = function () {
         //@RequestMapping(method = GET, value = "/route/")
         $.ajax({
             type: 'get',
@@ -238,18 +241,44 @@
             async: true,
 
             success: function (result) {
+
                 setCoordinateButton.disabled = true;
                 setDefaulValues();
-                markerGroup.clearLayers();
 
+                // Clear layer and update and show vessel coordinate
+                markerGroup.clearLayers();
+                linesGroup.clearLayers();
                 getVesselInfo();
-                 var boatMarker = L.marker([boatLatitude, boatLongitude]).addTo(markerGroup)
+                markers = [];  //clear markers structure
+
+                markers['0'] = boatMarker = L.marker([boatLatitude, boatLongitude]).addTo(markerGroup)
                     .bindPopup('<b>Current boat coordinate</b><br />Now you are here!').openPopup()
                     .on('click', selectMarker);
-                boatMarker._icon.style.backgroundColor = 'brown';
+                markers[0]._icon.style.backgroundColor = 'brown';
 
+                // Get route points
+                var obj = JSON.parse(result);
+                obj.routePoints.forEach(function (item, index, array) {
+                    markers[item.id] = L.marker([item.containedPoint.longitude, item.containedPoint.latitude]).addTo(markerGroup)
+                        .bindPopup("<b>Dump " + item.id + " point</b><br/>Status: "
+                            + item.status + "<br/>Type: " + item.type).openPopup()
+                        .on('click', selectMarker);
+                });
 
-
+                // Draw lines
+                var prevLat = '';
+                var prevLong = '';
+                markers.forEach(function (item, index, array) {
+                    if (index != '0') {
+                        var points = [
+                            [prevLat, prevLong],
+                            [item._latlng.lat, item._latlng.lng]
+                        ];
+                        L.polyline(points, {color: 'red', weight: 2}).addTo(linesGroup);
+                    }
+                    prevLat = item._latlng.lat;
+                    prevLong = item._latlng.lng;
+                });
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 printAnswer('Vessel route was not updated. Error: ' +
@@ -258,7 +287,7 @@
         });
     };
 
-    var onCloseRoute = function(){
+    var onCloseRoute = function () {
         console.log('close route click');
     };
 
@@ -304,7 +333,7 @@
             }
         });
     }
-    
+
     var onSetCoordinates = function () {
         $.ajax({
             type: 'PUT',

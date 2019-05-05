@@ -688,7 +688,7 @@ public class RestService {
                 "{\n" +
                     "\"id\" : null,\n" +
                     "\"routePoints\" : [ {\n" +
-                        "\"id\" : null,\n" +
+                        "\"id\" : 1,\n" +
                         "\"containedPoint\" : {\n" +
                             "\"id\" : 14,\n" +
                             "\"longitude\" : 61.253725645140435,\n" +
@@ -727,7 +727,7 @@ public class RestService {
                             "\"status\" : \"AWAITING\",\n" +
                             "\"number\" : 2\n" +
                             "}, {\n" +
-                        "\"id\" : null,\n" +
+                        "\"id\" : 2,\n" +
                         "\"containedPoint\" : {\n" +
                              "\"id\" : 8,\n" +
                             "\"longitude\" : 61.23754022717303,\n" +
