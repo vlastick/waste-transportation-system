@@ -1,6 +1,7 @@
 package one.vladimir.impl.services.rest;
 
 import one.vladimir.api.*;
+import one.vladimir.api.enums.UserRole;
 import one.vladimir.api.pojo.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 
 import java.util.List;
+import java.util.Vector;
 
 import static com.fasterxml.jackson.databind.node.JsonNodeType.OBJECT;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -54,10 +56,9 @@ public class RestService {
     private UserService userService;
 
     @PostConstruct
-    public void postConstructLog(){
+    public void postConstructLog() {
         System.out.println("restService initialized");
     }
-
 
 
     @RequestMapping(method = GET, value = "/point/{strId}")
@@ -560,7 +561,7 @@ public class RestService {
 
     @RequestMapping(method = GET, value = "/test_geo")
     public ResponseEntity<String> testGeo(
-            @RequestParam(name = "command", defaultValue = "")   String command) {
+            @RequestParam(name = "command", defaultValue = "") String command) {
 
         return new ResponseEntity(pointService.testGeo(command), OK);
     }
@@ -631,12 +632,38 @@ public class RestService {
     @RequestMapping(method = POST, value = "/points/")
     @ResponseBody
     public ResponseEntity<String> getPoints(
-            @RequestBody String configJSON ){
+            @RequestBody String configJSON) {
 
 
         String answerJSON = "";
         HttpStatus status = HttpStatus.BAD_REQUEST;
         DumpFilter dumpFilter = filterService.createDumpFilterFromJson(configJSON);
+        User user = userService.getAuthenticatedUser();
+        List<Integer> creatorsIdList;
+        switch (user.getRole()) {
+            case TOURIST:
+                dumpFilter = new DumpFilter();
+                creatorsIdList = new Vector<>();
+                creatorsIdList.add(user.getUserId());
+                dumpFilter.setCreatorsIdList(creatorsIdList);
+                System.out.println("tourist");
+                break;
+            case CREWMAN:
+                if (dumpFilter.getPointIdList() == null || dumpFilter.getPointIdList().size() != 1) {
+                    dumpFilter = new DumpFilter();
+                    creatorsIdList = new Vector<>();
+                    creatorsIdList.add(user.getUserId());
+                    dumpFilter.setCreatorsIdList(creatorsIdList);
+                    break;
+                }
+                dumpFilter.setGroupidList(null);
+                dumpFilter.setActive(null);
+                dumpFilter.setMaxSize(null);
+                dumpFilter.setCreatorsIdList(null);
+                dumpFilter.setDumpTypeList(null);
+                break;
+        }
+
         List<Dump> dumps = pointService.getDumpsByFilter(dumpFilter);
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -686,88 +713,88 @@ public class RestService {
 
         String answerJSON =
                 "{\n" +
-                    "\"id\" : null,\n" +
-                    "\"routePoints\" : [ {\n" +
+                        "\"id\" : null,\n" +
+                        "\"routePoints\" : [ {\n" +
                         "\"id\" : 1,\n" +
                         "\"containedPoint\" : {\n" +
-                            "\"id\" : 14,\n" +
-                            "\"longitude\" : 61.23051845016535,\n" +
-                            "\"latitude\" : 30.025144800966082,\n" +
-                            "\"createdBy\" : {\n" +
-                                "\"login\" : \"Admin\",\n" +
-                                "\"role\" : null,\n" +
-                                "\"password\" : null,\n" +
-                                "\"email\" : null,\n" +
-                                "\"userId\" : 1\n" +
-                            "},\n" +
-                                "\"updatedBy\" : {\n" +
-                                "\"login\" : \"Admin\",\n" +
-                                "\"role\" : null,\n" +
-                                "\"password\" : null,\n" +
-                                "\"email\" : null,\n" +
-                                "\"userId\" : 1\n" +
-                            "},\n" +
-                            "\"group\" : {\n" +
-                                "\"id\" : 2,\n" +
-                                "\"koef\" : null,\n" +
-                                "\"leftLongitude\" : 0.0,\n" +
-                                "\"topLatitude\" : 0.0,\n" +
-                                "\"rightLongitude\" : 1000.0,\n" +
-                                "\"bottomLatitude\" : 1000.0\n" +
-                            "},\n" +
-                            "\"createdWhen\" : 1556640392000,\n" +
-                                "\"updatedWhen\" : 1556640392000,\n" +
-                                "\"status\" : \"UNCONFIRMED\",\n" +
-                                "\"priority\" : null,\n" +
-                                "\"type\" : \"ORGANIC\",\n" +
-                                "\"size\" : null,\n" +
-                                "\"active\" : true,\n" +
-                                "\"pointId\" : 13\n" +
-                            "},\n" +
-                            "\"status\" : \"AWAITING\",\n" +
-                            "\"number\" : 2\n" +
-                            "}, {\n" +
+                        "\"id\" : 14,\n" +
+                        "\"longitude\" : 61.23051845016535,\n" +
+                        "\"latitude\" : 30.025144800966082,\n" +
+                        "\"createdBy\" : {\n" +
+                        "\"login\" : \"Admin\",\n" +
+                        "\"role\" : null,\n" +
+                        "\"password\" : null,\n" +
+                        "\"email\" : null,\n" +
+                        "\"userId\" : 1\n" +
+                        "},\n" +
+                        "\"updatedBy\" : {\n" +
+                        "\"login\" : \"Admin\",\n" +
+                        "\"role\" : null,\n" +
+                        "\"password\" : null,\n" +
+                        "\"email\" : null,\n" +
+                        "\"userId\" : 1\n" +
+                        "},\n" +
+                        "\"group\" : {\n" +
+                        "\"id\" : 2,\n" +
+                        "\"koef\" : null,\n" +
+                        "\"leftLongitude\" : 0.0,\n" +
+                        "\"topLatitude\" : 0.0,\n" +
+                        "\"rightLongitude\" : 1000.0,\n" +
+                        "\"bottomLatitude\" : 1000.0\n" +
+                        "},\n" +
+                        "\"createdWhen\" : 1556640392000,\n" +
+                        "\"updatedWhen\" : 1556640392000,\n" +
+                        "\"status\" : \"UNCONFIRMED\",\n" +
+                        "\"priority\" : null,\n" +
+                        "\"type\" : \"ORGANIC\",\n" +
+                        "\"size\" : null,\n" +
+                        "\"active\" : true,\n" +
+                        "\"pointId\" : 13\n" +
+                        "},\n" +
+                        "\"status\" : \"AWAITING\",\n" +
+                        "\"number\" : 2\n" +
+                        "}, {\n" +
                         "\"id\" : 2,\n" +
                         "\"containedPoint\" : {\n" +
-                             "\"id\" : 8,\n" +
-                            "\"longitude\" : 61.23572297641526,\n" +
-                            "\"latitude\" : 30.04284023949008,\n" +
-                            "\"createdBy\" : {\n" +
-                                "\"login\" : \"Admin\",\n" +
-                                "\"role\" : null,\n" +
-                                "\"password\" : null,\n" +
-                                "\"email\" : null,\n" +
-                                "\"userId\" : 1\n" +
-                            "},\n" +
-                            "\"updatedBy\" : {\n" +
-                                "\"login\" : \"Admin\",\n" +
-                                "\"role\" : null,\n" +
-                                "\"password\" : null,\n" +
-                                "\"email\" : null,\n" +
-                                "\"userId\" : 1\n" +
-                            "},\n" +
-                            "\"group\" : {\n" +
-                                "\"id\" : 2,\n" +
-                                "\"koef\" : null,\n" +
-                                "\"leftLongitude\" : 0.0,\n" +
-                                "\"topLatitude\" : 0.0,\n" +
-                                "\"rightLongitude\" : 1000.0,\n" +
-                                "\"bottomLatitude\" : 1000.0\n" +
-                            "},\n" +
-                            "\"createdWhen\" : 1556634441000,\n" +
-                            "\"updatedWhen\" : 1556634441000,\n" +
-                            "\"status\" : \"UNCONFIRMED\",\n" +
-                            "\"priority\" : null,\n" +
-                            "\"type\" : \"LIQUID\",\n" +
-                            "\"size\" : null,\n" +
-                            "\"active\" : true,\n" +
-                            "\"pointId\" : 7\n" +
+                        "\"id\" : 8,\n" +
+                        "\"longitude\" : 61.23572297641526,\n" +
+                        "\"latitude\" : 30.04284023949008,\n" +
+                        "\"createdBy\" : {\n" +
+                        "\"login\" : \"Admin\",\n" +
+                        "\"role\" : null,\n" +
+                        "\"password\" : null,\n" +
+                        "\"email\" : null,\n" +
+                        "\"userId\" : 1\n" +
+                        "},\n" +
+                        "\"updatedBy\" : {\n" +
+                        "\"login\" : \"Admin\",\n" +
+                        "\"role\" : null,\n" +
+                        "\"password\" : null,\n" +
+                        "\"email\" : null,\n" +
+                        "\"userId\" : 1\n" +
+                        "},\n" +
+                        "\"group\" : {\n" +
+                        "\"id\" : 2,\n" +
+                        "\"koef\" : null,\n" +
+                        "\"leftLongitude\" : 0.0,\n" +
+                        "\"topLatitude\" : 0.0,\n" +
+                        "\"rightLongitude\" : 1000.0,\n" +
+                        "\"bottomLatitude\" : 1000.0\n" +
+                        "},\n" +
+                        "\"createdWhen\" : 1556634441000,\n" +
+                        "\"updatedWhen\" : 1556634441000,\n" +
+                        "\"status\" : \"UNCONFIRMED\",\n" +
+                        "\"priority\" : null,\n" +
+                        "\"type\" : \"LIQUID\",\n" +
+                        "\"size\" : null,\n" +
+                        "\"active\" : true,\n" +
+                        "\"pointId\" : 7\n" +
                         "},\n" +
                         "\"status\" : \"AWAITING\",\n" +
                         "\"number\" : 1\n" +
-                    "} ],\n" +
-                    "\"status\" : \"IN_PROGRESS\"\n" +
-                "}";
+                        "} ],\n" +
+                        "\"status\" : \"IN_PROGRESS\"\n" +
+                        "}";
         HttpStatus status = HttpStatus.OK;
 
         return new ResponseEntity<>(answerJSON, status);
