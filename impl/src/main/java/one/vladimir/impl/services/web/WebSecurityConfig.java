@@ -24,7 +24,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                     .antMatchers("/css/**", "/fonts/**", "/img/**", "/js/**", "/index").permitAll()
-                    .antMatchers("/request", "/crewman").hasAnyAuthority("ADMIN", "TOURIST")
+                    .antMatchers("/request", "/crewman", "statistics").hasAnyAuthority("ADMIN", "TOURIST")
                     .anyRequest().authenticated()
                 .and()
                     .formLogin()

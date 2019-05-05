@@ -15,6 +15,7 @@
 <div class="container">
     <div class="box">
         <h2 class="intro-text text-center">Login page</h2>
+        <br/>
         <form th:action="@{/login}" method="post" class="text-center">
             <label> User Name : <input type="text" name="username"/> </label>
             <label> Password: <input type="password" name="password"/> </label>
@@ -26,6 +27,7 @@
         <div th:if="${param.logout}" class="text-center">
             You have been logged out.
         </div>
+        <br/>
     </div>
 </div>
 </body>

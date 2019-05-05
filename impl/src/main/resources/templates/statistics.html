@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Waste transportation system</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/business-casual.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+          integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+            integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+            crossorigin=""></script>
+
+</head>
+<body>
+
+<div class="brand"><font color="#6495ed">Waste transportation system</font></div>
+<div class="address-bar"><font color="#6495ed">Rest slow and clean</font></div>
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">WTS. Request</a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="index">About us</a>
+                </li>
+                <li>
+                    <a href="request">Make request</a>
+                </li>
+                <li>
+                    <a href="crewman">Boat page</a>
+                </li>
+                <li>
+                    <a href="statistics">Statistics page</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="box">
+        <form>
+            <div class="form-group col">
+                <h3 class="intro-text text-center">Statistics
+                </h3>
+                <br>
+                <div class="col-sm-7 text-center">
+                    <div id="map" style="height: 400px;"></div>
+                    <br>
+                    <div class="form-group col">
+                        <input type="text" readonly class="form-control-plaintext" id="latitude" value="Latitude">
+                        <input type="text" readonly class="form-control-plaintext" id="longitude" value="Longitude">
+                    </div>
+                </div>
+
+                <div class="col-sm-4" id="controlLayer">
+                    <h4 class="intro-text text-center">Points filter</h4>
+
+                    <div class="form-group row">
+                        <label class="col-sm-5">Status</label>
+                        <div class="col-sm-7">
+                            <select id="dumpStatus" class="form-control">
+                                <option selected>UNCONFIRMED</option>
+                                <option>UNREMOVED</option>
+                                <option>REMOVED</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-5">Dump type</label>
+                        <div class="col-sm-7">
+                            <select id="type" class="form-control">
+                                <option selected>LIQUID</option>
+                                <option>SOLID</option>
+                                <option>ORGANIC</option>
+                                <option>MIXED</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-7">Dump size in packages</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="size" placeholder="none">
+                        </div>
+                    </div>
+                    <br>
+
+                    <h4 class="intro-text text-center">Routes filter</h4>
+
+                    <div class="form-group row">
+                        <label class="col-sm-5">Status</label>
+                        <div class="col-sm-7">
+                            <select id="routeStatus" class="form-control">
+                                <option selected>IN_PROGRESS</option>
+                                <option>CANCELLED</option>
+                                <option>COMPLETED</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-5">Status</label>
+                        <div class="col-sm-7">
+                            <select id="vesselName" class="form-control">
+                                <option selected>Vessel1</option>
+                                <option>Vessel2</option>
+                                <option>Vessel3</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h4 class="intro-text text-center">Start data/End data fields...</h4>
+
+
+                    <div class="form-group row text-center">
+                        <button type="button" class="btn btn-primary mb-3" onclick="onGetPoints()">Get points
+                        </button>
+                        <button type="button" class="btn btn-primary mb-3" onclick="onGetRoutes()">Get routes
+                        </button>
+                        <button type="button" class="btn btn-primary mb-3" onclick="onClear()">Clear
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="container">
+    <div class="box">
+        <textarea readonly class="form-control rounded-0" id="answer" rows="5"
+                  placeholder="Answer information"></textarea>
+        <button type="button" class="btn btn-primary mb-2" id="clearLog" onclick="onClearLog()">Clear</button>
+    </div>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript">
+
+    // Create map
+    var map = L.map('map').setView([61.2302, 30.0495], 13);
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Create layer group to draw markers
+    var markerGroup = L.layerGroup().addTo(map);
+    // Create layer group to draw lines
+    var linesGroup = L.layerGroup().addTo(map);
+
+    // Save all markers to provide it's id
+    var markers = {};
+
+</script>
+
+</body>
+</html>
