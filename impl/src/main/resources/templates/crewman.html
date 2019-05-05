@@ -111,7 +111,8 @@
                     <div class="form-group row text-center">
                         <button type="button" class="btn btn-primary mb-3" onclick="onGetRoute()">Get route
                         </button>
-                        <button type="button" class="btn btn-primary mb-3" onclick="onCloseRoute()">Close
+                        <button type="button" class="btn btn-primary mb-3" id="closeRoute" onclick="onCloseRoute()">
+                            Close
                             route
                         </button>
                     </div>
@@ -156,10 +157,12 @@
     var setCoordinateButton = document.getElementById('setCoordinates');
     var acceptButton = document.getElementById('acceptButton');
     var dumpStatus = document.getElementById('dumpStatus');
+    var closeRouteButton = document.getElementById('closeRoute');
 
     setCoordinateButton.disabled = true;
     acceptButton.disabled = true;
     dumpStatus.disabled = true;
+    closeRouteButton.disabled = true;
 
 
     var boatLatitude = '';
@@ -215,8 +218,6 @@
         });
     };
 
-    getVesselInfo();
-
     function onMapClick(e) {
 
         var tempMarker = L.marker(e.latlng).addTo(markerGroup)
@@ -230,6 +231,8 @@
             + latitude.value + ' and longitude ' + longitude.value + ' coordinate');
 
         setCoordinateButton.disabled = false;
+        acceptButton.disabled = true;
+        dumpStatus.disabled = true;
     }
 
     var onGetRoute = function () {
@@ -250,11 +253,13 @@
                 linesGroup.clearLayers();
                 getVesselInfo();
                 markers = [];  //clear markers structure
+                acceptButton.disabled = true;
+                dumpStatus.disabled = true;
 
-                markers['0'] = boatMarker = L.marker([boatLatitude, boatLongitude]).addTo(markerGroup)
+                markers['0'] = L.marker([boatLatitude, boatLongitude]).addTo(markerGroup)
                     .bindPopup('<b>Current boat coordinate</b><br />Now you are here!').openPopup()
                     .on('click', selectMarker);
-                markers[0]._icon.style.backgroundColor = 'brown';
+                markers['0']._icon.style.backgroundColor = 'brown';
 
                 // Get route points
                 var obj = JSON.parse(result);
@@ -279,16 +284,36 @@
                     prevLat = item._latlng.lat;
                     prevLong = item._latlng.lng;
                 });
+
+                // Enable button close route if it exists
+                if (markers.length > 1) {
+                    closeRouteButton.disabled = false;
+                } else {
+                    closeRouteButton.disabled = true;
+                }
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 printAnswer('Vessel route was not updated. Error: ' +
                     jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+                acceptButton.disabled = true;
+                dumpStatus.disabled = true;
             }
         });
     };
 
     var onCloseRoute = function () {
         console.log('close route click');
+        markerGroup.clearLayers();
+        linesGroup.clearLayers();
+        markers = [];  //clear markers structure
+        acceptButton.disabled = true;
+        dumpStatus.disabled = true;
+
+        // TODO - Create realisation of this method
+    };
+
+    var onAccept = function(){
+        // TODO - create put point to change point status
     };
 
     map.on('click', onMapClick);
@@ -296,42 +321,65 @@
     function selectMarker(e) {
 
         var markerTempId = this._leaflet_id;
-        var objectId = 0;
+        var objectId = -1;
         markers.forEach(function (item, index, array) {
             if (markerTempId == markers[index]._leaflet_id) {
                 objectId = index;
             }
         });
+        if (objectId > 0 ) {
+            $.ajax({
+                type: 'POST',
+                url: 'points/',
+                data: JSON.stringify({
+                    "pointIdList": [
+                        {
+                            "id": objectId
+                        }]
+                }),
+                contentType: "application/json",
+                async: true,
+                success: function (result) {
 
-        $.ajax({
-            type: 'POST',
-            url: 'points/',
-            data: JSON.stringify({
-                "pointIdList": [
-                    {
-                        "id": objectId
-                    }]
-            }),
-            contentType: "application/json",
-            async: true,
-            success: function (result) {
+                    var obj = JSON.parse(result);
+                    obj.forEach(function (item, index, array) {
 
-                var obj = JSON.parse(result);
-                obj.forEach(function (item, index, array) {
+                        latitude.value = item.latitude;
+                        longitude.value = item.longitude; // TODO - Write answer description
+                        dumpDescription.value = 'New description ';
+                        dumpStatus.value = item.status;
+                        dumpType.value = item.type;
+                        dumpSize.value = item.size;
+                        dumpStatus.disabled = false;
+                        acceptButton.disabled = false;
+                        printAnswer('Dump was selected');
+                    });
 
-                    latitude.value = item.latitude;
-                    longitude.value = item.longitude; // TODO - Write answer description
-                    dumpDescription.value = 'New description ';
-                    dumpType.value = item.type;
-                    dumpSize.value = item.size;
-                });
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    printAnswer('Get dumps error: ' +
+                        jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+                }
+            });
+        }else if (objectId == 0 ) {
+            latitude.value = boatLatitude;
+            longitude.value = boatLongitude; // TODO - Write answer description
+            dumpDescription.value = 'Pol, you are here now';
+            dumpType.value =  'This is your ship';
+            dumpSize.value = 'One person';
+            dumpStatus.disabled = true;
+            acceptButton.disabled = true;
+            printAnswer('Ship was found');
 
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                printAnswer('Get dumps error: ' +
-                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
-            }
-        });
+        }
+        else{
+            dumpDescription.value = 'Marker not found';
+            dumpType.value =  'Marker not found';
+            dumpSize.value = 'Marker not found';
+            dumpStatus.disabled = true;
+            acceptButton.disabled = true;
+            printAnswer('Nothing was found');
+        }
     }
 
     var onSetCoordinates = function () {
@@ -356,7 +404,14 @@
                     + longitude.value + ' and latitude ' + latitude.value + ' coordinates');
 
                 setDefaulValues();
+
                 markerGroup.clearLayers();
+                linesGroup.clearLayers();
+
+                L.marker([boatLatitude, boatLongitude]).addTo(markerGroup)
+                    .bindPopup('<b>Current boat coordinate</b><br />Now you are here!').openPopup()
+                    .on('click', selectMarker);
+
                 setCoordinateButton.disabled = true;
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -365,6 +420,9 @@
             }
         });
     };
+
+    getVesselInfo();
+    onSetCoordinates();
 
 </script>
 

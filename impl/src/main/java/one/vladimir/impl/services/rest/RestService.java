@@ -691,8 +691,8 @@ public class RestService {
                         "\"id\" : 1,\n" +
                         "\"containedPoint\" : {\n" +
                             "\"id\" : 14,\n" +
-                            "\"longitude\" : 61.253725645140435,\n" +
-                            "\"latitude\" : 30.05739212036133,\n" +
+                            "\"longitude\" : 61.23051845016535,\n" +
+                            "\"latitude\" : 30.025144800966082,\n" +
                             "\"createdBy\" : {\n" +
                                 "\"login\" : \"Admin\",\n" +
                                 "\"role\" : null,\n" +
@@ -730,8 +730,8 @@ public class RestService {
                         "\"id\" : 2,\n" +
                         "\"containedPoint\" : {\n" +
                              "\"id\" : 8,\n" +
-                            "\"longitude\" : 61.23754022717303,\n" +
-                            "\"latitude\" : 30.074815750122074,\n" +
+                            "\"longitude\" : 61.23572297641526,\n" +
+                            "\"latitude\" : 30.04284023949008,\n" +
                             "\"createdBy\" : {\n" +
                                 "\"login\" : \"Admin\",\n" +
                                 "\"role\" : null,\n" +
@@ -803,8 +803,8 @@ public class RestService {
                 "\"name\":\"newVessel\",\n" +
                 "\"capacity\":130,\n" +
                 "\"currentLoad\":0,\n" +
-                "\"longitude\":\"30.22819519042969\",\n" +
-                "\"latitude\":\"61.239852939915565\"\n" +
+                "\"longitude\":\"30.034245772883004\",\n" +
+                "\"latitude\":\"61.21944564146565\"\n" +
                 "}";
         HttpStatus status = HttpStatus.OK;
 

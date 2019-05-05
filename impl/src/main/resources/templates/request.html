@@ -231,7 +231,7 @@
             setControlEnabled(true)
             setMapEnabled(false);
             blockMarkers = true;
-        }else{
+        } else {
             alert('Please apply or cancel your order before create a new marker');
             printAnswer('Please apply or cancel your order before create a new marker');
         }
@@ -241,47 +241,46 @@
 
     function selectMarker(e) {
 
-        if(!blockMarkers) {
+        if (!blockMarkers) {
             var markerTempId = this._leaflet_id;
-            var objectId = 0;
+            var objectId = -1;
             markers.forEach(function (item, index, array) {
                 if (markerTempId == markers[index]._leaflet_id) {
                     objectId = index;
                 }
             });
+            if (objectId != -1) {
+                $.ajax({
+                    type: 'POST',
+                    url: 'points/',
+                    data: JSON.stringify({
+                        "pointIdList": [
+                            {
+                                "id": objectId
+                            }]
+                    }),
+                    contentType: "application/json",
+                    async: true,
+                    success: function (result) {
 
-            $.ajax({
-                type: 'POST',
-                url: 'points/',
-                data: JSON.stringify({
-                    "pointIdList": [
-                        {
-                            "id": objectId
-                        }]
-                }),
-                contentType: "application/json",
-                async: true,
-                success: function (result) {
+                        var obj = JSON.parse(result);
+                        obj.forEach(function (item, index, array) {
 
-                    var obj = JSON.parse(result);
-                    obj.forEach(function (item, index, array) {
+                            latitude.value = item.latitude;
+                            longitude.value = item.longitude; // TODO - Write answer description
+                            dumpDescription.value = 'New description ';
+                            dumpType.value = item.type;
+                            dumpSize.value = item.size;
+                        });
 
-                        latitude.value = item.latitude;
-                        longitude.value = item.longitude; // TODO - Write answer description
-                        dumpDescription.value = 'New description ';
-                        dumpType.value = item.type;
-                        dumpSize.value = item.size;
-                    });
-
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    printAnswer('Get dumps error: ' +
-                        jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
-                }
-            });
-        }
-        else
-        {
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        printAnswer('Get dumps error: ' +
+                            jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+                    }
+                });
+            }
+        } else {
             alert('Please apply or cancel your order before select a new marker');
             printAnswer('Please apply or cancel your order before select a new marker');
         }
@@ -343,8 +342,8 @@
                 obj.forEach(function (item, index, array) {
 
                     markers[item.id] = L.marker([item.longitude, item.latitude]).addTo(markerGroup)
-                        .bindPopup("<b>Dump "+ item.id + " point</b><br/>Status: "
-                            + item.status +"<br/>Type: " + item.type).openPopup()
+                        .bindPopup("<b>Dump " + item.id + " point</b><br/>Status: "
+                            + item.status + "<br/>Type: " + item.type).openPopup()
                         .on('click', selectMarker);
                 });
             },
