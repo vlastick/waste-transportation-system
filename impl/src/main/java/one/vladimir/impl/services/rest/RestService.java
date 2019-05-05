@@ -687,8 +687,22 @@ public class RestService {
 
         String answerJSON = "";
         HttpStatus status = HttpStatus.BAD_REQUEST;
-        System.out.println(configJSON);
         RouteFilter routeFilter = filterService.createRouteFilterFromJson(configJSON);
+        User user = userService.getAuthenticatedUser();
+        switch (user.getRole()) {
+            case CREWMAN:
+                routeFilter = new RouteFilter();
+                List<Integer> vesselIdList = new Vector<>();
+                vesselIdList.add(transportService.getVesselByCrewmanId(user.getUserId()).getId());
+                routeFilter.setVesselIdList(vesselIdList);
+                break;
+            case ADMIN:
+                break;
+            default:
+                answerJSON = "Access denied";
+                status = HttpStatus.FORBIDDEN;
+                return new ResponseEntity<>(answerJSON, status);
+        }
         List<Route> routes = routeService.getRoutesByFilter(routeFilter);
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -833,12 +847,21 @@ public class RestService {
         JSONParser jsonParser = new JSONParser();
         Double longitude;
         Double latitude;
+        ObjectMapper mapper = new ObjectMapper();
         try {
             Object object = jsonParser.parse(configJSON);
             JSONObject jsonObject = (JSONObject) object;
-            latitude = (Double) jsonObject.get("latitude");
-            longitude = (Double) jsonObject.get("longitude");
+            String latStr, lonStr;
+            latStr = (String) jsonObject.get("latitude");
+            lonStr = (String) jsonObject.get("longitude") ;
+            System.out.println(latStr + " " + lonStr);
+            latitude = Double.parseDouble(latStr);
+            longitude = Double.parseDouble(lonStr);
         } catch (ParseException e) {
+            answerJSON = "Invalid body";
+            status = HttpStatus.BAD_REQUEST;
+            return new ResponseEntity<>(answerJSON, status);
+        } catch (NumberFormatException e) {
             answerJSON = "Invalid body";
             status = HttpStatus.BAD_REQUEST;
             return new ResponseEntity<>(answerJSON, status);
@@ -856,14 +879,22 @@ public class RestService {
     @ResponseBody
     public ResponseEntity<String> getCurrentVessel() {
 
-        String answerJSON = "{\n" +
-                "\"name\":\"newVessel\",\n" +
-                "\"capacity\":130,\n" +
-                "\"currentLoad\":0,\n" +
-                "\"longitude\":\"30.034245772883004\",\n" +
-                "\"latitude\":\"61.21944564146565\"\n" +
-                "}";
-        HttpStatus status = HttpStatus.OK;
+        String answerJSON = "";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        User user = userService.getAuthenticatedUser();
+        if (user.getRole() != UserRole.CREWMAN) {
+            answerJSON = "Access denied";
+            status = HttpStatus.FORBIDDEN;
+            return new ResponseEntity<>(answerJSON, status);
+        }
+        Vessel vessel = transportService.getVesselByCrewmanId(user.getUserId());
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            answerJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(vessel);
+        } catch (JsonProcessingException e) {
+            answerJSON = "Can't parse class to JSON";
+            status = HttpStatus.BAD_REQUEST;
+        }
 
         return new ResponseEntity<>(answerJSON, status);
     }
