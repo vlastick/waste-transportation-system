@@ -48,4 +48,10 @@ public class TransportServiceImpl implements TransportService {
         return "Vessel coordinates updated";
     }
 
+    @Override
+    public Vessel getVesselByCrewmanId(Integer id) {
+        Vessel vessel;
+        vessel = db.getVesselByCrewmanId(id);
+        return vessel;
+    }
 }

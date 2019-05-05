@@ -74,7 +74,7 @@ public class DatabaseImpl implements Database {
         df.setCreatorsIdList(ids);
         ObjectMapper mapper = new ObjectMapper();
         try {
-            System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this.getDumpsByFilter(df)));
+            System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this.getVesselByCrewmanId(4)));
         } catch (JsonProcessingException e) {
         }*/
 
@@ -646,5 +646,18 @@ public class DatabaseImpl implements Database {
         }
         return routePoints;
     }
+
+    public Vessel getVesselByCrewmanId(Integer id) {
+        VesselEntity vesselEnt;
+        vesselEnt = vesselRepo.findVesselByCrewmansUserUserId(id);
+        Vessel vessel = vesselEnt.getVessel();
+        try {
+            vessel.setCurrRoute(routeRepo.findRouteByVessel(vesselEnt).getRoute());
+        } catch (NullPointerException e) {
+            vessel.setCurrRoute(null);
+        }
+        return vessel;
+    }
+
 
 }

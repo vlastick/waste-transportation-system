@@ -29,7 +29,7 @@ public class UserEntity {
     private Collection<PointEntity> updatedPoints;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private CrewmanEntity crewmans;
+    private CrewmanEntity crewman;
 
 
     //    getters and setters

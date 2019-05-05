@@ -10,6 +10,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 import one.vladimir.impl.services.point.PointServiceImpl;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -816,8 +820,34 @@ public class RestService {
     public ResponseEntity<String> updateVesselCoordinates(
             @RequestBody String configJSON) {
 
-        String answerJSON = "vessel coordinates updated";
-        HttpStatus status = HttpStatus.OK;
+        String answerJSON = "";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        User user = userService.getAuthenticatedUser();
+        if (user.getRole() != UserRole.CREWMAN) {
+            answerJSON = "Access denied";
+            status = HttpStatus.FORBIDDEN;
+            return new ResponseEntity<>(answerJSON, status);
+        }
+
+        Vessel vessel = transportService.getVesselByCrewmanId(user.getUserId());
+        JSONParser jsonParser = new JSONParser();
+        Double longitude;
+        Double latitude;
+        try {
+            Object object = jsonParser.parse(configJSON);
+            JSONObject jsonObject = (JSONObject) object;
+            latitude = (Double) jsonObject.get("latitude");
+            longitude = (Double) jsonObject.get("longitude");
+        } catch (ParseException e) {
+            answerJSON = "Invalid body";
+            status = HttpStatus.BAD_REQUEST;
+            return new ResponseEntity<>(answerJSON, status);
+        }
+        vessel.setLongitude(longitude);
+        vessel.setLatitude(latitude);
+        transportService.updateVessel(vessel);
+        answerJSON = "Coordinates updated";
+        status = HttpStatus.OK;
 
         return new ResponseEntity<>(answerJSON, status);
     }

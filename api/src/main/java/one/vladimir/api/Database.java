@@ -49,6 +49,8 @@ public interface Database {
 
     public User getUserByLogin(String login);
 
+    public Vessel getVesselByCrewmanId(Integer id);
+
 
     /**
      * get group that contains point with coordinates

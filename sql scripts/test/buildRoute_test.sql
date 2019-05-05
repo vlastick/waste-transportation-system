@@ -1,6 +1,7 @@
 insert into user_entity(user_id, email, login, password, role, active) values (1, "admin@mail.ru", "admin", "123456", "ADMIN", 1);
 insert into user_entity(user_id, email, login, password, role, active) values (2, "admin@mail.ru", "tourist", "123456", "TOURIST", 1);
 insert into user_entity(user_id, email, login, password, role, active) values (3, "admin@mail.ru", "captain", "123456", "CREWMAN", 1);
+insert into user_entity(user_id, email, login, password, role, active) values (4, "admin@mail.ru", "captain2", "123456", "CREWMAN", 1);
 
 insert into point_group_entity(group_id, koef, left_longitude, top_latitude, right_longitude, bottom_latitude) values  (1, 1, 0, 0, 100, 100);
 insert into point_group_entity(group_id, koef, left_longitude, top_latitude, right_longitude, bottom_latitude) values (2, 1, 100, 100, 200, 200);
@@ -26,6 +27,9 @@ insert into vessel_entity(vessel_id, capacity, current_load, latitude, longitude
 insert into vessel_entity(vessel_id, capacity, current_load, latitude, longitude, name) values (2, 100, 10, 49, 50, "Vessel2");
 insert into vessel_entity(vessel_id, capacity, current_load, latitude, longitude, name) values (3, 100, 10, 89, 50, "Vessel3");
 insert into vessel_entity(vessel_id, capacity, current_load, latitude, longitude, name) values (4, 100, 10, 90, 50, "Strange Vessel");
+
+insert into crewman_entity(crewman_id, user_id, vessel_id) values (1, 3, 1);
+insert into crewman_entity(crewman_id, user_id, vessel_id) values (2, 4, 2);
 
 insert into route_entity(route_id, status, vessel_id) values (1, "IN_PROGRESS", 1);
 insert into route_entity(route_id, status, vessel_id) values (2, "IN_PROGRESS", 2);
