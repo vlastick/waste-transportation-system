@@ -266,8 +266,9 @@
                 // Get route points
                 var obj = JSON.parse(result);
                 obj.routePoints.forEach(function (item, index, array) {
-                    markers[item.id] = L.marker([item.containedPoint.longitude, item.containedPoint.latitude]).addTo(markerGroup)
-                        .bindPopup("<b>Dump " + item.id + " point</b><br/>Status: "
+
+                    markers[item.containedPoint.pointId] = L.marker([item.containedPoint.latitude, item.containedPoint.longitude]).addTo(markerGroup)
+                        .bindPopup("<b>" + item.number + " object " + " point</b><br/>Status: "
                             + item.status + "<br/>Type: " + item.type).openPopup()
                         .on('click', selectMarker);
                 });
@@ -337,6 +338,32 @@
 
     map.on('click', onMapClick);
 
+    var getPoint = function (type, objectId) {
+        var obj = ''
+        $.ajax({
+            type: 'POST',
+            url: 'points/?type=' + type,
+            data: JSON.stringify({
+                "pointIdList": [
+                    {
+                        "id": objectId
+                    }]
+            }),
+            contentType: "application/json",
+            async: true,
+            success: function (result) {
+
+                obj = JSON.parse(result);
+                console.log(obj);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                printAnswer('Get dumps error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+        return obj;
+    }
+
     function selectMarker(e) {
 
         var markerTempId = this._leaflet_id;
@@ -347,40 +374,38 @@
             }
         });
         if (objectId > 0) {
-            $.ajax({
-                type: 'POST',
-                url: 'points/',
-                data: JSON.stringify({
-                    "pointIdList": [
-                        {
-                            "id": objectId
-                        }]
-                }),
-                contentType: "application/json",
-                async: true,
-                success: function (result) {
 
-                    var obj = JSON.parse(result);
-                    obj.forEach(function (item, index, array) {
+            // If point type is dump
+            if (getPoint("dump", objectId) != '') {
+                obj.forEach(function (item, index, array) {
 
-                        current_point_id = item.id;
-                        latitude.value = item.latitude;
-                        longitude.value = item.longitude; // TODO - Write answer description
-                        dumpDescription.value = 'New description ';
-                        //dumpStatus.value = item.status;
-                        dumpType.value = item.type;
-                        dumpSize.value = item.size;
-                        dumpStatus.disabled = false;
-                        acceptButton.disabled = false;
-                        printAnswer('Dump was selected');
-                    });
+                    current_point_id = item.id;
+                    latitude.value = item.latitude;
+                    longitude.value = item.longitude; // TODO - Write answer description
+                    dumpDescription.value = 'New description ';
+                    //dumpStatus.value = item.status;
+                    dumpType.value = item.type;
+                    dumpSize.value = item.size;
+                    dumpStatus.disabled = false;
+                    acceptButton.disabled = false;
+                    printAnswer('Dump was selected');
+                });
+            }
+            // If point type is base
+            else if (getPoint("base", objectId) != '') {
+                obj.forEach(function (item, index, array) {
 
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    printAnswer('Get dumps error: ' +
-                        jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
-                }
-            });
+                    current_point_id = item.id;
+                    latitude.value = item.latitude;
+                    longitude.value = item.longitude; // TODO - Write answer description
+                    dumpDescription.value = 'This is base to deliver boat garbage';
+                    dumpType.value = 'This is Base';
+                    dumpSize.value = 'Base';
+                    dumpStatus.disabled = true;
+                    acceptButton.disabled = true;
+                    printAnswer('Base was selected');
+                });
+            }
         } else if (objectId == 0) {
             latitude.value = boatLatitude;
             longitude.value = boatLongitude; // TODO - Write answer description
