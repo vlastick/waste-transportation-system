@@ -760,6 +760,7 @@ public class RestService {
             return new ResponseEntity<>(answerJSON, status);
         }
         answerJSON = routeService.updateRoutePointStatus(routePointId, transportService.getVesselByCrewmanId(user.getUserId()).getId(), routePointStatus);
+        status = OK;
         return new ResponseEntity<>(answerJSON, status);
     }
 
@@ -929,6 +930,7 @@ public class RestService {
         ObjectMapper mapper = new ObjectMapper();
         try {
             answerJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(vessel);
+            status = OK;
         } catch (JsonProcessingException e) {
             answerJSON = "Can't parse class to JSON";
             status = HttpStatus.BAD_REQUEST;
