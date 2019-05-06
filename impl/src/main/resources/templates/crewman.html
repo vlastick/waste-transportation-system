@@ -78,9 +78,8 @@
                         <label class="col-sm-3">Status</label>
                         <div class="col-sm-6">
                             <select id="dumpStatus" class="form-control">
-                                <option selected>UNCONFIRMED</option>
-                                <option>UNREMOVED</option>
-                                <option>REMOVED</option>
+                                <option selected>COMPLETED</option>
+                                <option>CANCELED</option>
                             </select>
                         </div>
                         <button type="button" class="btn btn-primary mb-3" id="acceptButton" onclick="onAccept()">Accept
@@ -146,6 +145,9 @@
 
     // Save all markers to provide it's id
     var markers = {};
+
+    // Needs for update point status
+    var current_point_id = 0;
 
     var vesselInfo = document.getElementById('vesselInfo');
     var longitude = document.getElementById('longitude');
@@ -312,8 +314,25 @@
         // TODO - Create realisation of this method
     };
 
-    var onAccept = function(){
-        // TODO - create put point to change point status
+    var onAccept = function () {
+        $.ajax({
+            type: 'put',
+            url: 'routepoint/',
+            contentType: 'application/json',
+            async: true,
+            data: JSON.stringify({
+                "id": current_point_id,
+                "status": dumpStatus.value
+            }),
+            success: function (result) {
+                printAnswer('Point status was changed: ' + result);
+                onGetRoute();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                printAnswer('Vessel point was not updated. Error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
     };
 
     map.on('click', onMapClick);
@@ -327,7 +346,7 @@
                 objectId = index;
             }
         });
-        if (objectId > 0 ) {
+        if (objectId > 0) {
             $.ajax({
                 type: 'POST',
                 url: 'points/',
@@ -344,10 +363,11 @@
                     var obj = JSON.parse(result);
                     obj.forEach(function (item, index, array) {
 
+                        current_point_id = item.id;
                         latitude.value = item.latitude;
                         longitude.value = item.longitude; // TODO - Write answer description
                         dumpDescription.value = 'New description ';
-                        dumpStatus.value = item.status;
+                        //dumpStatus.value = item.status;
                         dumpType.value = item.type;
                         dumpSize.value = item.size;
                         dumpStatus.disabled = false;
@@ -361,20 +381,19 @@
                         jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
                 }
             });
-        }else if (objectId == 0 ) {
+        } else if (objectId == 0) {
             latitude.value = boatLatitude;
             longitude.value = boatLongitude; // TODO - Write answer description
             dumpDescription.value = 'Pol, you are here now';
-            dumpType.value =  'This is your ship';
+            dumpType.value = 'This is your ship';
             dumpSize.value = 'One person';
             dumpStatus.disabled = true;
             acceptButton.disabled = true;
             printAnswer('Ship was found');
 
-        }
-        else{
+        } else {
             dumpDescription.value = 'Marker not found';
-            dumpType.value =  'Marker not found';
+            dumpType.value = 'Marker not found';
             dumpSize.value = 'Marker not found';
             dumpStatus.disabled = true;
             acceptButton.disabled = true;
