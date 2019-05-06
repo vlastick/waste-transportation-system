@@ -641,20 +641,34 @@ public class RestService {
             @RequestBody String configJSON) {
 
 
+
         String answerJSON = "";
         HttpStatus status = HttpStatus.BAD_REQUEST;
         PointFilter pointFilter;
 
-        if (type == "dump" || type == "not given") {
+        if (type.equals("dump") || type.equals("not given")) {
             pointFilter = filterService.createDumpFilterFromJson(configJSON);
         } else {
             pointFilter = filterService.createBaseFilterFromJson(configJSON);
         }
+
+        /*ObjectMapper mapper1 = new ObjectMapper();
+        try {
+            System.out.println(mapper1.writerWithDefaultPrettyPrinter().writeValueAsString(pointFilter));
+            if (pointFilter instanceof DumpFilter) {
+                System.out.println("1");
+            } else if (pointFilter instanceof BaseFilter){
+                System.out.println("0");
+            }
+        } catch (JsonProcessingException e) {
+        }*/
+
+
         User user = userService.getAuthenticatedUser();
         List<Integer> creatorsIdList;
         switch (user.getRole()) {
             case TOURIST:
-                if (type == "dump" || type == "not given") {
+                if (type.equals("dump") || type.equals("not given")) {
                     pointFilter = new DumpFilter();
                 } else {
                     pointFilter = new BaseFilter();
@@ -665,7 +679,7 @@ public class RestService {
                 break;
             case CREWMAN:
                 if (pointFilter.getPointIdList() == null || pointFilter.getPointIdList().size() != 1) {
-                    if (type == "dump" || type == "not given") {
+                    if (type.equals("dump") || type.equals("not given")) {
                         pointFilter = new DumpFilter();
                     } else {
                         answerJSON = "access denied";
@@ -680,7 +694,7 @@ public class RestService {
                 pointFilter.setGroupidList(null);
                 pointFilter.setActive(null);
                 pointFilter.setCreatorsIdList(null);
-                if (type == "dump" || type == "not given") {
+                if (type.equals("dump") || type.equals("not given")) {
                     ((DumpFilter)pointFilter).setMaxSize(null);
                     ((DumpFilter)pointFilter).setDumpTypeList(null);
                 }
@@ -693,7 +707,7 @@ public class RestService {
 
         try {
             ObjectMapper mapper = new ObjectMapper();
-            if (type == "dump" || type == "not given") {
+            if (type.equals("dump") || type.equals("not given")) {
                 List<Dump> points = pointService.getDumpsByFilter((DumpFilter) pointFilter);
                 answerJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(points);
             } else {
@@ -705,11 +719,11 @@ public class RestService {
             //TODO: implement exception handling
         }
 
-        ObjectMapper mapper1 = new ObjectMapper();
+        /*ObjectMapper mapper1 = new ObjectMapper();
         try {
-            System.out.println(mapper1.writerWithDefaultPrettyPrinter().writeValueAsString(answerJSON));
+            System.out.println(mapper1.writerWithDefaultPrettyPrinter().writeValueAsString(pointFilter));
         } catch (JsonProcessingException e) {
-        }
+        }*/
         return new ResponseEntity<>(answerJSON, status);
     }
 
