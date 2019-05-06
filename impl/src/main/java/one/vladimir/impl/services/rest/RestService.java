@@ -637,41 +637,69 @@ public class RestService {
     @RequestMapping(method = POST, value = "/points/")
     @ResponseBody
     public ResponseEntity<String> getPoints(
+            @RequestParam(name = "type", defaultValue = "not given") String type,
             @RequestBody String configJSON) {
 
 
         String answerJSON = "";
         HttpStatus status = HttpStatus.BAD_REQUEST;
-        DumpFilter dumpFilter = filterService.createDumpFilterFromJson(configJSON);
+        PointFilter pointFilter;
+
+        if (type == "dump" || type == "not given") {
+            pointFilter = filterService.createDumpFilterFromJson(configJSON);
+        } else {
+            pointFilter = filterService.createBaseFilterFromJson(configJSON);
+        }
         User user = userService.getAuthenticatedUser();
         List<Integer> creatorsIdList;
         switch (user.getRole()) {
             case TOURIST:
-                dumpFilter = new DumpFilter();
+                if (type == "dump" || type == "not given") {
+                    pointFilter = new DumpFilter();
+                } else {
+                    pointFilter = new BaseFilter();
+                }
                 creatorsIdList = new Vector<>();
                 creatorsIdList.add(user.getUserId());
-                dumpFilter.setCreatorsIdList(creatorsIdList);
+                pointFilter.setCreatorsIdList(creatorsIdList);
                 break;
             case CREWMAN:
-                if (dumpFilter.getPointIdList() == null || dumpFilter.getPointIdList().size() != 1) {
-                    dumpFilter = new DumpFilter();
+                if (pointFilter.getPointIdList() == null || pointFilter.getPointIdList().size() != 1) {
+                    if (type == "dump" || type == "not given") {
+                        pointFilter = new DumpFilter();
+                    } else {
+                        answerJSON = "access denied";
+                        status = HttpStatus.FORBIDDEN;
+                        return new ResponseEntity<>(answerJSON, status);
+                    }
                     creatorsIdList = new Vector<>();
                     creatorsIdList.add(user.getUserId());
-                    dumpFilter.setCreatorsIdList(creatorsIdList);
+                    pointFilter.setCreatorsIdList(creatorsIdList);
                     break;
                 }
-                dumpFilter.setGroupidList(null);
-                dumpFilter.setActive(null);
-                dumpFilter.setMaxSize(null);
-                dumpFilter.setCreatorsIdList(null);
-                dumpFilter.setDumpTypeList(null);
+                pointFilter.setGroupidList(null);
+                pointFilter.setActive(null);
+                pointFilter.setCreatorsIdList(null);
+                if (type == "dump" || type == "not given") {
+                    ((DumpFilter)pointFilter).setMaxSize(null);
+                    ((DumpFilter)pointFilter).setDumpTypeList(null);
+                }
+
                 break;
         }
 
-        List<Dump> dumps = pointService.getDumpsByFilter(dumpFilter);
+
+
+
         try {
             ObjectMapper mapper = new ObjectMapper();
-            answerJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(dumps);
+            if (type == "dump" || type == "not given") {
+                List<Dump> points = pointService.getDumpsByFilter((DumpFilter) pointFilter);
+                answerJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(points);
+            } else {
+                List<Base> points = pointService.getBasesByFilter((BaseFilter) pointFilter);
+                answerJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(points);
+            }
             status = HttpStatus.OK;
         } catch (JsonProcessingException e) {
             //TODO: implement exception handling
@@ -784,7 +812,7 @@ public class RestService {
             answerJSON = "Can't parse class to JSON";
             status = HttpStatus.BAD_REQUEST;
         }
-        
+
 
         return new ResponseEntity<>(answerJSON, status);
     }
