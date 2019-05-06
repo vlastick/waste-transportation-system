@@ -252,7 +252,7 @@
             if (objectId != -1) {
                 $.ajax({
                     type: 'POST',
-                    url: 'points/',
+                    url: 'points/?type=dump',
                     data: JSON.stringify({
                         "pointIdList": [
                             {
@@ -331,7 +331,7 @@
 
         $.ajax({
             type: 'POST',
-            url: 'points/',
+            url: 'points/?type=dump',
             contentType: 'application/json',
             data: JSON.stringify({'pointIdList': []}),
             contentType: 'application/json',
@@ -341,8 +341,8 @@
                 markers = [];  //clear markers structure
                 obj.forEach(function (item, index, array) {
 
-                    markers[item.id] = L.marker([item.longitude, item.latitude]).addTo(markerGroup)
-                        .bindPopup("<b>Dump " + item.id + " point</b><br/>Status: "
+                    markers[item.pointId] = L.marker([item.longitude, item.latitude]).addTo(markerGroup)
+                        .bindPopup("<b>Dump point</b><br/>Status: "
                             + item.status + "<br/>Type: " + item.type).openPopup()
                         .on('click', selectMarker);
                 });
