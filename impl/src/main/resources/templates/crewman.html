@@ -339,7 +339,8 @@
     map.on('click', onMapClick);
 
     var getPoint = function (type, objectId) {
-        var obj = ''
+        console.log(type);
+        var obj = '';
         $.ajax({
             type: 'POST',
             url: 'points/?type=' + type,
@@ -352,9 +353,7 @@
             contentType: "application/json",
             async: true,
             success: function (result) {
-
-                obj = JSON.parse(result);
-                console.log(obj);
+                obj =  result;
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 printAnswer('Get dumps error: ' +
@@ -374,9 +373,10 @@
             }
         });
         if (objectId > 0) {
-
-            // If point type is dump
-            if (getPoint("dump", objectId) != '') {
+            var str_obj = getPoint("dump", objectId);
+            console.log("i am here " + str_obj);
+            if (str_obj != '') { // If point type is dump
+                var obj = JSON.parse(str_obj);
                 obj.forEach(function (item, index, array) {
 
                     current_point_id = item.id;
@@ -391,8 +391,11 @@
                     printAnswer('Dump was selected');
                 });
             }
-            // If point type is base
-            else if (getPoint("base", objectId) != '') {
+
+            else { // If point type is base
+                var str_obj = getPoint("base", objectId);
+                console.log("i am here " + str_obj);
+                var obj = JSON.parse(str_obj);
                 obj.forEach(function (item, index, array) {
 
                     current_point_id = item.id;
