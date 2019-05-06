@@ -59,11 +59,30 @@
                 <div class="col-lg-9">
                     <p>Какое то описание параграф 1</p>
                     <p>Какое то описание параграф 2</p>
+                    <button type="button" class="btn btn-primary mb-2" id="submit" onclick="testGeo()">Test geo</button>
                 </div>
             </div>
         </form>
     </div>
 </div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript">
+var testGeo = function(){
+    $.ajax({
+        type: 'get',
+        url: '/test_geo',
+        contentType: "application/json",
+        async: true,
+        success: function (result) {
+            console.log(result);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log("You are not right.");
+        }
+    });
+}
+</script>
 
 </body>
 </html>
