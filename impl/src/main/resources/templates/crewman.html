@@ -245,8 +245,7 @@
             setCoordinateButton.disabled = false;
             acceptButton.disabled = true;
             dumpStatus.disabled = true;
-        }
-        else{
+        } else {
             alert('Please apply or cancel your location before select a new marker');
             printAnswer('Please apply or cancel your location before select a new marker');
         }
@@ -278,7 +277,7 @@
             type: 'post',
             url: 'routes/',
             contentType: 'application/json',
-            data:'{}',
+            data: '{}',
             async: true,
 
             success: function (result) {
@@ -305,10 +304,12 @@
                 console.log(obj[0].routePoints);
                 obj[0].routePoints.forEach(function (item, index, array) {
 
-                    markers[item.containedPoint.pointId] = L.marker([item.containedPoint.latitude, item.containedPoint.longitude]).addTo(markerGroup)
-                        .bindPopup("<b>" + item.number + " object " + " point</b><br/>Status: "
-                            + item.status + "<br/>Type: " + item.type).openPopup()
-                        .on('click', selectMarker);
+                    if ((item.status != 'COMPLETED') &&(item.status != 'CANCELED')) {
+                        markers[item.containedPoint.pointId] = L.marker([item.containedPoint.latitude, item.containedPoint.longitude]).addTo(markerGroup)
+                            .bindPopup("<b>" + item.number + " object " + " point</b><br/>Status: "
+                                + item.status + "<br/>Type: " + item.type).openPopup()
+                            .on('click', selectMarker);
+                    }
                 });
 
                 // Draw lines
@@ -355,6 +356,7 @@
     };
 
     var onAccept = function () {
+        console.log(current_point_id);
         $.ajax({
             type: 'put',
             url: 'routepoint/',
@@ -404,10 +406,8 @@
                 async: true,
                 success: function (result) {
 
-                    console.log('I am still here, still alive!('+result+')');
-
                     if (result != '[ ]') { // We got the dump point
-                        console.log('I am in dump point');
+
                         var obj = JSON.parse(result);
                         obj.forEach(function (item, index, array) {
 
@@ -423,7 +423,6 @@
                             printAnswer('Dump was selected');
                         });
                     } else { // We have no answer, so we can try to get base point in the nested query
-                        console.log('I am still here, still alive! - base point('+result+')');
                         $.ajax({
                             type: 'POST',
                             url: 'points/?type=base',
@@ -437,7 +436,7 @@
                             async: true,
                             success: function (result) {
 
-                                if (result != '' && result !='[ ]') {
+                                if (result != '' && result != '[ ]') {
                                     var obj = JSON.parse(result);
                                     obj.forEach(function (item, index, array) {
 
@@ -449,8 +448,8 @@
                                         dumpDescription.value = 'This is base to deliver boat garbage';
                                         dumpType.value = 'This is Base';
                                         dumpSize.value = 'Base';
-                                        dumpStatus.disabled = true;
-                                        acceptButton.disabled = true;
+                                        dumpStatus.disabled = false;
+                                        acceptButton.disabled = false;
                                         printAnswer('Base was selected');
                                     });
                                 }
