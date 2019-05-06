@@ -71,14 +71,14 @@
 var testGeo = function(){
     $.ajax({
         type: 'get',
-        url: '/test_geo',
+        url: 'test_geo',
         contentType: "application/json",
         async: true,
         success: function (result) {
             console.log(result);
         },
         error: function (jqXHR, textStatus, errorThrown) {
-            console.log("You are not right.");
+            console.log("You are not right.!!!!" + jqXHR + "!!!" + textStatus + "!!!" + errorThrown);
         }
     });
 }

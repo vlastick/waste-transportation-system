@@ -53,7 +53,7 @@ public class GeoImpl implements Geo {
         System.out.println(query);
 
         String hostname = OVERPASS_API;
-        String queryString = query = "is_in(61.2246,30.05194);out;";
+        String queryString  = "is_in(61.2246,30.05194);out;";
         String resultString = "";
 
         System.out.println("There is an input for geo: " + queryString);
@@ -79,16 +79,28 @@ public class GeoImpl implements Geo {
         }
         catch (ParserConfigurationException e){
             e.printStackTrace();
+            resultString += e.toString();
+            System.out.println(e.toString());
         }
         catch (SAXException e){
             e.printStackTrace();
+            resultString += e.toString();
+            System.out.println(e.toString());
         }
         catch (MalformedURLException e){
             e.printStackTrace();
+            resultString += e.toString();
+            System.out.println(e.toString());
         }
         catch (java.io.IOException e){
             e.printStackTrace();
+            resultString += e.toString();
+            System.out.println(e.toString());
         }
+        if(resultString.equals("")){
+            resultString = "There is no answer message with exceptions, why?";
+        }
+
         return resultString;
     }
 
