@@ -22,6 +22,10 @@ public interface PointService {
     List <Dump> getDumpsByFilter(DumpFilter dumpFilter);
 
     // Get points
+    List <Base> getBasesByFilter(BaseFilter baseFilter);
+
+
+    // Get points
     List <Base> getBases();
 
     // Put point

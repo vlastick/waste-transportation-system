@@ -13,6 +13,8 @@ insert into point_entity(point_id, is_active, latitude, longitude, creator_id, g
 insert into point_entity(point_id, is_active, latitude, longitude, creator_id, group_id, updater_id) values (5, 1, 56, 50, 1, 1, 1);
 insert into point_entity(point_id, is_active, latitude, longitude, creator_id, group_id, updater_id) values (6, 1, 66, 50, 1, 1, 1);
 insert into point_entity(point_id, is_active, latitude, longitude, creator_id, group_id, updater_id) values (7, 1, 76, 50, 1, 1, 1);
+insert into point_entity(point_id, is_active, latitude, longitude, creator_id, group_id, updater_id) values (8, 1, 99, 99, 1, 1, 1);
+insert into point_entity(point_id, is_active, latitude, longitude, creator_id, group_id, updater_id) values (9, 1, 1, 1, 1, 1, 1);
 
 
 insert into dump_entity(dump_id, size, type, status, point_id) values (1, 10, "ORGANIC", "UNREMOVED", 1);
@@ -22,6 +24,9 @@ insert into dump_entity(dump_id, size, type, status, point_id) values (4, 11, "O
 insert into dump_entity(dump_id, size, type, status, point_id) values (5, 50, "ORGANIC", "UNREMOVED", 5);
 insert into dump_entity(dump_id, size, type, status, point_id) values (6, 60, "ORGANIC", "UNREMOVED", 6);
 insert into dump_entity(dump_id, size, type, status, point_id) values (7, 70, "ORGANIC", "UNREMOVED", 7);
+
+insert into base_entity(base_id, point_id) values (1, 8);
+insert into base_entity(base_id, point_id) values (2, 9);
 
 insert into vessel_entity(vessel_id, capacity, current_load, latitude, longitude, name) values (1, 100, 20, 9, 50, "Vessel1");
 insert into vessel_entity(vessel_id, capacity, current_load, latitude, longitude, name) values (2, 100, 10, 49, 50, "Vessel2");

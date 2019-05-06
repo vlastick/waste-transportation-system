@@ -71,6 +71,8 @@ public interface Database {
 
     public List<Dump> getDumpsByFilter(DumpFilter dumpFilter);
 
+    public List<Base> getBasesByFilter(BaseFilter baseFilter);
+
     public List<Route> getRoutesByFilter(RouteFilter routeFilter);
 
     public List<RoutePoint> getRoutePointsByPointId(Integer id);

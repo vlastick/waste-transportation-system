@@ -97,6 +97,13 @@ public class PointServiceImpl implements PointService {
     }
 
     @Override
+    public List<Base> getBasesByFilter(BaseFilter baseFilter) {
+        List<Base> bases;
+        bases = db.getBasesByFilter(baseFilter);
+        return  bases;
+    }
+
+    @Override
     public List<Base> getBases() {
         List<Integer> baseIds = new Vector<Integer>();
         List<Base> bases;

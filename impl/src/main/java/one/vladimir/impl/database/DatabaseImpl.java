@@ -68,13 +68,13 @@ public class DatabaseImpl implements Database {
         String message = "DB initialized";
         log.info(message);
 
-        /*DumpFilter df = new DumpFilter();
+        /*BaseFilter df = new BaseFilter();
         List<Integer> ids = new Vector<>();
-        ids.add(2);
-        df.setCreatorsIdList(ids);
+        ids.add(1);
+        df.setGroupidList(ids);
         ObjectMapper mapper = new ObjectMapper();
         try {
-            System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this.getVesselByCrewmanId(4)));
+            System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this.getBasesByFilter(df)));
         } catch (JsonProcessingException e) {
         }*/
 
@@ -579,6 +579,59 @@ public class DatabaseImpl implements Database {
         }
 
         return dumps;
+    }
+
+    public List<Base> getBasesByFilter(BaseFilter baseFilter) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<BaseEntity> query = builder.createQuery(BaseEntity.class);
+        Root<BaseEntity> baseEntity = query.from(BaseEntity.class);
+        Join<BaseEntity, PointEntity> pointEntity = baseEntity.join("point");
+        Join<PointEntity, GroupEntity> groupEntity = pointEntity.join("group");
+        Join<PointEntity, UserEntity> userEntity = pointEntity.join("createdBy");
+
+        Predicate pointIdPred;
+        Predicate groupIdPred;
+        Predicate creatorIdPred;
+        Predicate isActivePred;
+
+        Expression<Integer> pointIdExpr = pointEntity.get("pointId");
+        pointIdPred = pointIdExpr.isNotNull();
+        if (baseFilter.getPointIdList() != null) {
+            pointIdPred = pointIdExpr.in(baseFilter.getPointIdList());
+        }
+
+        Expression<Integer> groupIdExpr = groupEntity.get("groupId");
+        groupIdPred = groupIdExpr.isNotNull();
+        if (baseFilter.getGroupidList() != null) {
+            groupIdPred = groupIdExpr.in(baseFilter.getGroupidList());
+        }
+
+        Expression<String> creatorIdExpr = userEntity.get("userId");
+        creatorIdPred = creatorIdExpr.isNotNull();
+        if (baseFilter.getCreatorsIdList() != null) {
+            creatorIdPred = creatorIdExpr.in(baseFilter.getCreatorsIdList());
+        }
+
+        isActivePred = pointEntity.get("isActive").isNotNull();
+        if (baseFilter.getActive() != null) {
+            isActivePred = builder.equal(pointEntity.get("isActive"), baseFilter.getActive());
+        }
+
+        query.where(pointIdPred, groupIdPred, creatorIdPred, isActivePred);
+
+        List<BaseEntity> baseEntities = entityManager.createQuery(query).getResultList();
+        List<Base> bases = new Vector<Base>();
+        for (BaseEntity baseEnt : baseEntities) {
+            Base base = baseEnt.getBase();
+            baseEnt.getPoint().getPoint(base);
+            Point currPoint = this.getPointById(base.getPointId());
+            base.setGroup(currPoint.getGroup());
+            base.setCreatedBy(currPoint.getCreatedBy());
+            base.setUpdatedBy(currPoint.getUpdatedBy());
+            bases.add(base);
+        }
+
+        return bases;
     }
 
     public List<Route> getRoutesByFilter(RouteFilter routeFilter) {
