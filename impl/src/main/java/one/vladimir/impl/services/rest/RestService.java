@@ -1,6 +1,7 @@
 package one.vladimir.impl.services.rest;
 
 import one.vladimir.api.*;
+import one.vladimir.api.enums.UserRole;
 import one.vladimir.api.pojo.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -9,6 +10,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 import one.vladimir.impl.services.point.PointServiceImpl;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -22,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 
 import java.util.List;
+import java.util.Vector;
 
 import static com.fasterxml.jackson.databind.node.JsonNodeType.OBJECT;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -54,10 +60,9 @@ public class RestService {
     private UserService userService;
 
     @PostConstruct
-    public void postConstructLog(){
+    public void postConstructLog() {
         System.out.println("restService initialized");
     }
-
 
 
     @RequestMapping(method = GET, value = "/point/{strId}")
@@ -560,7 +565,7 @@ public class RestService {
 
     @RequestMapping(method = GET, value = "/test_geo")
     public ResponseEntity<String> testGeo(
-            @RequestParam(name = "command", defaultValue = "")   String command) {
+            @RequestParam(name = "command", defaultValue = "") String command) {
 
         return new ResponseEntity(pointService.testGeo(command), OK);
     }
@@ -631,12 +636,38 @@ public class RestService {
     @RequestMapping(method = POST, value = "/points/")
     @ResponseBody
     public ResponseEntity<String> getPoints(
-            @RequestBody String configJSON ){
+            @RequestBody String configJSON) {
 
 
         String answerJSON = "";
         HttpStatus status = HttpStatus.BAD_REQUEST;
         DumpFilter dumpFilter = filterService.createDumpFilterFromJson(configJSON);
+        User user = userService.getAuthenticatedUser();
+        List<Integer> creatorsIdList;
+        switch (user.getRole()) {
+            case TOURIST:
+                dumpFilter = new DumpFilter();
+                creatorsIdList = new Vector<>();
+                creatorsIdList.add(user.getUserId());
+                dumpFilter.setCreatorsIdList(creatorsIdList);
+                System.out.println("tourist");
+                break;
+            case CREWMAN:
+                if (dumpFilter.getPointIdList() == null || dumpFilter.getPointIdList().size() != 1) {
+                    dumpFilter = new DumpFilter();
+                    creatorsIdList = new Vector<>();
+                    creatorsIdList.add(user.getUserId());
+                    dumpFilter.setCreatorsIdList(creatorsIdList);
+                    break;
+                }
+                dumpFilter.setGroupidList(null);
+                dumpFilter.setActive(null);
+                dumpFilter.setMaxSize(null);
+                dumpFilter.setCreatorsIdList(null);
+                dumpFilter.setDumpTypeList(null);
+                break;
+        }
+
         List<Dump> dumps = pointService.getDumpsByFilter(dumpFilter);
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -656,8 +687,22 @@ public class RestService {
 
         String answerJSON = "";
         HttpStatus status = HttpStatus.BAD_REQUEST;
-        System.out.println(configJSON);
         RouteFilter routeFilter = filterService.createRouteFilterFromJson(configJSON);
+        User user = userService.getAuthenticatedUser();
+        switch (user.getRole()) {
+            case CREWMAN:
+                routeFilter = new RouteFilter();
+                List<Integer> vesselIdList = new Vector<>();
+                vesselIdList.add(transportService.getVesselByCrewmanId(user.getUserId()).getId());
+                routeFilter.setVesselIdList(vesselIdList);
+                break;
+            case ADMIN:
+                break;
+            default:
+                answerJSON = "Access denied";
+                status = HttpStatus.FORBIDDEN;
+                return new ResponseEntity<>(answerJSON, status);
+        }
         List<Route> routes = routeService.getRoutesByFilter(routeFilter);
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -686,88 +731,88 @@ public class RestService {
 
         String answerJSON =
                 "{\n" +
-                    "\"id\" : null,\n" +
-                    "\"routePoints\" : [ {\n" +
+                        "\"id\" : null,\n" +
+                        "\"routePoints\" : [ {\n" +
                         "\"id\" : 1,\n" +
                         "\"containedPoint\" : {\n" +
-                            "\"id\" : 14,\n" +
-                            "\"longitude\" : 61.23051845016535,\n" +
-                            "\"latitude\" : 30.025144800966082,\n" +
-                            "\"createdBy\" : {\n" +
-                                "\"login\" : \"Admin\",\n" +
-                                "\"role\" : null,\n" +
-                                "\"password\" : null,\n" +
-                                "\"email\" : null,\n" +
-                                "\"userId\" : 1\n" +
-                            "},\n" +
-                                "\"updatedBy\" : {\n" +
-                                "\"login\" : \"Admin\",\n" +
-                                "\"role\" : null,\n" +
-                                "\"password\" : null,\n" +
-                                "\"email\" : null,\n" +
-                                "\"userId\" : 1\n" +
-                            "},\n" +
-                            "\"group\" : {\n" +
-                                "\"id\" : 2,\n" +
-                                "\"koef\" : null,\n" +
-                                "\"leftLongitude\" : 0.0,\n" +
-                                "\"topLatitude\" : 0.0,\n" +
-                                "\"rightLongitude\" : 1000.0,\n" +
-                                "\"bottomLatitude\" : 1000.0\n" +
-                            "},\n" +
-                            "\"createdWhen\" : 1556640392000,\n" +
-                                "\"updatedWhen\" : 1556640392000,\n" +
-                                "\"status\" : \"UNCONFIRMED\",\n" +
-                                "\"priority\" : null,\n" +
-                                "\"type\" : \"ORGANIC\",\n" +
-                                "\"size\" : null,\n" +
-                                "\"active\" : true,\n" +
-                                "\"pointId\" : 13\n" +
-                            "},\n" +
-                            "\"status\" : \"AWAITING\",\n" +
-                            "\"number\" : 2\n" +
-                            "}, {\n" +
+                        "\"id\" : 14,\n" +
+                        "\"longitude\" : 61.23051845016535,\n" +
+                        "\"latitude\" : 30.025144800966082,\n" +
+                        "\"createdBy\" : {\n" +
+                        "\"login\" : \"Admin\",\n" +
+                        "\"role\" : null,\n" +
+                        "\"password\" : null,\n" +
+                        "\"email\" : null,\n" +
+                        "\"userId\" : 1\n" +
+                        "},\n" +
+                        "\"updatedBy\" : {\n" +
+                        "\"login\" : \"Admin\",\n" +
+                        "\"role\" : null,\n" +
+                        "\"password\" : null,\n" +
+                        "\"email\" : null,\n" +
+                        "\"userId\" : 1\n" +
+                        "},\n" +
+                        "\"group\" : {\n" +
+                        "\"id\" : 2,\n" +
+                        "\"koef\" : null,\n" +
+                        "\"leftLongitude\" : 0.0,\n" +
+                        "\"topLatitude\" : 0.0,\n" +
+                        "\"rightLongitude\" : 1000.0,\n" +
+                        "\"bottomLatitude\" : 1000.0\n" +
+                        "},\n" +
+                        "\"createdWhen\" : 1556640392000,\n" +
+                        "\"updatedWhen\" : 1556640392000,\n" +
+                        "\"status\" : \"UNCONFIRMED\",\n" +
+                        "\"priority\" : null,\n" +
+                        "\"type\" : \"ORGANIC\",\n" +
+                        "\"size\" : null,\n" +
+                        "\"active\" : true,\n" +
+                        "\"pointId\" : 13\n" +
+                        "},\n" +
+                        "\"status\" : \"AWAITING\",\n" +
+                        "\"number\" : 2\n" +
+                        "}, {\n" +
                         "\"id\" : 2,\n" +
                         "\"containedPoint\" : {\n" +
-                             "\"id\" : 8,\n" +
-                            "\"longitude\" : 61.23572297641526,\n" +
-                            "\"latitude\" : 30.04284023949008,\n" +
-                            "\"createdBy\" : {\n" +
-                                "\"login\" : \"Admin\",\n" +
-                                "\"role\" : null,\n" +
-                                "\"password\" : null,\n" +
-                                "\"email\" : null,\n" +
-                                "\"userId\" : 1\n" +
-                            "},\n" +
-                            "\"updatedBy\" : {\n" +
-                                "\"login\" : \"Admin\",\n" +
-                                "\"role\" : null,\n" +
-                                "\"password\" : null,\n" +
-                                "\"email\" : null,\n" +
-                                "\"userId\" : 1\n" +
-                            "},\n" +
-                            "\"group\" : {\n" +
-                                "\"id\" : 2,\n" +
-                                "\"koef\" : null,\n" +
-                                "\"leftLongitude\" : 0.0,\n" +
-                                "\"topLatitude\" : 0.0,\n" +
-                                "\"rightLongitude\" : 1000.0,\n" +
-                                "\"bottomLatitude\" : 1000.0\n" +
-                            "},\n" +
-                            "\"createdWhen\" : 1556634441000,\n" +
-                            "\"updatedWhen\" : 1556634441000,\n" +
-                            "\"status\" : \"UNCONFIRMED\",\n" +
-                            "\"priority\" : null,\n" +
-                            "\"type\" : \"LIQUID\",\n" +
-                            "\"size\" : null,\n" +
-                            "\"active\" : true,\n" +
-                            "\"pointId\" : 7\n" +
+                        "\"id\" : 8,\n" +
+                        "\"longitude\" : 61.23572297641526,\n" +
+                        "\"latitude\" : 30.04284023949008,\n" +
+                        "\"createdBy\" : {\n" +
+                        "\"login\" : \"Admin\",\n" +
+                        "\"role\" : null,\n" +
+                        "\"password\" : null,\n" +
+                        "\"email\" : null,\n" +
+                        "\"userId\" : 1\n" +
+                        "},\n" +
+                        "\"updatedBy\" : {\n" +
+                        "\"login\" : \"Admin\",\n" +
+                        "\"role\" : null,\n" +
+                        "\"password\" : null,\n" +
+                        "\"email\" : null,\n" +
+                        "\"userId\" : 1\n" +
+                        "},\n" +
+                        "\"group\" : {\n" +
+                        "\"id\" : 2,\n" +
+                        "\"koef\" : null,\n" +
+                        "\"leftLongitude\" : 0.0,\n" +
+                        "\"topLatitude\" : 0.0,\n" +
+                        "\"rightLongitude\" : 1000.0,\n" +
+                        "\"bottomLatitude\" : 1000.0\n" +
+                        "},\n" +
+                        "\"createdWhen\" : 1556634441000,\n" +
+                        "\"updatedWhen\" : 1556634441000,\n" +
+                        "\"status\" : \"UNCONFIRMED\",\n" +
+                        "\"priority\" : null,\n" +
+                        "\"type\" : \"LIQUID\",\n" +
+                        "\"size\" : null,\n" +
+                        "\"active\" : true,\n" +
+                        "\"pointId\" : 7\n" +
                         "},\n" +
                         "\"status\" : \"AWAITING\",\n" +
                         "\"number\" : 1\n" +
-                    "} ],\n" +
-                    "\"status\" : \"IN_PROGRESS\"\n" +
-                "}";
+                        "} ],\n" +
+                        "\"status\" : \"IN_PROGRESS\"\n" +
+                        "}";
         HttpStatus status = HttpStatus.OK;
 
         return new ResponseEntity<>(answerJSON, status);
@@ -789,8 +834,43 @@ public class RestService {
     public ResponseEntity<String> updateVesselCoordinates(
             @RequestBody String configJSON) {
 
-        String answerJSON = "vessel coordinates updated";
-        HttpStatus status = HttpStatus.OK;
+        String answerJSON = "";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        User user = userService.getAuthenticatedUser();
+        if (user.getRole() != UserRole.CREWMAN) {
+            answerJSON = "Access denied";
+            status = HttpStatus.FORBIDDEN;
+            return new ResponseEntity<>(answerJSON, status);
+        }
+
+        Vessel vessel = transportService.getVesselByCrewmanId(user.getUserId());
+        JSONParser jsonParser = new JSONParser();
+        Double longitude;
+        Double latitude;
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            Object object = jsonParser.parse(configJSON);
+            JSONObject jsonObject = (JSONObject) object;
+            String latStr, lonStr;
+            latStr = (String) jsonObject.get("latitude");
+            lonStr = (String) jsonObject.get("longitude") ;
+            System.out.println(latStr + " " + lonStr);
+            latitude = Double.parseDouble(latStr);
+            longitude = Double.parseDouble(lonStr);
+        } catch (ParseException e) {
+            answerJSON = "Invalid body";
+            status = HttpStatus.BAD_REQUEST;
+            return new ResponseEntity<>(answerJSON, status);
+        } catch (NumberFormatException e) {
+            answerJSON = "Invalid body";
+            status = HttpStatus.BAD_REQUEST;
+            return new ResponseEntity<>(answerJSON, status);
+        }
+        vessel.setLongitude(longitude);
+        vessel.setLatitude(latitude);
+        transportService.updateVessel(vessel);
+        answerJSON = "Coordinates updated";
+        status = HttpStatus.OK;
 
         return new ResponseEntity<>(answerJSON, status);
     }
@@ -799,14 +879,22 @@ public class RestService {
     @ResponseBody
     public ResponseEntity<String> getCurrentVessel() {
 
-        String answerJSON = "{\n" +
-                "\"name\":\"newVessel\",\n" +
-                "\"capacity\":130,\n" +
-                "\"currentLoad\":0,\n" +
-                "\"longitude\":\"30.034245772883004\",\n" +
-                "\"latitude\":\"61.21944564146565\"\n" +
-                "}";
-        HttpStatus status = HttpStatus.OK;
+        String answerJSON = "";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        User user = userService.getAuthenticatedUser();
+        if (user.getRole() != UserRole.CREWMAN) {
+            answerJSON = "Access denied";
+            status = HttpStatus.FORBIDDEN;
+            return new ResponseEntity<>(answerJSON, status);
+        }
+        Vessel vessel = transportService.getVesselByCrewmanId(user.getUserId());
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            answerJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(vessel);
+        } catch (JsonProcessingException e) {
+            answerJSON = "Can't parse class to JSON";
+            status = HttpStatus.BAD_REQUEST;
+        }
 
         return new ResponseEntity<>(answerJSON, status);
     }

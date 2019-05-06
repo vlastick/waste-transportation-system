@@ -1,6 +1,7 @@
 package one.vladimir.impl.database.repositories;
 
 import one.vladimir.impl.database.entities.UserEntity;
+import one.vladimir.impl.database.entities.VesselEntity;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 

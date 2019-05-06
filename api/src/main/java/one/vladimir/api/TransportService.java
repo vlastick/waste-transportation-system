@@ -12,4 +12,6 @@ public interface TransportService {
 
     public String updateCoordinates(Integer vesselId, Double latitude, Double longitude);
 
+    public Vessel getVesselByCrewmanId(Integer id);
+
 }

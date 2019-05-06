@@ -49,6 +49,8 @@ public interface Database {
 
     public User getUserByLogin(String login);
 
+    public Vessel getVesselByCrewmanId(Integer id);
+
 
     /**
      * get group that contains point with coordinates
@@ -68,6 +70,8 @@ public interface Database {
     public Set<RoutePoint> getRoutePointsByRouteId(Integer id);
 
     public List<Dump> getDumpsByFilter(DumpFilter dumpFilter);
+
+    public List<Base> getBasesByFilter(BaseFilter baseFilter);
 
     public List<Route> getRoutesByFilter(RouteFilter routeFilter);
 

@@ -32,14 +32,15 @@ public class RouteServiceImpl implements RouteService {
 
     @PostConstruct
     public void postConstructLog() {
-        /*ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper();
         String testJSON = null;
         try {
             testJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this.buildroute(1));
             System.out.println(testJSON);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-        }*/
+        }
+        this.buildroute(1);
         //System.out.println(this.updateRoutePointStatus(1, 1, RoutePointStatus.CANCELED));
     }
 
@@ -130,12 +131,20 @@ public class RouteServiceImpl implements RouteService {
 
         //RoutePoints of currents vessel with statuses AWAITING and IN_PROGRESS
         List<RoutePoint> activeRoutePoints = new Vector<>();
-        for (RoutePoint routePoint : currentRoute.getRoutePoints()) {
-            if (routePoint.getStatus() == RoutePointStatus.IN_PROGRESS
-                    || routePoint.getStatus() == RoutePointStatus.AWAITING) {
-                activeRoutePoints.add(routePoint);
-                plannedLoad += db.getDumpById(routePoint.getContainedPoint().getPointId()).getSize();
+        try {
+            for (RoutePoint routePoint : currentRoute.getRoutePoints()) {
+                if (routePoint.getStatus() == RoutePointStatus.IN_PROGRESS
+                        || routePoint.getStatus() == RoutePointStatus.AWAITING) {
+                    activeRoutePoints.add(routePoint);
+                    DumpFilter dumpFilter = new DumpFilter();
+                    List<Integer> dumpIds = new Vector<>();
+                    dumpIds.add(routePoint.getContainedPoint().getPointId());
+                    dumpFilter.setPointIdList(dumpIds);
+                    plannedLoad += db.getDumpsByFilter(dumpFilter).get(0).getSize();
+                }
             }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return currentRoute;
         }
 
         if (activeRoutePoints.size() < numberOfRoutePoints) {
@@ -234,14 +243,27 @@ public class RouteServiceImpl implements RouteService {
         return currentRoute;
     }
 
-    public String updateRoutePointStatus(Integer routePointId, Integer vesselId, RoutePointStatus status){
+    public String updateRoutePointStatus(Integer routePointId, Integer vesselId, RoutePointStatus status) {
         RoutePoint routePoint = db.getRoutePointById(routePointId);
+        Vessel vessel = transportService.getVessel(vesselId);
+        if (vessel.getCurrRoute() == null) {
+            return "no current route";
+        }
+        Boolean routePointCorrect = false;
+        for (RoutePoint currRoutePoint : vessel.getCurrRoute().getRoutePoints()) {
+            if (currRoutePoint.getId() == routePoint.getId()) {
+                routePointCorrect = true;
+            }
+        }
+        if (!routePointCorrect) {
+            return "RoutePoint is not included in current Route";
+        }
         if (routePoint.getStatus() == RoutePointStatus.CANCELED
-            || routePoint.getStatus() == RoutePointStatus.COMPLETED) {
+                || routePoint.getStatus() == RoutePointStatus.COMPLETED) {
             return "This RoutePoint can't be updated";
         }
         if (status == RoutePointStatus.IN_PROGRESS
-        || status == RoutePointStatus.COMPLETED) {
+                || status == RoutePointStatus.COMPLETED) {
             transportService.updateCoordinates(vesselId, routePoint.getContainedPoint().getLatitude(), routePoint.getContainedPoint().getLongitude());
             routePoint.setStatus(status);
         } else if (status == RoutePointStatus.CANCELED) {
@@ -250,7 +272,96 @@ public class RouteServiceImpl implements RouteService {
             return "RoutePoint can't be updated";
         }
         db.updateRoutePoint(routePoint);
+
+        BaseFilter baseFilter = new BaseFilter();
+        List<Integer> pointIds = new Vector<>();
+        pointIds.add(routePoint.getContainedPoint().getPointId());
+        baseFilter.setPointIdList(pointIds);
+
+        //In case Route is closing
+        if ((routePoint.getStatus() == RoutePointStatus.AWAITING
+                || routePoint.getStatus() == RoutePointStatus.IN_PROGRESS)
+                && pointService.getBasesByFilter(baseFilter).size() == 1
+                && status == RoutePointStatus.COMPLETED) {
+            Route currRoute = vessel.getCurrRoute();
+            currRoute.setStatus(RouteStatus.COMPLETED);
+            db.updateRoute(currRoute, vessel);
+        }
         return "RoutePoint updated";
+    }
+
+    public Route finishRoute(Integer vesselId) {
+        RouteFilter filter = new RouteFilter();
+
+        List<Integer> vesselIdList = new Vector<>();
+        vesselIdList.add(vesselId);
+
+        List<String> statusList = new Vector<>();
+        statusList.add(RouteStatus.IN_PROGRESS.toString());
+
+        filter.setVesselIdList(vesselIdList);
+        filter.setRouteStatusList(statusList);
+
+        List<Route> routes;
+        routes = this.getRoutesByFilter(filter);
+
+        Route currentRoute;
+        if (routes.size() != 1) {
+            throw new IllegalArgumentException("Current route not found");
+        } else {
+            currentRoute = routes.get(0);
+        }
+
+        Vessel vessel = transportService.getVessel(vesselId);
+
+        Double longitude = vessel.getLongitude();
+        Double latitude = vessel.getLatitude();
+        Integer lastNumber = currentRoute.getRoutePoints().size();
+
+        Integer currNumber = 0;
+        for (RoutePoint routePoint : currentRoute.getRoutePoints()) {
+            if (routePoint.getStatus() == RoutePointStatus.IN_PROGRESS
+                    || routePoint.getStatus() == RoutePointStatus.AWAITING) {
+                throw new IllegalArgumentException("Not all routePoints are completed or canceled");
+            }
+        }
+
+        BaseFilter baseFilter = new BaseFilter();
+        baseFilter.setActive(true);
+        List<Integer> groupIdList = new Vector<>();
+        groupIdList.add(db.getGroupByCoordinates(latitude, longitude).getId());
+
+        baseFilter.setGroupidList(groupIdList);
+        List<Base> availableBases = db.getBasesByFilter(baseFilter);
+        if (availableBases.size() == 0) {
+            throw new IllegalArgumentException("No bases available");
+        }
+
+        Base nearestBase = availableBases.get(0);
+
+        for (Base candidateBase : availableBases) {
+            Double currentDistance =
+                    Math.sqrt(
+                            Math.pow(nearestBase.getLatitude() - latitude, 2) +
+                                    Math.pow(nearestBase.getLongitude() - longitude, 2)
+                    );
+            Double candidateDistance =
+                    Math.sqrt(
+                            Math.pow(candidateBase.getLatitude() - latitude, 2) +
+                                    Math.pow(candidateBase.getLongitude() - longitude, 2)
+                    );
+            if (candidateDistance < currentDistance) {
+                nearestBase = candidateBase;
+            }
+        }
+
+        RoutePoint routePoint = new RoutePoint();
+        routePoint.setStatus(RoutePointStatus.AWAITING);
+        routePoint.setNumber(lastNumber + 1);
+        routePoint.setContainedPoint(nearestBase);
+        currentRoute.addRoutePoint(routePoint);
+        db.addRoutePoint(routePoint, currentRoute);
+        return currentRoute;
     }
 
     private boolean routePointWithPointIdAlreadyExists(Integer pointId) {
