@@ -1,6 +1,7 @@
 package one.vladimir.impl.services.rest;
 
 import one.vladimir.api.*;
+import one.vladimir.api.enums.RoutePointStatus;
 import one.vladimir.api.enums.UserRole;
 import one.vladimir.api.pojo.*;
 
@@ -650,7 +651,6 @@ public class RestService {
                 creatorsIdList = new Vector<>();
                 creatorsIdList.add(user.getUserId());
                 dumpFilter.setCreatorsIdList(creatorsIdList);
-                System.out.println("tourist");
                 break;
             case CREWMAN:
                 if (dumpFilter.getPointIdList() == null || dumpFilter.getPointIdList().size() != 1) {
@@ -684,6 +684,13 @@ public class RestService {
     @ResponseBody
     public ResponseEntity<String> getRoutes(
             @RequestBody String configJSON) {
+
+        ObjectMapper mapper1 = new ObjectMapper();
+        try {
+            System.out.println(mapper1.writerWithDefaultPrettyPrinter().writeValueAsString(configJSON));
+        } catch (JsonProcessingException e) {
+        }
+
 
         String answerJSON = "";
         HttpStatus status = HttpStatus.BAD_REQUEST;
@@ -719,9 +726,40 @@ public class RestService {
     public ResponseEntity<String> updateRoutePointStatus(
             @RequestBody String configJSON) {
 
-        String answerJSON = "routePoint updated";
-        HttpStatus status = HttpStatus.OK;
+        ObjectMapper mapper1 = new ObjectMapper();
+        try {
+            System.out.println(mapper1.writerWithDefaultPrettyPrinter().writeValueAsString(configJSON));
+        } catch (JsonProcessingException e) {
+        }
 
+
+
+
+        String answerJSON = "";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        User user = userService.getAuthenticatedUser();
+        if (user.getRole() != UserRole.CREWMAN) {
+            answerJSON = "access denied";
+            status = HttpStatus.FORBIDDEN;
+        }
+
+        JSONParser jsonParser = new JSONParser();
+        RoutePointStatus routePointStatus;
+        Integer routePointId;
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            Object object = jsonParser.parse(configJSON);
+            JSONObject jsonObject = (JSONObject) object;
+            String latStr, lonStr;
+            routePointStatus = RoutePointStatus.valueOf((String) jsonObject.get("status"));
+            routePointId = ((Long) jsonObject.get("id")).intValue() ;
+        } catch (ParseException e) {
+            answerJSON = "Invalid body";
+            status = HttpStatus.BAD_REQUEST;
+            return new ResponseEntity<>(answerJSON, status);
+        }
+        answerJSON = routeService.updateRoutePointStatus(routePointId, transportService.getVesselByCrewmanId(user.getUserId()).getId(), routePointStatus);
         return new ResponseEntity<>(answerJSON, status);
     }
 

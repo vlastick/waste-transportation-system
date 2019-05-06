@@ -6,3 +6,4 @@ SELECT * FROM vessel_entity;
 SELECT * FROM route_entity;
 SELECT * FROM route_point_entity;
 SELECT * FROM user_entity;
+SELECT * FROM crewman_entity;

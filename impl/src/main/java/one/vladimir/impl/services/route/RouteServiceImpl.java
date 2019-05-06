@@ -30,9 +30,13 @@ public class RouteServiceImpl implements RouteService {
     @Qualifier("transportService")
     private TransportService transportService;
 
+    @Autowired
+    @Qualifier("userService")
+    private UserService userService;
+
     @PostConstruct
     public void postConstructLog() {
-        ObjectMapper mapper = new ObjectMapper();
+        /*ObjectMapper mapper = new ObjectMapper();
         String testJSON = null;
         try {
             testJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this.buildroute(1));
@@ -40,7 +44,7 @@ public class RouteServiceImpl implements RouteService {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        this.buildroute(1);
+        this.buildroute(1);*/
         //System.out.println(this.updateRoutePointStatus(1, 1, RoutePointStatus.CANCELED));
     }
 
@@ -246,8 +250,12 @@ public class RouteServiceImpl implements RouteService {
     public String updateRoutePointStatus(Integer routePointId, Integer vesselId, RoutePointStatus status) {
         RoutePoint routePoint = db.getRoutePointById(routePointId);
         Vessel vessel = transportService.getVessel(vesselId);
+
         if (vessel.getCurrRoute() == null) {
             return "no current route";
+        }
+        if (vessel.getCurrRoute().getRoutePoints() == null) {
+            return "current route is empty";
         }
         Boolean routePointCorrect = false;
         for (RoutePoint currRoutePoint : vessel.getCurrRoute().getRoutePoints()) {
@@ -262,8 +270,7 @@ public class RouteServiceImpl implements RouteService {
                 || routePoint.getStatus() == RoutePointStatus.COMPLETED) {
             return "This RoutePoint can't be updated";
         }
-        if (status == RoutePointStatus.IN_PROGRESS
-                || status == RoutePointStatus.COMPLETED) {
+        if (status == RoutePointStatus.COMPLETED) {
             transportService.updateCoordinates(vesselId, routePoint.getContainedPoint().getLatitude(), routePoint.getContainedPoint().getLongitude());
             routePoint.setStatus(status);
         } else if (status == RoutePointStatus.CANCELED) {
@@ -286,6 +293,14 @@ public class RouteServiceImpl implements RouteService {
             Route currRoute = vessel.getCurrRoute();
             currRoute.setStatus(RouteStatus.COMPLETED);
             db.updateRoute(currRoute, vessel);
+        }
+        if ((routePoint.getStatus() == RoutePointStatus.AWAITING
+                || routePoint.getStatus() == RoutePointStatus.IN_PROGRESS)
+                && pointService.getBasesByFilter(baseFilter).size() == 0
+                && status == RoutePointStatus.COMPLETED) {
+            Point point = routePoint.getContainedPoint();
+            point.setActive(false);
+            db.updatePoint(point, userService.getAuthenticatedUser());
         }
         return "RoutePoint updated";
     }

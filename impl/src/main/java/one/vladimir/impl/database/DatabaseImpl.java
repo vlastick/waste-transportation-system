@@ -370,7 +370,9 @@ public class DatabaseImpl implements Database {
         }
         Vessel vessel = vesselEnt.getVessel();
         try {
-            vessel.setCurrRoute(routeRepo.findRouteByVessel(vesselEnt).getRoute());
+            Route currRoute = routeRepo.findRouteByVessel(vesselEnt).getRoute();
+            currRoute.setRoutePoints(this.getRoutePointsByRouteId(currRoute.getId()));
+            vessel.setCurrRoute(currRoute);
         } catch (NullPointerException e) {
             vessel.setCurrRoute(null);
         }
