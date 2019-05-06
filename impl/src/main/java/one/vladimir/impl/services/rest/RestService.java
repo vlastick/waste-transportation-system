@@ -742,6 +742,7 @@ public class RestService {
         if (user.getRole() != UserRole.CREWMAN) {
             answerJSON = "access denied";
             status = HttpStatus.FORBIDDEN;
+            return new ResponseEntity<>(answerJSON, status);
         }
 
         JSONParser jsonParser = new JSONParser();
@@ -765,94 +766,25 @@ public class RestService {
     }
 
     @RequestMapping(method = GET, value = "/route/")
-    @ResponseBody
     public ResponseEntity<String> buildRoute() {
 
-        String answerJSON =
-                "{\n" +
-                        "\"id\" : null,\n" +
-                        "\"routePoints\" : [ {\n" +
-                        "\"id\" : 1,\n" +
-                        "\"containedPoint\" : {\n" +
-                        "\"id\" : 14,\n" +
-                        "\"longitude\" : 61.23051845016535,\n" +
-                        "\"latitude\" : 30.025144800966082,\n" +
-                        "\"createdBy\" : {\n" +
-                        "\"login\" : \"Admin\",\n" +
-                        "\"role\" : null,\n" +
-                        "\"password\" : null,\n" +
-                        "\"email\" : null,\n" +
-                        "\"userId\" : 1\n" +
-                        "},\n" +
-                        "\"updatedBy\" : {\n" +
-                        "\"login\" : \"Admin\",\n" +
-                        "\"role\" : null,\n" +
-                        "\"password\" : null,\n" +
-                        "\"email\" : null,\n" +
-                        "\"userId\" : 1\n" +
-                        "},\n" +
-                        "\"group\" : {\n" +
-                        "\"id\" : 2,\n" +
-                        "\"koef\" : null,\n" +
-                        "\"leftLongitude\" : 0.0,\n" +
-                        "\"topLatitude\" : 0.0,\n" +
-                        "\"rightLongitude\" : 1000.0,\n" +
-                        "\"bottomLatitude\" : 1000.0\n" +
-                        "},\n" +
-                        "\"createdWhen\" : 1556640392000,\n" +
-                        "\"updatedWhen\" : 1556640392000,\n" +
-                        "\"status\" : \"UNCONFIRMED\",\n" +
-                        "\"priority\" : null,\n" +
-                        "\"type\" : \"ORGANIC\",\n" +
-                        "\"size\" : null,\n" +
-                        "\"active\" : true,\n" +
-                        "\"pointId\" : 13\n" +
-                        "},\n" +
-                        "\"status\" : \"AWAITING\",\n" +
-                        "\"number\" : 2\n" +
-                        "}, {\n" +
-                        "\"id\" : 2,\n" +
-                        "\"containedPoint\" : {\n" +
-                        "\"id\" : 8,\n" +
-                        "\"longitude\" : 61.23572297641526,\n" +
-                        "\"latitude\" : 30.04284023949008,\n" +
-                        "\"createdBy\" : {\n" +
-                        "\"login\" : \"Admin\",\n" +
-                        "\"role\" : null,\n" +
-                        "\"password\" : null,\n" +
-                        "\"email\" : null,\n" +
-                        "\"userId\" : 1\n" +
-                        "},\n" +
-                        "\"updatedBy\" : {\n" +
-                        "\"login\" : \"Admin\",\n" +
-                        "\"role\" : null,\n" +
-                        "\"password\" : null,\n" +
-                        "\"email\" : null,\n" +
-                        "\"userId\" : 1\n" +
-                        "},\n" +
-                        "\"group\" : {\n" +
-                        "\"id\" : 2,\n" +
-                        "\"koef\" : null,\n" +
-                        "\"leftLongitude\" : 0.0,\n" +
-                        "\"topLatitude\" : 0.0,\n" +
-                        "\"rightLongitude\" : 1000.0,\n" +
-                        "\"bottomLatitude\" : 1000.0\n" +
-                        "},\n" +
-                        "\"createdWhen\" : 1556634441000,\n" +
-                        "\"updatedWhen\" : 1556634441000,\n" +
-                        "\"status\" : \"UNCONFIRMED\",\n" +
-                        "\"priority\" : null,\n" +
-                        "\"type\" : \"LIQUID\",\n" +
-                        "\"size\" : null,\n" +
-                        "\"active\" : true,\n" +
-                        "\"pointId\" : 7\n" +
-                        "},\n" +
-                        "\"status\" : \"AWAITING\",\n" +
-                        "\"number\" : 1\n" +
-                        "} ],\n" +
-                        "\"status\" : \"IN_PROGRESS\"\n" +
-                        "}";
-        HttpStatus status = HttpStatus.OK;
+        String answerJSON = "";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        User user = userService.getAuthenticatedUser();
+        if (user.getRole() != UserRole.CREWMAN) {
+            answerJSON = "access denied";
+            status = HttpStatus.FORBIDDEN;
+        }
+        Route route = routeService.buildroute(transportService.getVesselByCrewmanId(user.getUserId()).getId());
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            answerJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(route);
+            status = OK;
+        } catch (JsonProcessingException e) {
+            answerJSON = "Can't parse class to JSON";
+            status = HttpStatus.BAD_REQUEST;
+        }
+        
 
         return new ResponseEntity<>(answerJSON, status);
     }
