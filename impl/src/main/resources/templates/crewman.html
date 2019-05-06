@@ -210,7 +210,7 @@
 
                 vesselInfo.innerText = obj.name + ', load (' + obj.currentLoad + '/' + obj.capacity + ') packets';
 
-                printAnswer('Vessel info was updated '
+                printAnswer('Vessel info was updated longitude '
                     + longitude.value + ' and latitude ' + latitude.value + ' coordinates');
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -240,8 +240,8 @@
     var onGetRoute = function () {
         //@RequestMapping(method = GET, value = "/route/")
         $.ajax({
-            type: 'get',
-            url: 'route/',
+            type: 'post',
+            url: 'routes/',
             contentType: 'application/json',
             async: true,
 
@@ -441,7 +441,7 @@
     };
 
     getVesselInfo();
-    onSetCoordinates();
+    //onSetCoordinates();
 
 </script>
 
