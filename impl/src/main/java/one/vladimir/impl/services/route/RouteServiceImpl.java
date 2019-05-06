@@ -248,8 +248,21 @@ public class RouteServiceImpl implements RouteService {
     }
 
     public String updateRoutePointStatus(Integer routePointId, Integer vesselId, RoutePointStatus status) {
-        RoutePoint routePoint = db.getRoutePointById(routePointId);
         Vessel vessel = transportService.getVessel(vesselId);
+
+        //
+        // КОСТЫЛЬ 3000
+        //
+        RoutePoint routePoint = new RoutePoint();
+        for (RoutePoint currRoutePoint : vessel.getCurrRoute().getRoutePoints()) {
+            if (currRoutePoint.getContainedPoint().getPointId() == routePointId) {
+                routePoint = currRoutePoint;
+            }
+        };
+
+        //correct one
+        //RoutePoint routePoint = db.getRoutePointById(routePointId);
+
 
         if (vessel.getCurrRoute() == null) {
             return "no current route";

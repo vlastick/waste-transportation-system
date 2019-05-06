@@ -719,11 +719,12 @@ public class RestService {
             //TODO: implement exception handling
         }
 
-        /*ObjectMapper mapper1 = new ObjectMapper();
+        ObjectMapper mapper1 = new ObjectMapper();
         try {
             System.out.println(mapper1.writerWithDefaultPrettyPrinter().writeValueAsString(pointFilter));
+            System.out.println(mapper1.writerWithDefaultPrettyPrinter().writeValueAsString(answerJSON));
         } catch (JsonProcessingException e) {
-        }*/
+        }
         return new ResponseEntity<>(answerJSON, status);
     }
 
