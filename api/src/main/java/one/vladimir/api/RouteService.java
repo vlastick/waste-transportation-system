@@ -23,4 +23,6 @@ public interface RouteService {
 
     public String updateRoutePointStatus(Integer routePointId, Integer vesselId, RoutePointStatus status);
 
+    public Route finishRoute(Integer vesselId);
+
 }

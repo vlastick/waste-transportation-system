@@ -44,6 +44,7 @@ insert into route_entity(route_id, status, vessel_id) values (4, "IN_PROGRESS", 
 insert into route_point_entity(route_point_id, number, status, point_id, route_id) values (1, 1, "AWAITING", 1, 1);
 insert into route_point_entity(route_point_id, number, status, point_id, route_id) values (2, 1, "COMPLETED", 3, 2);
 insert into route_point_entity(route_point_id, number, status, point_id, route_id) values (3, 2, "AWAITING", 4, 2);
+insert into route_point_entity(route_point_id, number, status, point_id, route_id) values (4, 2, "AWAITING", 8, 1);
 
 
 
