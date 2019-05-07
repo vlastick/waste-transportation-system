@@ -41,6 +41,7 @@ public class TransportServiceImpl implements TransportService {
 
     @Override
     public String updateCoordinates(Integer vesselId, Double latitude, Double longitude) {
+        db.getGroupByCoordinates(latitude, longitude);
         Vessel vessel = db.getVesselById(vesselId);
         vessel.setLongitude(longitude);
         vessel.setLatitude(latitude);

@@ -631,6 +631,10 @@ public class RestService {
 
             System.out.println("Java IO Exception");
             e.printStackTrace();
+        } catch (NullPointerException e) {
+            answerJSON = "Coordinates are not in reserve";
+            status = HttpStatus.BAD_REQUEST;
+            return new ResponseEntity<>(answerJSON, status);
         }
 
         return new ResponseEntity<>(answerJSON, status);
@@ -914,6 +918,7 @@ public class RestService {
             System.out.println(latStr + " " + lonStr);
             latitude = Double.parseDouble(latStr);
             longitude = Double.parseDouble(lonStr);
+            transportService.updateCoordinates(vessel.getId(), latitude, longitude);
         } catch (ParseException e) {
             answerJSON = "Invalid body";
             status = HttpStatus.BAD_REQUEST;
@@ -922,10 +927,14 @@ public class RestService {
             answerJSON = "Invalid body";
             status = HttpStatus.BAD_REQUEST;
             return new ResponseEntity<>(answerJSON, status);
+        } catch (NullPointerException e) {
+            answerJSON = "Coordinates are not in reserve";
+            status = HttpStatus.BAD_REQUEST;
+            return new ResponseEntity<>(answerJSON, status);
         }
-        vessel.setLongitude(longitude);
-        vessel.setLatitude(latitude);
-        transportService.updateVessel(vessel);
+//        vessel.setLongitude(longitude);
+//        vessel.setLatitude(latitude);
+//        transportService.updateVessel(vessel);
         answerJSON = "Coordinates updated";
         status = HttpStatus.OK;
 
