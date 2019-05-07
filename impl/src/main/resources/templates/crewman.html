@@ -442,13 +442,6 @@
                     prevLong = item._latlng.lng;*/
                     counter = counter + 1;
                 });
-
-                // Enable button close route if it exists
-                if (markersArray.length > 1) {
-                    closeRouteButton.disabled = false;
-                } else {
-                    closeRouteButton.disabled = true;
-                }
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 printAnswer('Vessel route was not updated. Error: ' +
@@ -499,6 +492,7 @@
             }),
             success: function (result) {
                 printAnswer('Point status was changed: ' + result);
+                getVesselInfo();
                 drawRoute();
             },
             error: function (jqXHR, textStatus, errorThrown) {
