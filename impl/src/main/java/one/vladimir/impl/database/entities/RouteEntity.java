@@ -14,11 +14,11 @@ public class RouteEntity {
 
     private String status;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "VesselId")
     VesselEntity vessel;
 
-    @OneToMany(mappedBy = "route", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "route", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Collection<RoutePointEntity> routePoints;
 
 

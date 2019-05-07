@@ -21,11 +21,11 @@ public class VesselEntity {
 
     private Double latitude;
 
-    @OneToMany(mappedBy = "vessel", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "vessel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Collection<CrewmanEntity> crewmans;
 
-    @OneToOne(mappedBy = "vessel", cascade = CascadeType.ALL)
-    private RouteEntity route;
+    @OneToMany(mappedBy = "vessel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Collection<RouteEntity> routes;
 
 
     //    getters and setters

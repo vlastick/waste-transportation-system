@@ -69,7 +69,7 @@ public class DatabaseImpl implements Database {
         String message = "DB initialized";
         log.info(message);
 
-        System.out.println(userRepo.findUserByLogin("captain"));
+//        System.out.println(vesselRepo.findVesselByCrewmansUserUserId(3));
 
         /*BaseFilter df = new BaseFilter();
         List<Integer> ids = new Vector<>();
@@ -725,7 +725,25 @@ public class DatabaseImpl implements Database {
         vesselEnt = vesselRepo.findVesselByCrewmansUserUserId(id);
         Vessel vessel = vesselEnt.getVessel();
         try {
-            vessel.setCurrRoute(routeRepo.findRouteByVessel(vesselEnt).getRoute());
+
+            RouteFilter routeFilter = new RouteFilter();
+            List<String> routeStatuses = new ArrayList<>();
+            routeStatuses.add(RouteStatus.IN_PROGRESS.toString());
+            List<Integer> vesselIds = new ArrayList<>();
+            vesselIds.add(vessel.getId());
+            routeFilter.setVesselIdList(vesselIds);
+            routeFilter.setRouteStatusList(routeStatuses);
+            List<Route> routes;
+            routes = this.getRoutesByFilter(routeFilter);
+            Route currRoute;
+            if (routes.size() == 1) {
+                currRoute = routes.get(0);
+                currRoute.setRoutePoints(this.getRoutePointsByRouteId(currRoute.getId()));
+            } else {
+                currRoute = null;
+            }
+            vessel.setCurrRoute(currRoute);
+
         } catch (NullPointerException e) {
             vessel.setCurrRoute(null);
         }

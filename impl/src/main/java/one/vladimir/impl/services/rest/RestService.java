@@ -754,8 +754,9 @@ public class RestService {
                 List<Integer> vesselIdList = new Vector<>();
                 vesselIdList.add(transportService.getVesselByCrewmanId(user.getUserId()).getId());
                 routeFilter.setVesselIdList(vesselIdList);
-                List<RouteStatus> routeStatusList = new ArrayList<>();
-                routeStatusList.add(RouteStatus.IN_PROGRESS);
+                List<String> routeStatusList = new ArrayList<>();
+                routeStatusList.add(RouteStatus.IN_PROGRESS.toString());
+                routeFilter.setRouteStatusList(routeStatusList);
                 break;
             case ADMIN:
                 break;
@@ -769,6 +770,7 @@ public class RestService {
             ObjectMapper mapper = new ObjectMapper();
             answerJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(routes);
             status = HttpStatus.OK;
+            System.out.println(answerJSON);
         } catch (JsonProcessingException e) {
             //TODO: implement exception handling
         }

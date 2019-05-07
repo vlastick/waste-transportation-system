@@ -28,7 +28,7 @@ public class UserEntity {
     @OneToMany(mappedBy = "updatedBy", cascade = CascadeType.ALL)
     private Collection<PointEntity> updatedPoints;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private CrewmanEntity crewman;
 
 

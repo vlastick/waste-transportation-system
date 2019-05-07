@@ -255,22 +255,28 @@ public class RouteServiceImpl implements RouteService {
         if (vessel.getCurrRoute() == null) {
             return "no current route";
         }
+        if (vessel.getCurrRoute().getRoutePoints() == null) {
+            return "current route is empty";
+        }
         //
         // Temporary feature
         //
-        RoutePoint routePoint = new RoutePoint();
+        RoutePoint routePoint = null;
         for (RoutePoint currRoutePoint : vessel.getCurrRoute().getRoutePoints()) {
             if (currRoutePoint.getContainedPoint().getPointId() == routePointId) {
                 routePoint = currRoutePoint;
                 break;
             }
         }
+        if (routePoint == null) {
+            return "RoutePoint not found in current route";
+        }
 
-        ObjectMapper mapper1 = new ObjectMapper();
+        /*ObjectMapper mapper1 = new ObjectMapper();
         try {
             System.out.println(mapper1.writerWithDefaultPrettyPrinter().writeValueAsString(routePoint));
         } catch (JsonProcessingException e) {
-        }
+        }*/
 
         //correct one
         //RoutePoint routePoint = db.getRoutePointById(routePointId);
@@ -294,6 +300,16 @@ public class RouteServiceImpl implements RouteService {
         if (routePoint.getStatus() == RoutePointStatus.CANCELED
                 || routePoint.getStatus() == RoutePointStatus.COMPLETED) {
             return "This RoutePoint can't be updated";
+        }
+
+        if (status == RoutePointStatus.COMPLETED) {
+            for (RoutePoint currRoutePoint : vessel.getCurrRoute().getRoutePoints()) {
+                if (currRoutePoint.getNumber() < routePoint.getNumber()
+                        && (currRoutePoint.getStatus() == RoutePointStatus.AWAITING
+                        || currRoutePoint.getStatus() == RoutePointStatus.IN_PROGRESS)) {
+                    return "There are other not completed routepoints before current";
+                }
+            }
         }
 
         BaseFilter baseFilter = new BaseFilter();
