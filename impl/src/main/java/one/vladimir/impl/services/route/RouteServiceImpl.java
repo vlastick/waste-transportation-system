@@ -248,17 +248,29 @@ public class RouteServiceImpl implements RouteService {
     }
 
     public String updateRoutePointStatus(Integer routePointId, Integer vesselId, RoutePointStatus status) {
+
+        System.out.println(routePointId);
         Vessel vessel = transportService.getVessel(vesselId);
 
+        if (vessel.getCurrRoute() == null) {
+            return "no current route";
+        }
         //
-        // КОСТЫЛЬ 3000
+        // Temporary feature
         //
         RoutePoint routePoint = new RoutePoint();
         for (RoutePoint currRoutePoint : vessel.getCurrRoute().getRoutePoints()) {
             if (currRoutePoint.getContainedPoint().getPointId() == routePointId) {
                 routePoint = currRoutePoint;
+                break;
             }
-        };
+        }
+
+        ObjectMapper mapper1 = new ObjectMapper();
+        try {
+            System.out.println(mapper1.writerWithDefaultPrettyPrinter().writeValueAsString(routePoint));
+        } catch (JsonProcessingException e) {
+        }
 
         //correct one
         //RoutePoint routePoint = db.getRoutePointById(routePointId);
@@ -283,15 +295,6 @@ public class RouteServiceImpl implements RouteService {
                 || routePoint.getStatus() == RoutePointStatus.COMPLETED) {
             return "This RoutePoint can't be updated";
         }
-        if (status == RoutePointStatus.COMPLETED) {
-            transportService.updateCoordinates(vesselId, routePoint.getContainedPoint().getLatitude(), routePoint.getContainedPoint().getLongitude());
-            routePoint.setStatus(status);
-        } else if (status == RoutePointStatus.CANCELED) {
-            routePoint.setStatus(status);
-        } else {
-            return "RoutePoint can't be updated";
-        }
-        db.updateRoutePoint(routePoint);
 
         BaseFilter baseFilter = new BaseFilter();
         List<Integer> pointIds = new Vector<>();
@@ -315,6 +318,18 @@ public class RouteServiceImpl implements RouteService {
             point.setActive(false);
             db.updatePoint(point, userService.getAuthenticatedUser());
         }
+
+        if (status == RoutePointStatus.COMPLETED) {
+            transportService.updateCoordinates(vesselId, routePoint.getContainedPoint().getLatitude(), routePoint.getContainedPoint().getLongitude());
+            routePoint.setStatus(status);
+        } else if (status == RoutePointStatus.CANCELED) {
+            routePoint.setStatus(status);
+        } else {
+            return "RoutePoint can't be updated";
+        }
+        db.updateRoutePoint(routePoint);
+
+
         return "RoutePoint updated";
     }
 

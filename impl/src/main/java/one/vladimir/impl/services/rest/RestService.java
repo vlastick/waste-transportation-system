@@ -2,6 +2,7 @@ package one.vladimir.impl.services.rest;
 
 import one.vladimir.api.*;
 import one.vladimir.api.enums.RoutePointStatus;
+import one.vladimir.api.enums.RouteStatus;
 import one.vladimir.api.enums.UserRole;
 import one.vladimir.api.pojo.*;
 
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -751,6 +753,8 @@ public class RestService {
                 List<Integer> vesselIdList = new Vector<>();
                 vesselIdList.add(transportService.getVesselByCrewmanId(user.getUserId()).getId());
                 routeFilter.setVesselIdList(vesselIdList);
+                List<RouteStatus> routeStatusList = new ArrayList<>();
+                routeStatusList.add(RouteStatus.IN_PROGRESS);
                 break;
             case ADMIN:
                 break;

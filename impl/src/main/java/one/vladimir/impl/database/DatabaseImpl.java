@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javassist.expr.Instanceof;
 import one.vladimir.api.Database;
 import one.vladimir.api.enums.DumpType;
+import one.vladimir.api.enums.RouteStatus;
 import one.vladimir.api.pojo.*;
 import one.vladimir.impl.database.entities.*;
 import one.vladimir.impl.database.repositories.*;
@@ -68,6 +69,8 @@ public class DatabaseImpl implements Database {
         String message = "DB initialized";
         log.info(message);
 
+        System.out.println(userRepo.findUserByLogin("captain"));
+
         /*BaseFilter df = new BaseFilter();
         List<Integer> ids = new Vector<>();
         ids.add(1);
@@ -125,6 +128,7 @@ public class DatabaseImpl implements Database {
     }
 
     public User getUserByLogin(String login) {
+        System.out.println(login);
         UserEntity userEnt;
         userEnt = userRepo.findUserByLogin(login);
         User user = userEnt.getUser();
@@ -370,8 +374,22 @@ public class DatabaseImpl implements Database {
         }
         Vessel vessel = vesselEnt.getVessel();
         try {
-            Route currRoute = routeRepo.findRouteByVessel(vesselEnt).getRoute();
-            currRoute.setRoutePoints(this.getRoutePointsByRouteId(currRoute.getId()));
+            RouteFilter routeFilter = new RouteFilter();
+            List<String> routeStatuses = new ArrayList<>();
+            routeStatuses.add(RouteStatus.IN_PROGRESS.toString());
+            List<Integer> vesselIds = new ArrayList<>();
+            vesselIds.add(id);
+            routeFilter.setVesselIdList(vesselIds);
+            routeFilter.setRouteStatusList(routeStatuses);
+            List<Route> routes = new ArrayList<>();
+            routes = this.getRoutesByFilter(routeFilter);
+            Route currRoute;
+            if (routes.size() == 1) {
+                currRoute = routes.get(0);
+                currRoute.setRoutePoints(this.getRoutePointsByRouteId(currRoute.getId()));
+            } else {
+                currRoute = null;
+            }
             vessel.setCurrRoute(currRoute);
         } catch (NullPointerException e) {
             vessel.setCurrRoute(null);
