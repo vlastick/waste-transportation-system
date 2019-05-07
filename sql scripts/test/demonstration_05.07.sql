@@ -2,6 +2,7 @@ insert into user_entity(user_id, email, login, password, role, active) values (1
 insert into user_entity(user_id, email, login, password, role, active) values (2, "admin@mail.ru", "tourist", "123456", "TOURIST", 1);
 insert into user_entity(user_id, email, login, password, role, active) values (3, "admin@mail.ru", "captain", "123456", "CREWMAN", 1);
 insert into user_entity(user_id, email, login, password, role, active) values (4, "admin@mail.ru", "captain2", "123456", "CREWMAN", 1);
+insert into user_entity(user_id, email, login, password, role, active) values (5, "admin@mail.ru", "tourist2", "123456", "TOURIST", 1);
 
 insert into point_group_entity(group_id, koef, left_longitude, top_latitude, right_longitude, bottom_latitude) values  (1, 1, 29.285654415485855, 61.77028870692254, 33.5321013662014, 59.67278387738081);
 
