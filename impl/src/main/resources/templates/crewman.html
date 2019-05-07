@@ -314,35 +314,124 @@
                     .on('click', selectMarker);
                 markersArray['0']._icon.style.backgroundColor = 'brown';
 
+                console.log("len1 = " + markersArray.length);
+
                 // Get route points
                 var obj = JSON.parse(result);
-                obj[0].routePoints.forEach(function (item, index, array) {
-                    console.log(item);
-                    //if(item.type == 'dump') {
 
-                    //    objectTypeArray[item.containedPoint.pointId] = 'dump';
-                    //    objectSizeArray[item.containedPoint.pointId] = item.size;
-                        objectDescriptionArray[item.containedPoint.pointId] = 'This is dump';
-                        objectStatusArray[item.containedPoint.pointId] = item.status;
-                    //    dumpTypeArray[item.containedPoint.pointId] = item.type;
+                // Cycle on all point
+                obj[0].routePoints.forEach(function (routePointItem, index, array) {
 
-                    //    markersArray[item.containedPoint.pointId] = L.marker([item.containedPoint.latitude, item.containedPoint.longitude]).addTo(markerGroup)
-                    //        .bindPopup("<b>" + item.number + " Dump " +
-                    //            "</b><br/>Status: "+ item.status + "<br/>Type: " + item.type + "<br/>Size: " + item.size).openPopup()
-                    //        .on('click', selectMarker);
-                    //}
+                    console.log(routePointItem.containedPoint.pointId);
 
-                    markersArray[item.containedPoint.pointId] = L.marker([item.containedPoint.latitude, item.containedPoint.longitude]).addTo(markerGroup)
-                            .bindPopup("<b>" + item.number + " Point "
-                            ).openPopup()
-                            .on('click', selectMarker);
+                    // Get information about the point
+                    $.ajax({
+                        type: 'POST',
+                        url: 'points/?type=dump',
+                        data: JSON.stringify({
+                            "pointIdList": [
+                                {
+                                    "id": routePointItem.containedPoint.pointId
+                                }]
+                        }),
+                        contentType: "application/json",
+                        async: true,
+                        success: function (result) {
+
+                            if (result != '[ ]') { // We got the dump point
+
+                                var obj = JSON.parse(result);
+                                obj.forEach(function (item, index, array) {
+
+                                    objectTypeArray[routePointItem.containedPoint.pointId] = 'dump';
+                                    dumpTypeArray[routePointItem.containedPoint.pointId] = item.type;
+                                    objectSizeArray[routePointItem.containedPoint.pointId] = item.size;
+                                    objectStatusArray[routePointItem.containedPoint.pointId] = routePointItem.status;
+                                    objectDescriptionArray[routePointItem.containedPoint.pointId] = 'This is dump';
+
+                                    markersArray[routePointItem.containedPoint.pointId] = L.marker([routePointItem.containedPoint.latitude,
+                                        routePointItem.containedPoint.longitude]).addTo(markerGroup)
+                                        .bindPopup("<b>" + routePointItem.number + " Dump " +
+                                            "</b><br/>Status: " + objectStatusArray[routePointItem.containedPoint.pointId] +
+                                            "<br/>Type: " + dumpTypeArray[routePointItem.containedPoint.pointId] +
+                                            "<br/>Size: " + objectSizeArray[routePointItem.containedPoint.pointId]).openPopup()
+                                        .on('click', selectMarker);
+
+
+                                    if((routePointItem.status == "AWAITING") || (routePointItem.status == "IN_PROGRESS")) {
+                                        markersArray[routePointItem.containedPoint.pointId]._icon.style.backgroundColor = 'green';
+                                    }else if(routePointItem.status == "CANCELED") {
+                                        markersArray[routePointItem.containedPoint.pointId]._icon.style.backgroundColor = 'black';
+                                    }
+                                    else if(routePointItem.status == "COMPLETED") {
+                                        markersArray[routePointItem.containedPoint.pointId]._icon.style.backgroundColor = 'gray';
+                                    }
+
+                                    console.log("len2 = " + markersArray.length + " pointID = " + routePointItem.containedPoint.pointId);
+
+                                    printAnswer('Dump was read');
+                                });
+                            } else { // We have no answer, so we can try to get base point in the nested query
+                                $.ajax({
+                                    type: 'POST',
+                                    url: 'points/?type=base',
+                                    data: JSON.stringify({
+                                        "pointIdList": [
+                                            {
+                                                "id": routePointItem.containedPoint.pointId
+                                            }]
+                                    }),
+                                    contentType: "application/json",
+                                    async: true,
+                                    success: function (result) {
+
+                                        if (result != '' && result != '[ ]') {
+                                            var obj = JSON.parse(result);
+                                            obj.forEach(function (item, index, array) {
+
+                                                objectTypeArray[routePointItem.containedPoint.pointId] = 'base';
+                                                objectDescriptionArray[routePointItem.containedPoint.pointId] = 'This is base';
+
+                                                markersArray[routePointItem.containedPoint.pointId] = L.marker([routePointItem.containedPoint.latitude,
+                                                    routePointItem.containedPoint.longitude]).addTo(markerGroup)
+                                                    .bindPopup("<b>" + routePointItem.number + " Base " +
+                                                        "</b>This is route pase").openPopup()
+                                                    .on('click', selectMarker);
+
+                                                // Base is green
+                                                markersArray[routePointItem.containedPoint.pointId]._icon.style.backgroundColor = 'white';
+
+                                                console.log("len3 = " + markersArray.length + " pointID = " + routePointItem.containedPoint.pointId);
+
+                                                printAnswer('Base was read');
+                                            });
+                                        }
+
+                                    },
+                                    error: function (jqXHR, textStatus, errorThrown) {
+                                        printAnswer('Get base error: ' +
+                                            jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+                                    }
+                                });
+                            }
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            printAnswer('Get dumps error: ' +
+                                jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+                        }
+                    });
+
                 });
 
                 // Draw lines
                 var prevLat = '';
                 var prevLong = '';
+
+                console.log('len4=' + markersArray.length);
+                var counter = 1;
                 markersArray.forEach(function (item, index, array) {
-                    if (index != '0') {
+                    console.log("I AM HERE NOW " + counter + item);
+                    /*if (index != '0') {
                         var points = [
                             [prevLat, prevLong],
                             [item._latlng.lat, item._latlng.lng]
@@ -350,7 +439,8 @@
                         L.polyline(points, {color: 'red', weight: 2}).addTo(linesGroup);
                     }
                     prevLat = item._latlng.lat;
-                    prevLong = item._latlng.lng;
+                    prevLong = item._latlng.lng;*/
+                    counter = counter + 1;
                 });
 
                 // Enable button close route if it exists
@@ -392,14 +482,12 @@
         });
 
 
-
         drawRoute();
 
         // TODO - Create realisation of this method
     };
 
     var onAccept = function () {
-        console.log(current_point_id);
         $.ajax({
             type: 'put',
             url: 'routepoint/',
@@ -455,7 +543,6 @@
 
                             var obj = JSON.parse(result);
                             obj.forEach(function (item, index, array) {
-                                console.log(item);
                                 current_point_id = item.pointId;
                                 latitude.value = item.latitude;
                                 longitude.value = item.longitude; // TODO - Write answer description
@@ -486,7 +573,6 @@
                                         obj.forEach(function (item, index, array) {
 
                                             console.log('I am in base case ' + result);
-                                            console.log(item);
                                             current_point_id = item.pointId;
                                             latitude.value = item.latitude;
                                             longitude.value = item.longitude; // TODO - Write answer description
@@ -501,7 +587,7 @@
 
                                 },
                                 error: function (jqXHR, textStatus, errorThrown) {
-                                    printAnswer('Get dumps error: ' +
+                                    printAnswer('Get bases error: ' +
                                         jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
                                 }
                             });
