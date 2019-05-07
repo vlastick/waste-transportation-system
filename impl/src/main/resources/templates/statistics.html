@@ -163,7 +163,7 @@
                         <div class="col-sm-7">
                             <select id="routeStatus" class="form-control">
                                 <option selected>IN_PROGRESS</option>
-                                <option>CANCELLED</option>
+                                <option>CANCELED</option>
                                 <option>COMPLETED</option>
                             </select>
                         </div>
@@ -254,10 +254,48 @@
 
         console.log(strRequest);
 
-
         $.ajax({
             type: 'POST',
             url: 'points/?type=dump',
+            data: strRequest,
+            contentType: "application/json",
+            async: true,
+            success: function (result) {
+                console.log(result);
+                /*if (result != '' && result != '[ ]') {
+                    var obj = JSON.parse(result);
+                    obj.forEach(function (item, index, array) {
+
+                        console.log(obj);
+                        printAnswer('Base was read');
+                    });
+                }*/
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                printAnswer('Get dump error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+    };
+
+    var onGetBases = function () {
+
+        var strRequest = "{";
+
+        if(basePointId.value!=''){
+            strRequest +="\"pointIdList\": [{\"id\": " + basePointId.value + "}],";
+        }
+        if(baseGroupId.value!=''){
+            strRequest +="\"groupIdList\": [{\"id\": " + baseGroupId.value + "}],";
+        }
+        if(strRequest != "{"){
+            strRequest = strRequest.substring(0, strRequest.length - 1);
+        }
+        strRequest += "}";
+
+        $.ajax({
+            type: 'POST',
+            url: 'points/?type=base',
             data: strRequest,
             contentType: "application/json",
             async: true,
@@ -277,14 +315,50 @@
                     jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
             }
         });
-    };
-
-    var onGetBases = function () {
 
     };
 
     var onGetRoutes = function () {
 
+        var strRequest = "{";
+        if(routeId.value!=''){
+            strRequest +="\"routeIdList\": [{\"id\": " + routeId.value + "}],";
+        }
+        if(routeVesselId.value!=''){
+            strRequest +="\"vesselIdList\": [{\"id\": " + routeVesselId.value + "}],";
+        }
+        if(routeStatus.value!=''){
+            strRequest +="\"routeStatusList\": [{\"routeStatus\": \"" + routeStatus.value + "\"}],";
+        }
+        if(strRequest != "{"){
+            strRequest = strRequest.substring(0, strRequest.length - 1);
+        }
+        strRequest += "}";
+
+        console.log(strRequest);
+
+        $.ajax({
+            type: 'POST',
+            url: 'routes/',
+            data: strRequest,
+            contentType: "application/json",
+            async: true,
+            success: function (result) {
+                console.log(result);
+                /*if (result != '' && result != '[ ]') {
+                    var obj = JSON.parse(result);
+                    obj.forEach(function (item, index, array) {
+
+                        console.log(obj);
+                        printAnswer('Base was read');
+                    });
+                }*/
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                printAnswer('Get routes error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
     };
 
     var onClear = function () {
