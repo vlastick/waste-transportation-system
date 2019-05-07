@@ -228,8 +228,8 @@
                 .bindPopup('<b>New dump</b><br />Describe one and make a request').openPopup()
                 .on('click', selectMarker);
 
-            longitude.value = e.latlng.lat;
-            latitude.value = e.latlng.lng;
+            longitude.value = e.latlng.lng;
+            latitude.value = e.latlng.lat;
 
             printAnswer('Marker was added with latitude = '
                 + latitude.value + ' and longitude ' + longitude.value + ' coordinate');
@@ -347,7 +347,7 @@
                 markers = [];  //clear markers structure
                 obj.forEach(function (item, index, array) {
 
-                    markers[item.pointId] = L.marker([item.longitude, item.latitude]).addTo(markerGroup)
+                    markers[item.pointId] = L.marker([item.latitude, item.longitude]).addTo(markerGroup)
                         .bindPopup("<b>Dump point</b><br/>Status: "
                             + item.status + "<br/>Type: " + item.type).openPopup()
                         .on('click', selectMarker);
