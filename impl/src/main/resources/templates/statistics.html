@@ -76,23 +76,31 @@
                 </div>
 
                 <div class="col-sm-4" id="controlLayer">
-                    <h4 class="intro-text text-center">Points filter</h4>
+                    <h4 class="intro-text text-center">Dump filter</h4>
 
                     <div class="form-group row">
-                        <label class="col-sm-5">Status</label>
+                        <label class="col-sm-5">Creator ID</label>
                         <div class="col-sm-7">
-                            <select id="dumpStatus" class="form-control">
-                                <option selected>UNCONFIRMED</option>
-                                <option>UNREMOVED</option>
-                                <option>REMOVED</option>
-                            </select>
+                            <input type="text" class="form-control" id="dumpCreatorId" placeholder="none">
                         </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-5">Point ID</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" id="dumpPointId" placeholder="none">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-6">Is dump active</label>
+                        <input type="checkbox" class="form-check-input" id="dumpActive">
                     </div>
 
                     <div class="form-group row">
                         <label class="col-sm-5">Dump type</label>
                         <div class="col-sm-7">
-                            <select id="type" class="form-control">
+                            <select id="dumpType" class="form-control">
                                 <option selected>LIQUID</option>
                                 <option>SOLID</option>
                                 <option>ORGANIC</option>
@@ -102,14 +110,53 @@
                     </div>
 
                     <div class="form-group row">
-                        <label class="col-sm-7">Dump size in packages</label>
-                        <div class="col-sm-5">
-                            <input type="text" class="form-control" id="size" placeholder="none">
+                        <label class="col-sm-5">Max dump size</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" id="dumpMaxSize" placeholder="none">
                         </div>
                     </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-5">Group ID</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" id="dumpGroupId" placeholder="none">
+                        </div>
+                    </div>
+
                     <br>
 
-                    <h4 class="intro-text text-center">Routes filter</h4>
+                    <h4 class="intro-text text-center">Base filter</h4>
+
+                    <div class="form-group row">
+                        <label class="col-sm-5">Point ID</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" id="basePointId" placeholder="none">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-5">Group ID</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" id="baseGroupId" placeholder="none">
+                        </div>
+                    </div>
+
+
+                    <h4 class="intro-text text-center">Route filter</h4>
+
+                    <div class="form-group row">
+                        <label class="col-sm-5">Route ID</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" id="routeId" placeholder="none">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-5">Vessel ID</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" id="routeVesselId" placeholder="none">
+                        </div>
+                    </div>
 
                     <div class="form-group row">
                         <label class="col-sm-5">Status</label>
@@ -122,22 +169,10 @@
                         </div>
                     </div>
 
-                    <div class="form-group row">
-                        <label class="col-sm-5">Status</label>
-                        <div class="col-sm-7">
-                            <select id="vesselName" class="form-control">
-                                <option selected>Vessel1</option>
-                                <option>Vessel2</option>
-                                <option>Vessel3</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <h4 class="intro-text text-center">Start data/End data fields...</h4>
-
-
                     <div class="form-group row text-center">
-                        <button type="button" class="btn btn-primary mb-3" onclick="onGetPoints()">Get points
+                        <button type="button" class="btn btn-primary mb-3" onclick="onGetDumps()">Get dumps
+                        </button>
+                        <button type="button" class="btn btn-primary mb-3" onclick="onGetBases()">Get bases
                         </button>
                         <button type="button" class="btn btn-primary mb-3" onclick="onGetRoutes()">Get routes
                         </button>
@@ -162,6 +197,21 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script type="text/javascript">
 
+    var dumpCreatorId = document.getElementById('dumpCreatorId');
+    var dumpPointId = document.getElementById('dumpPointId');
+    var dumpActive = document.getElementById('dumpActive');
+    var dumpType = document.getElementById('dumpType');
+    var dumpMaxSize = document.getElementById('dumpMaxSize');
+    var dumpGroupId = document.getElementById('dumpGroupId');
+
+    var basePointId = document.getElementById('basePointId');
+    var baseGroupId = document.getElementById('baseGroupId');
+
+    var routeStatus = document.getElementById('routeStatus');
+    var routeVesselId = document.getElementById('routeVesselId');
+    var routeId = document.getElementById('routeId');
+
+
     // Create map
     var map = L.map('map').setView([61.2302, 30.0495], 13);
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -175,6 +225,71 @@
 
     // Save all markers to provide it's id
     var markers = {};
+
+    var onGetDumps = function () {
+        var strRequest = "{";
+
+        if(dumpPointId.value!=''){
+            strRequest +="\"pointIdList\": [{\"id\": " + dumpPointId.value + "}],";
+        }
+        if(dumpGroupId.value!=''){
+            strRequest +="\"groupIdList\": [{\"id\": " + dumpGroupId.value + "}],";
+        }
+        if(dumpCreatorId.value!=''){
+            strRequest +="\"creatorsIdList\": [{\"id\": " + dumpCreatorId.value + "}],";
+        }
+        if(dumpType.value!=''){
+            strRequest +="\"dumpTypeList\": [{\"dumpType\": \"" + dumpType.value + "\"}],";
+        }
+        if(dumpActive.value!=''){
+            strRequest +="\"isActive\": " + dumpActive.checked + ",";
+        }
+        if(dumpMaxSize.value!=''){
+            strRequest +="\"maxSize\": " + dumpMaxSize.value + ",";
+        }
+        if(strRequest != "{"){
+            strRequest = strRequest.substring(0, strRequest.length - 1);
+        }
+        strRequest += "}";
+
+        console.log(strRequest);
+
+
+        $.ajax({
+            type: 'POST',
+            url: 'points/?type=dump',
+            data: strRequest,
+            contentType: "application/json",
+            async: true,
+            success: function (result) {
+                console.log(result);
+                /*if (result != '' && result != '[ ]') {
+                    var obj = JSON.parse(result);
+                    obj.forEach(function (item, index, array) {
+
+                        console.log(obj);
+                        printAnswer('Base was read');
+                    });
+                }*/
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                printAnswer('Get base error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+    };
+
+    var onGetBases = function () {
+
+    };
+
+    var onGetRoutes = function () {
+
+    };
+
+    var onClear = function () {
+
+    };
 
 </script>
 
