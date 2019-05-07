@@ -692,6 +692,7 @@ public class RestService {
                     creatorsIdList = new Vector<>();
                     creatorsIdList.add(user.getUserId());
                     pointFilter.setCreatorsIdList(creatorsIdList);
+                    pointFilter.setActive(true);
                     break;
                 }
                 pointFilter.setGroupidList(null);
