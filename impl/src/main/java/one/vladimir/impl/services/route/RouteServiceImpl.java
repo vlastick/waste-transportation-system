@@ -338,6 +338,8 @@ public class RouteServiceImpl implements RouteService {
         }
 
         if (status == RoutePointStatus.COMPLETED) {
+            vessel.setLatitude(routePoint.getContainedPoint().getLatitude());
+            vessel.setLongitude(routePoint.getContainedPoint().getLongitude());
             transportService.updateCoordinates(vesselId, routePoint.getContainedPoint().getLatitude(), routePoint.getContainedPoint().getLongitude());
             DumpFilter dumpFilter = new DumpFilter();
             List<Integer> ids = new ArrayList<>();
