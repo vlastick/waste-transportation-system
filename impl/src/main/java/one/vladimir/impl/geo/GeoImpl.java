@@ -5,6 +5,7 @@ import one.vladimir.api.pojo.Point;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.annotation.PostConstruct;
@@ -18,6 +19,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -35,7 +37,7 @@ public class GeoImpl implements Geo {
     @PostConstruct
     public void postConstructLog() {
         System.out.println("geoService initialized");
-        //this.isLand("123");
+        this.isLand("123");
     }
 
     public static String toString(Document doc) {
@@ -116,7 +118,7 @@ public class GeoImpl implements Geo {
     }
 
     private Boolean isLand(String str) {
-        str = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+        String testStr = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<osm generator=\"Overpass API 0.7.55.7 8b86ff77\" version=\"0.6\">\n" +
                 "    \n" +
                 "    <note>The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.</note>\n" +
@@ -1140,9 +1142,12 @@ public class GeoImpl implements Geo {
                 "</osm>\n";
         try {
             DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document document = documentBuilder.parse(str);
+            InputSource is = new InputSource(new StringReader(testStr));
+            Document document = documentBuilder.parse(is);
             Node root =  document.getDocumentElement();
             System.out.println(root.getFirstChild());
+            System.out.println(root.getBaseURI());
+            System.out.println(root.getChildNodes());
 
         } catch (ParserConfigurationException ex) {
             ex.printStackTrace(System.out);
