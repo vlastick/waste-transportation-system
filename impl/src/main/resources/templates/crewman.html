@@ -455,8 +455,8 @@
 
                             var obj = JSON.parse(result);
                             obj.forEach(function (item, index, array) {
-
-                                current_point_id = item.id;
+                                console.log(item);
+                                current_point_id = item.pointId;
                                 latitude.value = item.latitude;
                                 longitude.value = item.longitude; // TODO - Write answer description
                                 objectDescription.value = 'New description ';
@@ -486,8 +486,8 @@
                                         obj.forEach(function (item, index, array) {
 
                                             console.log('I am in base case ' + result);
-
-                                            current_point_id = item.id;
+                                            console.log(item);
+                                            current_point_id = item.pointId;
                                             latitude.value = item.latitude;
                                             longitude.value = item.longitude; // TODO - Write answer description
                                             objectDescription.value = 'This is base to deliver boat garbage';

@@ -10,11 +10,11 @@ public class CrewmanEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer crewmanId;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "UserId")
     private UserEntity user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "VesselId")
     private VesselEntity vessel;
 

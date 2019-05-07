@@ -2,6 +2,7 @@ package one.vladimir.impl.services.rest;
 
 import one.vladimir.api.*;
 import one.vladimir.api.enums.RoutePointStatus;
+import one.vladimir.api.enums.RouteStatus;
 import one.vladimir.api.enums.UserRole;
 import one.vladimir.api.pojo.*;
 
@@ -27,7 +28,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Vector;
 
 import static com.fasterxml.jackson.databind.node.JsonNodeType.OBJECT;
@@ -751,6 +754,9 @@ public class RestService {
                 List<Integer> vesselIdList = new Vector<>();
                 vesselIdList.add(transportService.getVesselByCrewmanId(user.getUserId()).getId());
                 routeFilter.setVesselIdList(vesselIdList);
+                List<String> routeStatusList = new ArrayList<>();
+                routeStatusList.add(RouteStatus.IN_PROGRESS.toString());
+                routeFilter.setRouteStatusList(routeStatusList);
                 break;
             case ADMIN:
                 break;
@@ -764,6 +770,7 @@ public class RestService {
             ObjectMapper mapper = new ObjectMapper();
             answerJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(routes);
             status = HttpStatus.OK;
+            System.out.println(answerJSON);
         } catch (JsonProcessingException e) {
             //TODO: implement exception handling
         }
@@ -824,7 +831,15 @@ public class RestService {
             answerJSON = "access denied";
             status = HttpStatus.FORBIDDEN;
         }
-        Route route = routeService.buildroute(transportService.getVesselByCrewmanId(user.getUserId()).getId());
+        Route route = transportService.getVesselByCrewmanId(user.getUserId()).getCurrRoute();
+        try {
+            route = routeService.buildroute(transportService.getVesselByCrewmanId(user.getUserId()).getId());
+        } catch (NoSuchElementException e) {
+            status = HttpStatus.OK;
+            answerJSON = "No dumps available";
+            return new ResponseEntity<>(answerJSON, status);
+        }
+
         ObjectMapper mapper = new ObjectMapper();
         try {
             answerJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(route);
@@ -845,6 +860,24 @@ public class RestService {
 
         String answerJSON = "route status updated";
         HttpStatus status = HttpStatus.BAD_REQUEST;
+        User user = userService.getAuthenticatedUser();
+        if (user.getRole() != UserRole.CREWMAN) {
+            answerJSON = "access denied";
+            status = HttpStatus.FORBIDDEN;
+        }
+
+        Vessel vessel = transportService.getVesselByCrewmanId(user.getUserId());
+        Route route = routeService.finishRoute(vessel.getId());
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            answerJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(route);
+            status = OK;
+        } catch (JsonProcessingException e) {
+            answerJSON = "Can't parse class to JSON";
+            status = HttpStatus.BAD_REQUEST;
+        }
+
 
         return new ResponseEntity<>(answerJSON, status);
     }
