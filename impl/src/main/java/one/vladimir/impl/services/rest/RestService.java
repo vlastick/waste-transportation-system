@@ -692,6 +692,7 @@ public class RestService {
                     creatorsIdList = new Vector<>();
                     creatorsIdList.add(user.getUserId());
                     pointFilter.setCreatorsIdList(creatorsIdList);
+                    pointFilter.setActive(true);
                     break;
                 }
                 pointFilter.setGroupidList(null);
@@ -770,7 +771,7 @@ public class RestService {
             ObjectMapper mapper = new ObjectMapper();
             answerJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(routes);
             status = HttpStatus.OK;
-            System.out.println(answerJSON);
+            //System.out.println(answerJSON);
         } catch (JsonProcessingException e) {
             //TODO: implement exception handling
         }
@@ -867,14 +868,17 @@ public class RestService {
         }
 
         Vessel vessel = transportService.getVesselByCrewmanId(user.getUserId());
-        Route route = routeService.finishRoute(vessel.getId());
 
         ObjectMapper mapper = new ObjectMapper();
         try {
+            Route route = routeService.finishRoute(vessel.getId());
             answerJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(route);
             status = OK;
         } catch (JsonProcessingException e) {
             answerJSON = "Can't parse class to JSON";
+            status = HttpStatus.BAD_REQUEST;
+        } catch (IllegalArgumentException e) {
+            answerJSON = e.getMessage();
             status = HttpStatus.BAD_REQUEST;
         }
 
