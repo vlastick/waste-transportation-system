@@ -325,6 +325,8 @@ public class RouteServiceImpl implements RouteService {
             Route currRoute = vessel.getCurrRoute();
             currRoute.setStatus(RouteStatus.COMPLETED);
             db.updateRoute(currRoute, vessel);
+            vessel.setCurrentLoad(0);
+            transportService.updateVessel(vessel);
         }
         if ((routePoint.getStatus() == RoutePointStatus.AWAITING
                 || routePoint.getStatus() == RoutePointStatus.IN_PROGRESS)

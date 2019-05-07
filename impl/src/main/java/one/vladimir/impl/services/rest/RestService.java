@@ -860,6 +860,24 @@ public class RestService {
 
         String answerJSON = "route status updated";
         HttpStatus status = HttpStatus.BAD_REQUEST;
+        User user = userService.getAuthenticatedUser();
+        if (user.getRole() != UserRole.CREWMAN) {
+            answerJSON = "access denied";
+            status = HttpStatus.FORBIDDEN;
+        }
+
+        Vessel vessel = transportService.getVesselByCrewmanId(user.getUserId());
+        Route route = routeService.finishRoute(vessel.getId());
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            answerJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(route);
+            status = OK;
+        } catch (JsonProcessingException e) {
+            answerJSON = "Can't parse class to JSON";
+            status = HttpStatus.BAD_REQUEST;
+        }
+
 
         return new ResponseEntity<>(answerJSON, status);
     }
