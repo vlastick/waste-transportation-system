@@ -321,6 +321,16 @@ public class RouteServiceImpl implements RouteService {
 
         if (status == RoutePointStatus.COMPLETED) {
             transportService.updateCoordinates(vesselId, routePoint.getContainedPoint().getLatitude(), routePoint.getContainedPoint().getLongitude());
+            DumpFilter dumpFilter = new DumpFilter();
+            List<Integer> ids = new ArrayList<>();
+            ids.add(routePoint.getContainedPoint().getPointId());
+            dumpFilter.setPointIdList(ids);
+            List<Dump> dumps = pointService.getDumpsByFilter(dumpFilter);
+            if (dumps.size() == 1) {
+                Integer currLoad = vessel.getCurrentLoad();
+                vessel.setCurrentLoad(currLoad + dumps.get(0).getSize());
+                transportService.updateVessel(vessel);
+            }
             routePoint.setStatus(status);
         } else if (status == RoutePointStatus.CANCELED) {
             routePoint.setStatus(status);

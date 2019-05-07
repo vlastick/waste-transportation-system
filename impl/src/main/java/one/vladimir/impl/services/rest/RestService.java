@@ -30,6 +30,7 @@ import javax.annotation.PostConstruct;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Vector;
 
 import static com.fasterxml.jackson.databind.node.JsonNodeType.OBJECT;
@@ -828,7 +829,15 @@ public class RestService {
             answerJSON = "access denied";
             status = HttpStatus.FORBIDDEN;
         }
-        Route route = routeService.buildroute(transportService.getVesselByCrewmanId(user.getUserId()).getId());
+        Route route = transportService.getVesselByCrewmanId(user.getUserId()).getCurrRoute();
+        try {
+            route = routeService.buildroute(transportService.getVesselByCrewmanId(user.getUserId()).getId());
+        } catch (NoSuchElementException e) {
+            status = HttpStatus.OK;
+            answerJSON = "No dumps available";
+            return new ResponseEntity<>(answerJSON, status);
+        }
+
         ObjectMapper mapper = new ObjectMapper();
         try {
             answerJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(route);
