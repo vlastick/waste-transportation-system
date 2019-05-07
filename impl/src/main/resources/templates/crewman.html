@@ -89,28 +89,29 @@
                     </div>
 
                     <div class="form-group row">
-                        <label class="col-sm-5">Dump type</label>
+                        <label class="col-sm-5">Object type</label>
                         <div class="col-sm-7">
-                            <input type="text" readonly class="form-control" id="type" value="LIQUID">
+                            <input type="text" readonly class="form-control" id="obj_type" value="dump, LIQUID">
                         </div>
                     </div>
 
                     <div class="form-group row">
-                        <label class="col-sm-7">Dump size in packages</label>
+                        <label class="col-sm-7">Object size</label>
                         <div class="col-sm-5">
-                            <input type="text" readonly class="form-control" id="size" placeholder="1">
+                            <input type="text" readonly class="form-control" id="obj_size" placeholder="1">
                         </div>
                     </div>
 
-                    <label class="col-sm-7">Dump description</label>
+                    <label class="col-sm-7">Object description</label>
                     <div class="col-sm-13">
-                            <textarea readonly class="form-control rounded-0" id="description" rows="5"
+                            <textarea readonly class="form-control rounded-0" id="obj_description" rows="5"
                                       placeholder="Dump description."></textarea>
                     </div>
 
                     <br>
                     <div class="form-group row text-center">
-                        <button type="button" class="btn btn-primary mb-3" id = "getRoute" onclick="onGetRoute()">Get route
+                        <button type="button" class="btn btn-primary mb-3" id="getRoute" onclick="onGetRoute()">Get
+                            route
                         </button>
                         <button type="button" class="btn btn-primary mb-3" id="closeRoute" onclick="onCloseRoute()">
                             Close
@@ -146,9 +147,12 @@
     var linesGroup = L.layerGroup().addTo(map);
 
     // Save all markers to provide it's id
-    var markers = {};
-    var dump_status = {};
-    var base_status = {};
+    var markersArray = {};
+    var objectTypeArray = {};   // Object type - dump, base, boat
+    var objectSizeArray = {};   // Dump - size in package, boat - capacity
+    var objectDescriptionArray = {}; // Some object description
+    var objectStatusArray = {}; // Dump subtype - liquid, organic, etc.
+    var dumpTypeArray = {}; // Dump subtype - liquid, organic, etc.
 
     // Needs for update point status
     var current_point_id = 0;
@@ -156,9 +160,9 @@
     var vesselInfo = document.getElementById('vesselInfo');
     var longitude = document.getElementById('longitude');
     var latitude = document.getElementById('latitude');
-    var dumpType = document.getElementById('type');
-    var dumpSize = document.getElementById('size');
-    var dumpDescription = document.getElementById('description');
+    var objectType = document.getElementById('obj_type');
+    var objectSize = document.getElementById('obj_size');
+    var objectDescription = document.getElementById('obj_description');
     var answer = document.getElementById('answer');
     var setCoordinateButton = document.getElementById('setCoordinates');
     var acceptButton = document.getElementById('acceptButton');
@@ -171,6 +175,8 @@
     var boatLongitude = '';
     var boatLoad = 0;
     var boatCapacity = 0;
+    var boatName = '';
+
     var blockMarkers = false;
 
     function printAnswer(value) {
@@ -179,11 +185,11 @@
     }
 
     function setDefaulValues() {
-        latitude.value = 'Marker is not selected';
-        longitude.value = 'Marker is not selected';
-        dumpDescription.value = 'Marker is not selected';
-        dumpType.value = 'Marker is not selected';
-        dumpSize.value = '1';
+        latitude.value = 'Object is not selected';
+        longitude.value = 'Object is not selected';
+        objectDescription.value = 'Object is not selected';
+        objectType.value = 'Object is not selected';
+        objectSize.value = '0';
 
         setCoordinateButton.disabled = true;
         cancelButton.disabled = true;
@@ -192,6 +198,14 @@
         closeRouteButton.disabled = true;
     }
 
+    function clearArrData() {
+        markersArray = [];
+        objectTypeArray = [];   // Object type - dump, base, boat
+        objectSizeArray = [];   // Dump - size in package, boat - capacity
+        objectDescriptionArray = []; // Some object description
+        dumpTypeArray = []; // Dump subtype - liquid, organic, etc.
+        objectStatusArray = [];
+    }
 
     function onClearLog() {
         answer.value = '';
@@ -214,6 +228,7 @@
                 longitude.value = boatLongitude;
                 boatLoad = obj.currentLoad;
                 boatCapacity = obj.capacity;
+                boatName = obj.name;
 
                 vesselInfo.innerText = obj.name + ', load (' + obj.currentLoad + '/' + obj.capacity + ') packets';
 
@@ -285,31 +300,48 @@
                 markerGroup.clearLayers();
                 linesGroup.clearLayers();
 
-                markers = [];  //clear markers structure
+                // Clear points arr with additional data
+                clearArrData();
 
-                markers['0'] = L.marker([boatLatitude, boatLongitude]).addTo(markerGroup)
-                    .bindPopup('<b>Current boat coordinate</b><br />Now you are here!').openPopup()
+                // Init boat T
+                objectTypeArray['0'] = 'Boat';   // Object type - dump, base, boat
+                objectSizeArray['0'] = 'Capacity: ' + boatCapacity + ', Load ' + boatLoad;   // Dump - size in package, boat - capacity
+                objectDescriptionArray['0'] = 'This is your boat'; // Some object description TODO
+
+
+                markersArray['0'] = L.marker([boatLatitude, boatLongitude]).addTo(markerGroup)
+                    .bindPopup('<b>Boat ' + boatName + '</b><br/>Now you are here!').openPopup()
                     .on('click', selectMarker);
-                markers['0']._icon.style.backgroundColor = 'brown';
+                markersArray['0']._icon.style.backgroundColor = 'brown';
 
                 // Get route points
-                console.log(result);
                 var obj = JSON.parse(result);
-                console.log(obj[0].routePoints);
                 obj[0].routePoints.forEach(function (item, index, array) {
+                    console.log(item);
+                    //if(item.type == 'dump') {
 
-                    if ((item.status != 'COMPLETED') && (item.status != 'CANCELED')) {
-                        markers[item.containedPoint.pointId] = L.marker([item.containedPoint.latitude, item.containedPoint.longitude]).addTo(markerGroup)
-                            .bindPopup("<b>" + item.number + " object " + " point</b><br/>Status: "
-                                + item.status + "<br/>Type: " + item.type).openPopup()
+                    //    objectTypeArray[item.containedPoint.pointId] = 'dump';
+                    //    objectSizeArray[item.containedPoint.pointId] = item.size;
+                        objectDescriptionArray[item.containedPoint.pointId] = 'This is dump';
+                        objectStatusArray[item.containedPoint.pointId] = item.status;
+                    //    dumpTypeArray[item.containedPoint.pointId] = item.type;
+
+                    //    markersArray[item.containedPoint.pointId] = L.marker([item.containedPoint.latitude, item.containedPoint.longitude]).addTo(markerGroup)
+                    //        .bindPopup("<b>" + item.number + " Dump " +
+                    //            "</b><br/>Status: "+ item.status + "<br/>Type: " + item.type + "<br/>Size: " + item.size).openPopup()
+                    //        .on('click', selectMarker);
+                    //}
+
+                    markersArray[item.containedPoint.pointId] = L.marker([item.containedPoint.latitude, item.containedPoint.longitude]).addTo(markerGroup)
+                            .bindPopup("<b>" + item.number + " Point "
+                            ).openPopup()
                             .on('click', selectMarker);
-                    }
                 });
 
                 // Draw lines
                 var prevLat = '';
                 var prevLong = '';
-                markers.forEach(function (item, index, array) {
+                markersArray.forEach(function (item, index, array) {
                     if (index != '0') {
                         var points = [
                             [prevLat, prevLong],
@@ -322,7 +354,7 @@
                 });
 
                 // Enable button close route if it exists
-                if (markers.length > 1) {
+                if (markersArray.length > 1) {
                     closeRouteButton.disabled = false;
                 } else {
                     closeRouteButton.disabled = true;
@@ -339,10 +371,29 @@
 
     var onCloseRoute = function () {
         console.log('close route click');
-        markers = [];  //clear markers structure
+        markersArray = [];  //clear markers structure
         acceptButton.disabled = true;
         dumpStatus.disabled = true;
-        drawRoute
+
+        $.ajax({
+            type: 'put',
+            url: 'route/',
+            contentType: 'application/json',
+            async: true,
+            data: JSON.stringify('[]'),
+            success: function (result) {
+                printAnswer('Put route: ' + result);
+                drawRoute();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                printAnswer('Put route was not update. Error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+
+
+
+        drawRoute();
 
         // TODO - Create realisation of this method
     };
@@ -373,13 +424,14 @@
 
 
     function selectMarker(e) {
+
         if (!blockMarkers) {
 
             console.log("Marker was selected");
             var markerTempId = this._leaflet_id;
             var objectId = -1;
-            markers.forEach(function (item, index, array) {
-                if (markerTempId == markers[index]._leaflet_id) {
+            markersArray.forEach(function (item, index, array) {
+                if (markerTempId == markersArray[index]._leaflet_id) {
                     objectId = index;
                 }
             });
@@ -407,10 +459,10 @@
                                 current_point_id = item.id;
                                 latitude.value = item.latitude;
                                 longitude.value = item.longitude; // TODO - Write answer description
-                                dumpDescription.value = 'New description ';
+                                objectDescription.value = 'New description ';
                                 //dumpStatus.value = item.status;
-                                dumpType.value = item.type;
-                                dumpSize.value = item.size;
+                                objectType.value = item.type;
+                                objectSize.value = item.size;
                                 dumpStatus.disabled = false;
                                 acceptButton.disabled = false;
                                 printAnswer('Dump was selected');
@@ -438,9 +490,9 @@
                                             current_point_id = item.id;
                                             latitude.value = item.latitude;
                                             longitude.value = item.longitude; // TODO - Write answer description
-                                            dumpDescription.value = 'This is base to deliver boat garbage';
-                                            dumpType.value = 'This is Base';
-                                            dumpSize.value = 'Base';
+                                            objectDescription.value = 'This is base to deliver boat garbage';
+                                            objectType.value = 'This is Base';
+                                            objectSize.value = 'Base';
                                             dumpStatus.disabled = false;
                                             acceptButton.disabled = false;
                                             printAnswer('Base was selected');
@@ -465,17 +517,17 @@
             } else if (objectId == 0) {
                 latitude.value = boatLatitude;
                 longitude.value = boatLongitude; // TODO - Write answer description
-                dumpDescription.value = 'Pol, you are here now';
-                dumpType.value = 'This is your ship';
-                dumpSize.value = 'One person';
+                objectDescription.value = 'Pol, you are here now';
+                objectType.value = 'This is your ship';
+                objectSize.value = 'One person';
                 dumpStatus.disabled = true;
                 acceptButton.disabled = true;
                 printAnswer('Ship was found');
 
             } else {
-                dumpDescription.value = 'Marker not found';
-                dumpType.value = 'Marker not found';
-                dumpSize.value = 'Marker not found';
+                objectDescription.value = 'Marker not found';
+                objectType.value = 'Marker not found';
+                objectSize.value = 'Marker not found';
                 dumpStatus.disabled = true;
                 acceptButton.disabled = true;
                 printAnswer('Nothing was found');
