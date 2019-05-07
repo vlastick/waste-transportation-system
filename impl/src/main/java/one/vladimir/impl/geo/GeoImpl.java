@@ -80,25 +80,22 @@ public class GeoImpl implements Geo {
         catch (ParserConfigurationException e){
             e.printStackTrace();
             resultString += e.toString();
-            System.out.println(e.toString());
         }
         catch (SAXException e){
             e.printStackTrace();
             resultString += e.toString();
-            System.out.println(e.toString());
         }
         catch (MalformedURLException e){
             e.printStackTrace();
             resultString += e.toString();
-            System.out.println(e.toString());
         }
         catch (java.io.IOException e){
             e.printStackTrace();
             resultString += e.toString();
-            System.out.println(e.toString());
         }
+
         if(resultString.equals("")){
-            resultString = "There is no answer message with exceptions, why?";
+            resultString = "There is no answer message with exceptions";
         }
 
         return resultString;
