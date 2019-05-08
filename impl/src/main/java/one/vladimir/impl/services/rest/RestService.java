@@ -683,6 +683,7 @@ public class RestService {
                 creatorsIdList = new Vector<>();
                 creatorsIdList.add(user.getUserId());
                 pointFilter.setCreatorsIdList(creatorsIdList);
+                pointFilter.setActive(true);
                 break;
             case CREWMAN:
                 if (pointFilter.getPointIdList() == null || pointFilter.getPointIdList().size() != 1) {
@@ -730,7 +731,6 @@ public class RestService {
         ObjectMapper mapper1 = new ObjectMapper();
         try {
             System.out.println(mapper1.writerWithDefaultPrettyPrinter().writeValueAsString(pointFilter));
-            System.out.println(mapper1.writerWithDefaultPrettyPrinter().writeValueAsString(answerJSON));
         } catch (JsonProcessingException e) {
         }
         return new ResponseEntity<>(answerJSON, status);
