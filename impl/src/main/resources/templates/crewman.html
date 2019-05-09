@@ -227,6 +227,7 @@
             success: function (result) {
 
                 var obj = JSON.parse(result);
+
                 boatLongitude = obj.longitude;
                 boatLatitude = obj.latitude;
                 latitude.value = boatLatitude;
@@ -239,10 +240,34 @@
 
                 printAnswer('Vessel information was updated longitude '
                     + longitude.value + ' and latitude ' + latitude.value + ' coordinates');
+
+                objectTypeArray['0'] = 'Boat';   // Object type - dump, base, boat
+                objectSizeArray['0'] = 'Capacity: ' + boatCapacity + ', Load ' + boatLoad;   // Dump - size in package, boat - capacity
+                objectDescriptionArray['0'] = 'This is your boat'; // Some object description
+                objectStatusArray['0'] = 'IN PROGRESS'; // Needs to draw lines
+
+                console.log('get vessel info lat ' + boatLatitude);
+                console.log('get vessel info long ' + boatLatitude);
+
+                markersArray['0'] = L.marker([boatLatitude, boatLongitude]).addTo(markerGroup)
+                    .bindPopup('<b>Boat ' + boatName + '</b><br/>Now you are here!').openPopup()
+                    .on('click', selectMarker);
+                markersArray['0']._icon.style.backgroundColor = 'brown';
+
+                routeCounter = routeCounter + 1;
+                if (routeCounter == routeSize) {
+                    drawLines();
+                }
+
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 printAnswer('Vessel information was not updated. Error: ' +
                     jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+
+                routeCounter = routeCounter + 1;
+                if (routeCounter == routeSize) {
+                    drawLines();
+                }
             }
         });
     };
@@ -278,7 +303,15 @@
             async: true,
 
             success: function (result) {
-                drawRoute();
+
+                // We will draw the route if we have one
+                if (result != 'No dumps available') {
+                    drawRoute();
+                }
+                else{
+                    alert('Now there are not points to get the route');
+                    printAnswer('Now there are not points to get the route');
+                }
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 printAnswer('Vessel route was not updated. Error: ' +
@@ -286,6 +319,9 @@
             }
         });
     };
+
+    var routeSize = 0;
+    var routeCounter = 0;
 
     var drawRoute = function () {
 
@@ -298,154 +334,161 @@
 
             success: function (result) {
 
+                // Clear layers and points to draw new markers and lines
+                clearArrData();
                 setDefaulValues();
-                getVesselInfo();
-
-                // Clear layers to draw new markers and lines
                 markerGroup.clearLayers();
                 linesGroup.clearLayers();
 
-                // Clear points arr with additional data
-                clearArrData();
-
-                // Init boat
-                objectTypeArray['0'] = 'Boat';   // Object type - dump, base, boat
-                objectSizeArray['0'] = 'Capacity: ' + boatCapacity + ', Load ' + boatLoad;   // Dump - size in package, boat - capacity
-                objectDescriptionArray['0'] = 'This is your boat'; // Some object description
-
-                markersArray['0'] = L.marker([boatLatitude, boatLongitude]).addTo(markerGroup)
-                    .bindPopup('<b>Boat ' + boatName + '</b><br/>Now you are here!').openPopup()
-                    .on('click', selectMarker);
-                markersArray['0']._icon.style.backgroundColor = 'brown';
-
-                console.log("len1 = " + markersArray.length);
+                // At first get vessel info and draw she's point
+                getVesselInfo();
 
                 // Get route points
                 var obj = JSON.parse(result);
 
-                // Cycle on all point
-                obj[0].routePoints.forEach(function (routePointItem, index, array) {
+                // We will draw route if we get one
+                if ((obj[0] != undefined) && (obj[0].routePoints != undefined)) {
 
-                    console.log(routePointItem.containedPoint.pointId);
+                    // Get route size to draw lines when we get all points
+                    routeSize = obj[0].routePoints.length + 1; // +1 includes vessel
+                    // To understand that we got all points we use the counter which increases on a getting point event
+                    routeCounter = 0;
 
-                    // Get information about the point
-                    $.ajax({
-                        type: 'POST',
-                        url: 'points/?type=dump',
-                        data: JSON.stringify({
-                            "pointIdList": [
-                                {
-                                    "id": routePointItem.containedPoint.pointId
-                                }]
-                        }),
-                        contentType: "application/json",
-                        async: true,
-                        success: function (result) {
+                    // Let's use a point list to request information about all points
+                    obj[0].routePoints.forEach(function (routePointItem, index, array) {
 
-                            if (result != '[ ]') { // We got the dump point
+                        // We suppose that we have dump point and we make a request to get one.
+                        // In case if there isn't a dump point we make the second request to get another point type - this is base
+                        $.ajax({
+                            type: 'POST',
+                            url: 'points/?type=dump',
+                            data: JSON.stringify({
+                                "pointIdList": [
+                                    {
+                                        "id": routePointItem.containedPoint.pointId
+                                    }]
+                            }),
+                            contentType: "application/json",
+                            async: true,
+                            success: function (result) {
 
-                                var obj = JSON.parse(result);
-                                obj.forEach(function (item, index, array) {
+                                // The not empty result means that we have gotten a dump point to draw
+                                if (result != '[ ]') {
 
-                                    objectTypeArray[routePointItem.containedPoint.pointId] = 'dump';
-                                    dumpTypeArray[routePointItem.containedPoint.pointId] = item.type;
-                                    objectSizeArray[routePointItem.containedPoint.pointId] = item.size;
-                                    objectStatusArray[routePointItem.containedPoint.pointId] = routePointItem.status;
-                                    objectDescriptionArray[routePointItem.containedPoint.pointId] = 'This is dump';
+                                    // Let's parse it and draw this dump point
+                                    var obj = JSON.parse(result);
+                                    obj.forEach(function (item, index, array) {
 
-                                    markersArray[routePointItem.containedPoint.pointId] = L.marker([routePointItem.containedPoint.latitude,
-                                        routePointItem.containedPoint.longitude]).addTo(markerGroup)
-                                        .bindPopup("<b>" + routePointItem.number + " Dump " +
-                                            "</b><br/>Status: " + objectStatusArray[routePointItem.containedPoint.pointId] +
-                                            "<br/>Type: " + dumpTypeArray[routePointItem.containedPoint.pointId] +
-                                            "<br/>Size: " + objectSizeArray[routePointItem.containedPoint.pointId]).openPopup()
-                                        .on('click', selectMarker);
+                                        // Saving the information about the dump
+                                        objectTypeArray[routePointItem.containedPoint.pointId] = 'dump';
+                                        dumpTypeArray[routePointItem.containedPoint.pointId] = item.type;
+                                        objectSizeArray[routePointItem.containedPoint.pointId] = item.size;
+                                        objectStatusArray[routePointItem.containedPoint.pointId] = routePointItem.status;
+                                        objectDescriptionArray[routePointItem.containedPoint.pointId] = 'This is dump';
 
+                                        // Drawing marker point
+                                        markersArray[routePointItem.containedPoint.pointId] = L.marker([routePointItem.containedPoint.latitude,
+                                            routePointItem.containedPoint.longitude]).addTo(markerGroup)
+                                            .bindPopup("<b>" + routePointItem.number + " Dump " +
+                                                "</b><br/>Status: " + objectStatusArray[routePointItem.containedPoint.pointId] +
+                                                "<br/>Type: " + dumpTypeArray[routePointItem.containedPoint.pointId] +
+                                                "<br/>Size: " + objectSizeArray[routePointItem.containedPoint.pointId]).openPopup()
+                                            .on('click', selectMarker);
 
-                                    if((routePointItem.status == "AWAITING") || (routePointItem.status == "IN_PROGRESS")) {
-                                        markersArray[routePointItem.containedPoint.pointId]._icon.style.backgroundColor = 'green';
-                                    }else if(routePointItem.status == "CANCELED") {
-                                        markersArray[routePointItem.containedPoint.pointId]._icon.style.backgroundColor = 'black';
-                                    }
-                                    else if(routePointItem.status == "COMPLETED") {
-                                        markersArray[routePointItem.containedPoint.pointId]._icon.style.backgroundColor = 'gray';
-                                    }
-
-                                    console.log("len2 = " + markersArray.length + " pointID = " + routePointItem.containedPoint.pointId);
-
-                                    printAnswer('Dump was read');
-                                });
-                            } else { // We have no answer, so we can try to get base point in the nested query
-                                $.ajax({
-                                    type: 'POST',
-                                    url: 'points/?type=base',
-                                    data: JSON.stringify({
-                                        "pointIdList": [
-                                            {
-                                                "id": routePointItem.containedPoint.pointId
-                                            }]
-                                    }),
-                                    contentType: "application/json",
-                                    async: true,
-                                    success: function (result) {
-
-                                        if (result != '' && result != '[ ]') {
-                                            var obj = JSON.parse(result);
-                                            obj.forEach(function (item, index, array) {
-
-                                                objectTypeArray[routePointItem.containedPoint.pointId] = 'base';
-                                                objectDescriptionArray[routePointItem.containedPoint.pointId] = 'This is base';
-
-                                                markersArray[routePointItem.containedPoint.pointId] = L.marker([routePointItem.containedPoint.latitude,
-                                                    routePointItem.containedPoint.longitude]).addTo(markerGroup)
-                                                    .bindPopup("<b>" + routePointItem.number + " Base " +
-                                                        "</b>This is route pase").openPopup()
-                                                    .on('click', selectMarker);
-
-                                                // Base is green
-                                                markersArray[routePointItem.containedPoint.pointId]._icon.style.backgroundColor = 'white';
-
-                                                console.log("len3 = " + markersArray.length + " pointID = " + routePointItem.containedPoint.pointId);
-
-                                                printAnswer('Base was read');
-                                            });
+                                        // Let's color the point according to status
+                                        if ((routePointItem.status == "AWAITING") || (routePointItem.status == "IN_PROGRESS")) {
+                                            markersArray[routePointItem.containedPoint.pointId]._icon.style.backgroundColor = 'green';
+                                        } else if (routePointItem.status == "CANCELED") {
+                                            markersArray[routePointItem.containedPoint.pointId]._icon.style.backgroundColor = 'black';
+                                        } else if (routePointItem.status == "COMPLETED") {
+                                            markersArray[routePointItem.containedPoint.pointId]._icon.style.backgroundColor = 'gray';
                                         }
 
-                                    },
-                                    error: function (jqXHR, textStatus, errorThrown) {
-                                        printAnswer('Get base error: ' +
-                                            jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
-                                    }
-                                });
+                                        // It could be the last point. Let's check this case and draw lines
+                                        routeCounter = routeCounter + 1;
+                                        if (routeCounter == routeSize) {
+                                            drawLines();
+                                        }
+
+                                        printAnswer('Dump was read');
+                                    });
+                                } else { // No answer means that this is base and we will get the second request to get the point
+
+                                    $.ajax({
+                                        type: 'POST',
+                                        url: 'points/?type=base',
+                                        data: JSON.stringify({
+                                            "pointIdList": [
+                                                {
+                                                    "id": routePointItem.containedPoint.pointId
+                                                }]
+                                        }),
+                                        contentType: "application/json",
+                                        async: true,
+                                        success: function (result) {
+                                            // We can not get the null answer but we will check one.
+                                            // Also, we can get the null answer if we create a new point type in the future
+                                            if (result != '' && result != '[ ]') {
+
+                                                var obj = JSON.parse(result);
+
+                                                // Let's parse it and draw this base point
+                                                obj.forEach(function (item, index, array) {
+
+                                                    // Saving the information about the base
+                                                    // We also create a base status for function draw lines
+                                                    objectTypeArray[routePointItem.containedPoint.pointId] = 'base';
+                                                    objectDescriptionArray[routePointItem.containedPoint.pointId] = 'This is base';
+                                                    objectStatusArray[routePointItem.containedPoint.pointId] = 'IN PROGRESS';
+
+                                                    // Let's color the base
+                                                    markersArray[routePointItem.containedPoint.pointId] = L.marker([routePointItem.containedPoint.latitude,
+                                                        routePointItem.containedPoint.longitude]).addTo(markerGroup)
+                                                        .bindPopup("<b>" + routePointItem.number + " Base " +
+                                                            "</b>This is route pase").openPopup()
+                                                        .on('click', selectMarker);
+
+                                                    // Set white color for base
+                                                    markersArray[routePointItem.containedPoint.pointId]._icon.style.backgroundColor = 'white';
+
+                                                    // It could be the last point. Let's check this case and draw lines
+                                                    routeCounter = routeCounter + 1;
+                                                    if (routeCounter == routeSize) {
+                                                        drawLines();
+                                                    }
+
+                                                    printAnswer('Base was read');
+                                                });
+                                            }
+
+                                        },
+                                        error: function (jqXHR, textStatus, errorThrown) {
+                                            printAnswer('Get base error: ' +
+                                                jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+
+                                            // It could be the last point. Let's check this case and draw lines
+                                            routeCounter = routeCounter + 1;
+                                            if (routeCounter == routeSize) {
+                                                drawLines();
+                                            }
+                                        }
+                                    });
+                                }
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                printAnswer('Get dumps error: ' +
+                                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+
+                                // It could be the last point. Let's check this case and draw lines
+                                routeCounter = routeCounter + 1;
+                                if (routeCounter == routeSize) {
+                                    drawLines();
+                                }
                             }
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            printAnswer('Get dumps error: ' +
-                                jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
-                        }
+                        });
+
                     });
-
-                });
-
-                // Draw lines
-                var prevLat = '';
-                var prevLong = '';
-
-                console.log('len4=' + markersArray.length);
-                var counter = 1;
-                markersArray.forEach(function (item, index, array) {
-                    console.log("I AM HERE NOW " + counter + item);
-                    /*if (index != '0') {
-                        var points = [
-                            [prevLat, prevLong],
-                            [item._latlng.lat, item._latlng.lng]
-                        ];
-                        L.polyline(points, {color: 'red', weight: 2}).addTo(linesGroup);
-                    }
-                    prevLat = item._latlng.lat;
-                    prevLong = item._latlng.lng;*/
-                    counter = counter + 1;
-                });
+                }
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 printAnswer('Vessel route was not updated. Error: ' +
@@ -454,6 +497,30 @@
                 dumpStatus.disabled = true;
             }
         });
+
+    };
+
+    var drawLines = function () {
+        var prevLat = '';
+        var prevLong = '';
+
+        markersArray.forEach(function (item, index, array) {
+
+            console.log(index);
+
+                if ((objectStatusArray[index] != 'COMPLETED') && (objectStatusArray[index] != 'CANCELED')) {
+                    if (index != '0') {
+                        var points = [
+                            [prevLat, prevLong],
+                            [item._latlng.lat, item._latlng.lng]
+                        ];
+                        L.polyline(points, {color: 'red', weight: 2}).addTo(linesGroup);
+                    }
+                    prevLat = item._latlng.lat;
+                    prevLong = item._latlng.lng;
+                }
+            }
+        );
     };
 
     var onCloseRoute = function () {
@@ -480,8 +547,6 @@
 
 
         drawRoute();
-
-        // TODO - Create realisation of this method
     };
 
     var onAccept = function () {
@@ -496,7 +561,6 @@
             }),
             success: function (result) {
                 printAnswer('Point status was changed: ' + result);
-                getVesselInfo();
                 drawRoute();
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -519,6 +583,7 @@
             markersArray.forEach(function (item, index, array) {
                 if (markerTempId == markersArray[index]._leaflet_id) {
                     objectId = index;
+                    console.log(objectId);
                 }
             });
             if (objectId > 0) {
@@ -570,7 +635,6 @@
                                         var obj = JSON.parse(result);
                                         obj.forEach(function (item, index, array) {
 
-                                            console.log('I am in base case ' + result);
                                             current_point_id = item.pointId;
                                             latitude.value = item.latitude;
                                             longitude.value = item.longitude; // TODO - Write answer description
@@ -716,7 +780,6 @@
     }
 
     getVesselInfo();
-    drawRoute();
 
 </script>
 
