@@ -68,8 +68,6 @@
                 </h3>
                 <br>
                 <div class="col-sm-7 text-center">
-                    <div id="map" style="height: 400px;"></div>
-                    <br>
                     <div class="form-group col">
                         <input type="text" readonly class="form-control-plaintext" id="latitude" value="Latitude">
                         <input type="text" readonly class="form-control-plaintext" id="longitude" value="Longitude">
@@ -79,10 +77,20 @@
                                 onclick="onSetCoordinates()">Set boat coordinates
                         </button>
                     </div>
+
+                    <div id="map" style="height: 400px;"></div>
                 </div>
 
                 <div class="col-sm-4" id="controlLayer">
 
+                    <div class="form-group row">
+                        <button type="button" class="btn btn-primary mb-3" id="getRoute" onclick="onGetRoute()">Create route
+                        </button>
+                        <button type="button" class="btn btn-primary mb-3" id="closeRoute" onclick="onCloseRoute()">
+                            Close route
+                        </button>
+                    </div>
+                    <br/>
                     <div class="form-group row">
                         <label class="col-sm-3">Status</label>
                         <div class="col-sm-6">
@@ -113,16 +121,6 @@
                     <div class="col-sm-13">
                             <textarea readonly class="form-control rounded-0" id="obj_description" rows="5"
                                       placeholder="Dump description."></textarea>
-                    </div>
-
-                    <br>
-                    <div class="form-group row text-center">
-                        <button type="button" class="btn btn-primary mb-3" id="getRoute" onclick="onGetRoute()">Get
-                            route
-                        </button>
-                        <button type="button" class="btn btn-primary mb-3" id="closeRoute" onclick="onCloseRoute()">
-                            Close route
-                        </button>
                     </div>
                 </div>
             </div>
@@ -156,6 +154,7 @@
     var markersArray = {};
     var objectTypeArray = {};   // Object type - dump, base, boat
     var objectSizeArray = {};   // Dump - size in package, boat - capacity
+    var objectRoutePointId = {};
     var objectDescriptionArray = {}; // Some object description
     var objectStatusArray = {}; // Dump subtype - liquid, organic, etc.
     var dumpTypeArray = {}; // Dump subtype - liquid, organic, etc.
@@ -210,6 +209,7 @@
         objectDescriptionArray = []; // Some object description
         dumpTypeArray = []; // Dump subtype - liquid, organic, etc.
         objectStatusArray = [];
+        objectRoutePointId = [];
     }
 
     function onClearLog() {
@@ -307,8 +307,7 @@
                 // We will draw the route if we have one
                 if (result != 'No dumps available') {
                     drawRoute();
-                }
-                else{
+                } else {
                     alert('Now there are not points to get the route');
                     printAnswer('Now there are not points to get the route');
                 }
@@ -349,6 +348,9 @@
                 // We will draw route if we get one
                 if ((obj[0] != undefined) && (obj[0].routePoints != undefined)) {
 
+                    getRouteButton.innerHTML = "Update route";
+                    closeRouteButton.disabled = false;
+
                     // Get route size to draw lines when we get all points
                     routeSize = obj[0].routePoints.length + 1; // +1 includes vessel
                     // To understand that we got all points we use the counter which increases on a getting point event
@@ -385,6 +387,7 @@
                                         objectSizeArray[routePointItem.containedPoint.pointId] = item.size;
                                         objectStatusArray[routePointItem.containedPoint.pointId] = routePointItem.status;
                                         objectDescriptionArray[routePointItem.containedPoint.pointId] = 'This is dump';
+                                        objectRoutePointId[routePointItem.containedPoint.pointId] = routePointItem.number;
 
                                         // Drawing marker point
                                         markersArray[routePointItem.containedPoint.pointId] = L.marker([routePointItem.containedPoint.latitude,
@@ -440,6 +443,7 @@
                                                     objectTypeArray[routePointItem.containedPoint.pointId] = 'base';
                                                     objectDescriptionArray[routePointItem.containedPoint.pointId] = 'This is base';
                                                     objectStatusArray[routePointItem.containedPoint.pointId] = 'IN PROGRESS';
+                                                    objectRoutePointId[routePointItem.containedPoint.pointId] = routePointItem.number;
 
                                                     // Let's color the base
                                                     markersArray[routePointItem.containedPoint.pointId] = L.marker([routePointItem.containedPoint.latitude,
@@ -489,6 +493,10 @@
 
                     });
                 }
+                else{
+                    getRouteButton.innerHTML = "Create route";
+                    closeRouteButton.disabled = true;
+                }
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 printAnswer('Vessel route was not updated. Error: ' +
@@ -504,24 +512,30 @@
         var prevLat = '';
         var prevLong = '';
 
-        markersArray.forEach(function (item, index, array) {
+        // To draw lines in correct order we use sequence which generates order according to route number
+        var mySequence = [];
+        mySequence[0] = 0;
+        objectRoutePointId.forEach(function (item, index, array) {
+            mySequence[item] = index;
+        });
 
-            console.log(index);
+        mySequence.forEach(function (item, index, array) {
 
-                if ((objectStatusArray[index] != 'COMPLETED') && (objectStatusArray[index] != 'CANCELED')) {
-                    if (index != '0') {
+                if ((objectStatusArray[item] != 'COMPLETED') && (objectStatusArray[item] != 'CANCELED')) {
+                    if (item != '0') {
                         var points = [
                             [prevLat, prevLong],
-                            [item._latlng.lat, item._latlng.lng]
+                            [markersArray[item]._latlng.lat, markersArray[item]._latlng.lng]
                         ];
                         L.polyline(points, {color: 'red', weight: 2}).addTo(linesGroup);
                     }
-                    prevLat = item._latlng.lat;
-                    prevLong = item._latlng.lng;
+                    prevLat = markersArray[item]._latlng.lat;
+                    prevLong = markersArray[item]._latlng.lng;
                 }
             }
         );
     };
+
 
     var onCloseRoute = function () {
         console.log('close route click');
@@ -544,7 +558,6 @@
                     jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
             }
         });
-
 
         drawRoute();
     };
@@ -779,7 +792,7 @@
         drawRoute();
     }
 
-    getVesselInfo();
+    drawRoute();
 
 </script>
 

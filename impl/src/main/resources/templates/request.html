@@ -67,15 +67,22 @@
 
                 <br>
                 <div class="col-sm-7 text-center">
-                    <div id="map" style="height: 400px;"></div>
-                    <br>
                     <div class="form-group col">
                         <input type="text" readonly class="form-control-plaintext" id="latitude" value="Latitude">
                         <input type="text" readonly class="form-control-plaintext" id="longitude" value="Longitude">
                     </div>
+                    <br/>
+                    <div id="map" style="height: 400px;"></div>
                 </div>
 
-                <div class="col-sm-4 text-center" id="controlLayer">
+                <div class="col-sm-4 text-left" id="controlLayer">
+                    <div class="row">
+                        <button type="button" class="btn btn-primary mb-2" id="submit" onclick="postPoint()">Submit
+                        </button>
+                        <button type="button" class="btn btn-primary mb-2" id="cancel" onclick="onCancel()">Cancel
+                        </button>
+                    </div>
+                    <br/>
                     <div class="row">
                         <label for="type">Dump type</label>
                         <select id="type" class="form-control">
@@ -95,13 +102,6 @@
                         <label for="description">Dump description</label>
                         <textarea class="form-control rounded-0" id="description" rows="5"
                                   placeholder="Write your own description. E.g: Camp landmark, time, skerries and seafloor features."></textarea>
-                    </div>
-                    <br>
-                    <div class="row">
-                        <button type="button" class="btn btn-primary mb-2" id="submit" onclick="postPoint()">Submit
-                        </button>
-                        <button type="button" class="btn btn-primary mb-2" id="cancel" onclick="onCancel()">Cancel
-                        </button>
                     </div>
                 </div>
             </div>
