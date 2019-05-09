@@ -4,7 +4,7 @@ public class Group {
 
     private Integer id;
 
-    public Integer koef;
+    private Integer koef;
 
     private Double leftLongitude;
 

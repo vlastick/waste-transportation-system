@@ -10,12 +10,12 @@ public interface UserService {
      *
      * @return user pojo
      */
-    public User getAuthenticatedUser();
+    User getAuthenticatedUser();
 
-    public User getUser(Integer id);
+    User getUser(Integer id);
 
-    public String addUser(User user);
+    String addUser(User user);
 
-    public String updateUser(User user);
+    String updateUser(User user);
 
 }

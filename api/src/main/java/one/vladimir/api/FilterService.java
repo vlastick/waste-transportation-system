@@ -6,10 +6,10 @@ import one.vladimir.api.pojo.RouteFilter;
 
 public interface FilterService {
 
-    public DumpFilter createDumpFilterFromJson(String jsonString);
+    DumpFilter createDumpFilterFromJson(String jsonString);
 
-    public RouteFilter createRouteFilterFromJson(String jsonString);
+    RouteFilter createRouteFilterFromJson(String jsonString);
 
-    public BaseFilter createBaseFilterFromJson(String jsonString);
+    BaseFilter createBaseFilterFromJson(String jsonString);
 
 }

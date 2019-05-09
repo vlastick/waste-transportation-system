@@ -9,47 +9,47 @@ public interface Database {
 
     //add requests
 
-    public Integer addUser(User user);
+    Integer addUser(User user);
 
-    public Integer addPoint(Point point, User creator, Group group);
+    Integer addPoint(Point point, User creator, Group group);
 
-    public Integer addGroup(Group group);
+    Integer addGroup(Group group);
 
-    public Integer addDump(Dump dump);
+    Integer addDump(Dump dump);
 
-    public Integer addBase(Base base);
+    Integer addBase(Base base);
 
-    public Integer addCrewman(Crewman crewman);
+    Integer addCrewman(Crewman crewman);
 
-    public Integer addRoute(Route route, Vessel vessel);
+    Integer addRoute(Route route, Vessel vessel);
 
-    public Integer addRoutePoint(RoutePoint routePoint, Route route);
+    Integer addRoutePoint(RoutePoint routePoint, Route route);
 
-    public Integer addVessel(Vessel vessel);
+    Integer addVessel(Vessel vessel);
 
     //get requests
 
-    public User getUserById(Integer id);
+    User getUserById(Integer id);
 
-    public Point getPointById(Integer id);
+    Point getPointById(Integer id);
 
-    public Group getGroupById(Integer id);
+    Group getGroupById(Integer id);
 
-    public Dump getDumpById(Integer id);
+    Dump getDumpById(Integer id);
 
-    public Base getBaseById(Integer id);
+    Base getBaseById(Integer id);
 
-    public Crewman getCrewmanById(Integer id);
+    Crewman getCrewmanById(Integer id);
 
-    public Route getRouteById(Integer id);
+    Route getRouteById(Integer id);
 
-    public RoutePoint getRoutePointById(Integer id);
+    RoutePoint getRoutePointById(Integer id);
 
-    public Vessel getVesselById(Integer id);
+    Vessel getVesselById(Integer id);
 
-    public User getUserByLogin(String login);
+    User getUserByLogin(String login);
 
-    public Vessel getVesselByCrewmanId(Integer id);
+    Vessel getVesselByCrewmanId(Integer id);
 
 
     /**
@@ -57,46 +57,46 @@ public interface Database {
      *
      * @return group pojo
      */
-    public Group getGroupByCoordinates(Double latitude, Double longitude);
+    Group getGroupByCoordinates(Double latitude, Double longitude);
 
-    public List<Dump> getAllDumps();
+    List<Dump> getAllDumps();
 
-    public List<Base> getAllBases();
+    List<Base> getAllBases();
 
-    public List<Dump> getDumpsByIds(List<Integer> ids);
+    List<Dump> getDumpsByIds(List<Integer> ids);
 
-    public List<Base> getBasesByIds(List<Integer> ids);
+    List<Base> getBasesByIds(List<Integer> ids);
 
-    public Set<RoutePoint> getRoutePointsByRouteId(Integer id);
+    Set<RoutePoint> getRoutePointsByRouteId(Integer id);
 
-    public List<Dump> getDumpsByFilter(DumpFilter dumpFilter);
+    List<Dump> getDumpsByFilter(DumpFilter dumpFilter);
 
-    public List<Base> getBasesByFilter(BaseFilter baseFilter);
+    List<Base> getBasesByFilter(BaseFilter baseFilter);
 
-    public List<Route> getRoutesByFilter(RouteFilter routeFilter);
+    List<Route> getRoutesByFilter(RouteFilter routeFilter);
 
-    public List<RoutePoint> getRoutePointsByPointId(Integer id);
+    List<RoutePoint> getRoutePointsByPointId(Integer id);
 
     //update requests
 
-    public void updateUser(User user);
+    void updateUser(User user);
 
-    public void updatePoint(Point point, User creator, Group group);
+    void updatePoint(Point point, User creator, Group group);
 
-    public void updatePoint(Point point, User updater);
+    void updatePoint(Point point, User updater);
 
-    public void updateGroup(Group group);
+    void updateGroup(Group group);
 
-    public void updateDump(Dump dump);
+    void updateDump(Dump dump);
 
-    public void updateBase(Base base);
+    void updateBase(Base base);
 
-    public void updateCrewman(Crewman crewman);
+    void updateCrewman(Crewman crewman);
 
-    public void updateRoute(Route route, Vessel vessel);
+    void updateRoute(Route route, Vessel vessel);
 
-    public void updateRoutePoint(RoutePoint routePoint);
+    void updateRoutePoint(RoutePoint routePoint);
 
-    public void updateVessel(Vessel vessel);
+    void updateVessel(Vessel vessel);
 
 }
