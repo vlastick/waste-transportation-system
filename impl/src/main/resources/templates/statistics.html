@@ -75,7 +75,7 @@
                     <div id="map" style="height: 400px;"></div>
                 </div>
 
-                <div class="col-sm-4" id="controlLayer">
+                <!--<div class="col-sm-4" id="controlLayer">
                     <h4 class="intro-text text-center">Dump filter</h4>
 
                     <div class="form-group row">
@@ -180,7 +180,152 @@
                         </button>
 
                     </div>
+                </div>-->
+                <div class="container col-sm-4" style="margin-top: 25px">
+                    <ul class="nav nav-tabs">
+
+                        <li class="active col-sm-4 nav-item">
+                            <div class="nav-link">
+                            <a class="text-left" data-toggle="tab" href="#panel1">
+                                Dump Filter
+                            </a>
+                            </div>
+                        </li>
+
+                        <li class="col-sm-4 nav-item">
+                            <div class="nav-link">
+                            <a class="text-left" data-toggle="tab" href="#panel2">
+                                Base Filter
+                            </a>
+                            </div>
+                        </li>
+
+                        <li class="col-sm-4 nav-item">
+                            <div class="nav-link">
+                            <a class="text-left" data-toggle="tab" href="#panel3">
+                                Route Filter
+                            </a>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                    <div class="tab-content">
+                        <div id="panel1" class="tab-pane fade in active" style="margin-top: 25px">
+
+                            <div class="form-group row">
+                                <label class="col-sm-5">Creator ID</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="dumpCreatorId" placeholder="none">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-5">Point ID</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="dumpPointId" placeholder="none">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-6">Is dump active</label>
+                                <input type="checkbox" class="form-check-input" id="dumpActive">
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-5">Dump type</label>
+                                <div class="col-sm-7">
+                                    <select id="dumpType" class="form-control">
+                                        <option selected>LIQUID</option>
+                                        <option>SOLID</option>
+                                        <option>ORGANIC</option>
+                                        <option>MIXED</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-5">Max dump size</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="dumpMaxSize" placeholder="none">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-5">Group ID</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="dumpGroupId" placeholder="none">
+                                </div>
+                            </div>
+                            <div class="form-group row text-center">
+                                <button type="button" class="btn btn-primary mb-3" onclick="onGetDumps()">Get dumps
+                                </button>
+                                <button type="button" class="btn btn-primary mb-3" onclick="onClear()">Clear
+                                </button>
+                            </div>
+                        </div>
+                        <div id="panel2" class="tab-pane fade" style="margin-top: 25px">
+
+                            <div class="form-group row">
+                                <label class="col-sm-5">Point ID</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="basePointId" placeholder="none">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-5">Group ID</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="baseGroupId" placeholder="none">
+                                </div>
+                            </div>
+                            <div class="form-group row text-center">
+                                <button type="button" class="btn btn-primary mb-3" onclick="onGetBases()">Get bases
+                                </button>
+                                <button type="button" class="btn btn-primary mb-3" onclick="onClear()">Clear
+                                </button>
+                            </div>
+                        </div>
+                        <div id="panel3" class="tab-pane fade" style="margin-top: 25px">
+
+                            <div class="form-group row">
+                                <label class="col-sm-5">Route ID</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="routeId" placeholder="none">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-5">Vessel ID</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="routeVesselId" placeholder="none">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-5">Status</label>
+                                <div class="col-sm-7">
+                                    <select id="routeStatus" class="form-control">
+                                        <option selected>IN_PROGRESS</option>
+                                        <option>CANCELED</option>
+                                        <option>COMPLETED</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row text-center">
+                                <button type="button" class="btn btn-primary mb-3" onclick="onGetRoutes()">Get routes
+                                </button>
+                                <button type="button" class="btn btn-primary mb-3" onclick="onClear()">Clear
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+
+
+
             </div>
         </form>
     </div>
@@ -195,6 +340,7 @@
 </div>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
 <script type="text/javascript">
 
     var dumpCreatorId = document.getElementById('dumpCreatorId');
