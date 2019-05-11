@@ -5,6 +5,6 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface VesselRepository extends CrudRepository<VesselEntity, Integer> {
 
-    public VesselEntity findVesselByCrewmansUserUserId(Integer id);
+    VesselEntity findVesselByCrewmansUserUserId(Integer id);
 
 }

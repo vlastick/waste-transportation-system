@@ -190,10 +190,10 @@ public class RouteServiceImpl implements RouteService {
             }
 
             List<RoutePoint> newRoutePoints = new Vector<>();
-            Boolean noMoreAvailableDumps = false;
+            boolean noMoreAvailableDumps = false;
             while (activeRoutePoints.size() + newRoutePoints.size() < numberOfRoutePoints
                     && avaliableDumps.size() != 0
-                    && noMoreAvailableDumps == false) {
+                    && !noMoreAvailableDumps) {
 
                 noMoreAvailableDumps = true;
                 if (newRoutePoints.size() != 0) {
@@ -288,7 +288,7 @@ public class RouteServiceImpl implements RouteService {
         if (vessel.getCurrRoute().getRoutePoints() == null) {
             return "current route is empty";
         }
-        Boolean routePointCorrect = false;
+        boolean routePointCorrect = false;
         for (RoutePoint currRoutePoint : vessel.getCurrRoute().getRoutePoints()) {
             if (currRoutePoint.getId() == routePoint.getId()) {
                 routePointCorrect = true;

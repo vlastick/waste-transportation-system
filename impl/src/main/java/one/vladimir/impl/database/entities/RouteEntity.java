@@ -16,7 +16,7 @@ public class RouteEntity {
 
     @ManyToOne
     @JoinColumn(name = "VesselId")
-    VesselEntity vessel;
+    private VesselEntity vessel;
 
     @OneToMany(mappedBy = "route", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Collection<RoutePointEntity> routePoints;

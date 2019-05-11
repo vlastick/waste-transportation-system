@@ -69,7 +69,7 @@ public class RestService {
     }
 
 
-    @RequestMapping(method = GET, value = "/point/{strId}")
+  /*  @RequestMapping(method = GET, value = "/point/{strId}")
     @ResponseBody
     public ResponseEntity<String> getPoint(
             @PathVariable String strId,
@@ -277,7 +277,7 @@ public class RestService {
 
         return new ResponseEntity<>(answerJSON, status);
     }
-
+*/
 
 
 
@@ -364,7 +364,7 @@ public class RestService {
 
     // Test methods
 
-    @RequestMapping(method = POST, value = "/user/")
+   /* @RequestMapping(method = POST, value = "/user/")
     @ResponseBody
     public ResponseEntity<String> addUser(@RequestBody String configJSON) {
 
@@ -541,7 +541,7 @@ public class RestService {
         }
 
         return new ResponseEntity<>(answerJSON, status);
-    }
+    }*/
 
     /*@RequestMapping(method = GET, value = "/add_user/")
     public ResponseEntity<String> addUser() {
@@ -649,7 +649,7 @@ public class RestService {
 
 
 
-        String answerJSON = "";
+        String answerJSON;
         HttpStatus status = HttpStatus.BAD_REQUEST;
         PointFilter pointFilter;
 
@@ -725,14 +725,9 @@ public class RestService {
             }
             status = HttpStatus.OK;
         } catch (JsonProcessingException e) {
-            //TODO: implement exception handling
+            answerJSON = "Can't parse class to JSON";
         }
 
-        ObjectMapper mapper1 = new ObjectMapper();
-        try {
-            System.out.println(mapper1.writerWithDefaultPrettyPrinter().writeValueAsString(pointFilter));
-        } catch (JsonProcessingException e) {
-        }
         return new ResponseEntity<>(answerJSON, status);
     }
 
@@ -742,14 +737,7 @@ public class RestService {
     public ResponseEntity<String> getRoutes(
             @RequestBody String configJSON) {
 
-        ObjectMapper mapper1 = new ObjectMapper();
-        try {
-            System.out.println(mapper1.writerWithDefaultPrettyPrinter().writeValueAsString(configJSON));
-        } catch (JsonProcessingException e) {
-        }
-
-
-        String answerJSON = "";
+        String answerJSON;
         HttpStatus status = HttpStatus.BAD_REQUEST;
         RouteFilter routeFilter = filterService.createRouteFilterFromJson(configJSON);
         User user = userService.getAuthenticatedUser();
@@ -777,7 +765,7 @@ public class RestService {
             status = HttpStatus.OK;
             //System.out.println(answerJSON);
         } catch (JsonProcessingException e) {
-            //TODO: implement exception handling
+            answerJSON = "Can't parse class to JSON";
         }
         return new ResponseEntity<>(answerJSON, status);
     }
@@ -787,16 +775,7 @@ public class RestService {
     public ResponseEntity<String> updateRoutePointStatus(
             @RequestBody String configJSON) {
 
-        ObjectMapper mapper1 = new ObjectMapper();
-        try {
-            System.out.println(mapper1.writerWithDefaultPrettyPrinter().writeValueAsString(configJSON));
-        } catch (JsonProcessingException e) {
-        }
-
-
-
-
-        String answerJSON = "";
+        String answerJSON;
         HttpStatus status = HttpStatus.BAD_REQUEST;
 
         User user = userService.getAuthenticatedUser();
@@ -809,16 +788,13 @@ public class RestService {
         JSONParser jsonParser = new JSONParser();
         RoutePointStatus routePointStatus;
         Integer routePointId;
-        ObjectMapper mapper = new ObjectMapper();
         try {
             Object object = jsonParser.parse(configJSON);
             JSONObject jsonObject = (JSONObject) object;
-            String latStr, lonStr;
             routePointStatus = RoutePointStatus.valueOf((String) jsonObject.get("status"));
             routePointId = ((Long) jsonObject.get("id")).intValue() ;
         } catch (ParseException e) {
             answerJSON = "Invalid body";
-            status = HttpStatus.BAD_REQUEST;
             return new ResponseEntity<>(answerJSON, status);
         }
         answerJSON = routeService.updateRoutePointStatus(routePointId, transportService.getVesselByCrewmanId(user.getUserId()).getId(), routePointStatus);
@@ -829,14 +805,15 @@ public class RestService {
     @RequestMapping(method = GET, value = "/route/")
     public ResponseEntity<String> buildRoute() {
 
-        String answerJSON = "";
+        String answerJSON;
         HttpStatus status = HttpStatus.BAD_REQUEST;
         User user = userService.getAuthenticatedUser();
         if (user.getRole() != UserRole.CREWMAN) {
             answerJSON = "access denied";
             status = HttpStatus.FORBIDDEN;
+            return new ResponseEntity<>(answerJSON, status);
         }
-        Route route = transportService.getVesselByCrewmanId(user.getUserId()).getCurrRoute();
+        Route route;
         try {
             route = routeService.buildroute(transportService.getVesselByCrewmanId(user.getUserId()).getId());
         } catch (NoSuchElementException e) {
@@ -851,7 +828,6 @@ public class RestService {
             status = OK;
         } catch (JsonProcessingException e) {
             answerJSON = "Can't parse class to JSON";
-            status = HttpStatus.BAD_REQUEST;
         }
 
 
@@ -863,12 +839,13 @@ public class RestService {
     public ResponseEntity<String> updateRouteStatus(
             @RequestBody String configJSON) {
 
-        String answerJSON = "route status updated";
-        HttpStatus status = HttpStatus.BAD_REQUEST;
+        String answerJSON;
+        HttpStatus status;
         User user = userService.getAuthenticatedUser();
         if (user.getRole() != UserRole.CREWMAN) {
             answerJSON = "access denied";
             status = HttpStatus.FORBIDDEN;
+            return new ResponseEntity<>(answerJSON, status);
         }
 
         Vessel vessel = transportService.getVesselByCrewmanId(user.getUserId());
@@ -886,7 +863,6 @@ public class RestService {
             status = HttpStatus.BAD_REQUEST;
         }
 
-
         return new ResponseEntity<>(answerJSON, status);
     }
 
@@ -895,7 +871,7 @@ public class RestService {
     public ResponseEntity<String> updateVesselCoordinates(
             @RequestBody String configJSON) {
 
-        String answerJSON = "";
+        String answerJSON;
         HttpStatus status = HttpStatus.BAD_REQUEST;
         User user = userService.getAuthenticatedUser();
         if (user.getRole() != UserRole.CREWMAN) {
@@ -908,7 +884,6 @@ public class RestService {
         JSONParser jsonParser = new JSONParser();
         Double longitude;
         Double latitude;
-        ObjectMapper mapper = new ObjectMapper();
         try {
             Object object = jsonParser.parse(configJSON);
             JSONObject jsonObject = (JSONObject) object;
@@ -921,7 +896,6 @@ public class RestService {
             transportService.updateCoordinates(vessel.getId(), latitude, longitude);
         } catch (ParseException e) {
             answerJSON = "Invalid body";
-            status = HttpStatus.BAD_REQUEST;
             return new ResponseEntity<>(answerJSON, status);
         } catch (NumberFormatException e) {
             answerJSON = "Invalid body";
@@ -945,7 +919,7 @@ public class RestService {
     @ResponseBody
     public ResponseEntity<String> getCurrentVessel() {
 
-        String answerJSON = "";
+        String answerJSON;
         HttpStatus status = HttpStatus.BAD_REQUEST;
         User user = userService.getAuthenticatedUser();
         if (user.getRole() != UserRole.CREWMAN) {
@@ -960,7 +934,6 @@ public class RestService {
             status = OK;
         } catch (JsonProcessingException e) {
             answerJSON = "Can't parse class to JSON";
-            status = HttpStatus.BAD_REQUEST;
         }
 
         return new ResponseEntity<>(answerJSON, status);

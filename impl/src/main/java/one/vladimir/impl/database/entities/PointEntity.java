@@ -7,7 +7,6 @@ import java.sql.Timestamp;
 import java.util.Collection;
 
 
-//TODO: add create and modified dates
 @Entity
 public class PointEntity {
     @Id

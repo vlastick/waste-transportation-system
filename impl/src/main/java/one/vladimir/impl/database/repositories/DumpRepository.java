@@ -1,7 +1,6 @@
 package one.vladimir.impl.database.repositories;
 
 import one.vladimir.impl.database.entities.DumpEntity;
-import one.vladimir.impl.database.entities.GroupEntity;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
