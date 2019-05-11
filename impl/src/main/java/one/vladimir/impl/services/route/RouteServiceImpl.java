@@ -103,10 +103,10 @@ public class RouteServiceImpl implements RouteService {
 
         RouteFilter filter = new RouteFilter();
 
-        List<Integer> vesselIdList = new Vector<>();
+        List<Integer> vesselIdList = new ArrayList<>();
         vesselIdList.add(vesselId);
 
-        List<String> statusList = new Vector<>();
+        List<String> statusList = new ArrayList<>();
         statusList.add(RouteStatus.IN_PROGRESS.toString());
 
         filter.setVesselIdList(vesselIdList);
@@ -134,14 +134,14 @@ public class RouteServiceImpl implements RouteService {
         Integer lastPointNumber = currentRoute.getRoutePoints().size();
 
         //RoutePoints of currents vessel with statuses AWAITING and IN_PROGRESS
-        List<RoutePoint> activeRoutePoints = new Vector<>();
+        List<RoutePoint> activeRoutePoints = new ArrayList<>();
         try {
             for (RoutePoint routePoint : currentRoute.getRoutePoints()) {
                 if (routePoint.getStatus() == RoutePointStatus.IN_PROGRESS
                         || routePoint.getStatus() == RoutePointStatus.AWAITING) {
                     activeRoutePoints.add(routePoint);
                     DumpFilter dumpFilter = new DumpFilter();
-                    List<Integer> dumpIds = new Vector<>();
+                    List<Integer> dumpIds = new ArrayList<>();
                     dumpIds.add(routePoint.getContainedPoint().getPointId());
                     dumpFilter.setPointIdList(dumpIds);
                     plannedLoad += db.getDumpsByFilter(dumpFilter).get(0).getSize();
@@ -161,13 +161,13 @@ public class RouteServiceImpl implements RouteService {
             Double longitude = vessel.getLongitude();
 
             dumpFilter.setMaxSize(vessel.getCapacity() - vessel.getCurrentLoad() - plannedLoad);
-            List<Integer> groupIdList = new Vector<>();
+            List<Integer> groupIdList = new ArrayList<>();
             groupIdList.add(db.getGroupByCoordinates(latitude, longitude).getId());
 
             dumpFilter.setGroupidList(groupIdList); // TODO - write group correctly
 
             List<Dump> avaliableDumps = pointService.getDumpsByFilter(dumpFilter);
-            List<Dump> usedDumps = new Vector<>();
+            List<Dump> usedDumps = new ArrayList<>();
             for (Dump dump : avaliableDumps) {
                 if (this.routePointWithPointIdAlreadyExists(dump.getPointId())) {
                     usedDumps.add(dump);
@@ -189,7 +189,7 @@ public class RouteServiceImpl implements RouteService {
                 }
             }
 
-            List<RoutePoint> newRoutePoints = new Vector<>();
+            List<RoutePoint> newRoutePoints = new ArrayList<>();
             boolean noMoreAvailableDumps = false;
             while (activeRoutePoints.size() + newRoutePoints.size() < numberOfRoutePoints
                     && avaliableDumps.size() != 0
@@ -313,7 +313,7 @@ public class RouteServiceImpl implements RouteService {
         }
 
         BaseFilter baseFilter = new BaseFilter();
-        List<Integer> pointIds = new Vector<>();
+        List<Integer> pointIds = new ArrayList<>();
         pointIds.add(routePoint.getContainedPoint().getPointId());
         baseFilter.setPointIdList(pointIds);
 
@@ -366,10 +366,10 @@ public class RouteServiceImpl implements RouteService {
     public Route finishRoute(Integer vesselId) {
         RouteFilter filter = new RouteFilter();
 
-        List<Integer> vesselIdList = new Vector<>();
+        List<Integer> vesselIdList = new ArrayList<>();
         vesselIdList.add(vesselId);
 
-        List<String> statusList = new Vector<>();
+        List<String> statusList = new ArrayList<>();
         statusList.add(RouteStatus.IN_PROGRESS.toString());
 
         filter.setVesselIdList(vesselIdList);
@@ -401,7 +401,7 @@ public class RouteServiceImpl implements RouteService {
 
         BaseFilter baseFilter = new BaseFilter();
         baseFilter.setActive(true);
-        List<Integer> groupIdList = new Vector<>();
+        List<Integer> groupIdList = new ArrayList<>();
         groupIdList.add(db.getGroupByCoordinates(latitude, longitude).getId());
 
         baseFilter.setGroupidList(groupIdList);

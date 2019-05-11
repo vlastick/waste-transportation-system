@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -54,7 +55,7 @@ public class FilterServiceImpl implements FilterService {
             Iterator iterator;
             if (pointIdsJson != null) {
                 iterator = pointIdsJson.iterator();
-                pointIdList = new Vector<Integer>();
+                pointIdList = new ArrayList<>();
                 while (iterator.hasNext()) {
                     JSONObject idJson = (JSONObject) iterator.next();
                     Integer id = ((Long) idJson.get("id")).intValue();
@@ -66,7 +67,7 @@ public class FilterServiceImpl implements FilterService {
             }
             if (groupIdsJson != null) {
                 iterator = groupIdsJson.iterator();
-                groupIdList = new Vector<Integer>();
+                groupIdList = new ArrayList<>();
                 while (iterator.hasNext()) {
                     JSONObject idJson = (JSONObject) iterator.next();
                     Integer id = ((Long) idJson.get("id")).intValue();
@@ -78,7 +79,7 @@ public class FilterServiceImpl implements FilterService {
             }
             if (dumpTypesJson != null) {
                 iterator = dumpTypesJson.iterator();
-                dumpTypeList = new Vector<String>();
+                dumpTypeList = new ArrayList<>();
                 while (iterator.hasNext()) {
                     JSONObject dumpTypeJson = (JSONObject) iterator.next();
                     String dumpType = (String) dumpTypeJson.get("dumpType");
@@ -89,7 +90,7 @@ public class FilterServiceImpl implements FilterService {
                 }
             }
             if (creatorsIdListJdon != null) {
-                creatorsIdList = new Vector<Integer>();
+                creatorsIdList = new ArrayList<>();
                 for (Object currentObject : creatorsIdListJdon) {
                     JSONObject creatorIdJson = (JSONObject) currentObject;
                     Integer creatorId = ((Long) creatorIdJson.get("id")).intValue();
@@ -130,7 +131,7 @@ public class FilterServiceImpl implements FilterService {
             Iterator iterator;
             if (routeIdsJson != null) {
                 iterator = routeIdsJson.iterator();
-                routeIdList = new Vector<Integer>();
+                routeIdList = new ArrayList<>();
                 while (iterator.hasNext()) {
                     JSONObject idJson = (JSONObject) iterator.next();
                     Integer id = ((Long) idJson.get("id")).intValue();
@@ -142,7 +143,7 @@ public class FilterServiceImpl implements FilterService {
             }
             if (vesselIdsJson != null) {
                 iterator = vesselIdsJson.iterator();
-                vesselIdList = new Vector<Integer>();
+                vesselIdList = new ArrayList<>();
                 while (iterator.hasNext()) {
                     JSONObject idJson = (JSONObject) iterator.next();
                     Integer id = ((Long) idJson.get("id")).intValue();
@@ -154,7 +155,7 @@ public class FilterServiceImpl implements FilterService {
             }
             if (routeStatusesJson != null) {
                 iterator = routeStatusesJson.iterator();
-                routeStatusList = new Vector<String>();
+                routeStatusList = new ArrayList<>();
                 while (iterator.hasNext()) {
                     JSONObject routeStatusJson = (JSONObject) iterator.next();
                     String routeStatus = (String) routeStatusJson.get("routeStatus");
@@ -195,7 +196,7 @@ public class FilterServiceImpl implements FilterService {
             Iterator iterator;
             if (pointIdsJson != null) {
                 iterator = pointIdsJson.iterator();
-                pointIdList = new Vector<Integer>();
+                pointIdList = new ArrayList<>();
                 while (iterator.hasNext()) {
                     JSONObject idJson = (JSONObject) iterator.next();
                     Integer id = ((Long) idJson.get("id")).intValue();
@@ -208,7 +209,7 @@ public class FilterServiceImpl implements FilterService {
 
             if (groupIdsJson != null) {
                 iterator = groupIdsJson.iterator();
-                groupIdList = new Vector<Integer>();
+                groupIdList = new ArrayList<>();
                 while (iterator.hasNext()) {
                     JSONObject idJson = (JSONObject) iterator.next();
                     Integer id = ((Long) idJson.get("id")).intValue();
@@ -220,7 +221,7 @@ public class FilterServiceImpl implements FilterService {
             }
 
             if (creatorsIdListJdon != null) {
-                creatorsIdList = new Vector<Integer>();
+                creatorsIdList = new ArrayList<>();
                 for (Object currentObject : creatorsIdListJdon) {
                     JSONObject creatorIdJson = (JSONObject) currentObject;
                     Integer creatorId = ((Long) creatorIdJson.get("id")).intValue();

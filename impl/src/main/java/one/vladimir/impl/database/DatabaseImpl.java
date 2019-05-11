@@ -489,7 +489,7 @@ public class DatabaseImpl implements Database {
 
     public List<Dump> getAllDumps() {
         List<DumpEntity> dumpEnts;
-        List<Dump> dumps = new Vector<Dump>();
+        List<Dump> dumps = new ArrayList<>();
         dumpEnts = dumpRepo.findAllDumps();
         for (DumpEntity dumpEnt : dumpEnts) {
             Dump dump = dumpEnt.getDump();
@@ -501,7 +501,7 @@ public class DatabaseImpl implements Database {
 
     public List<Base> getAllBases() {
         List<BaseEntity> baseEnts;
-        List<Base> bases = new Vector<Base>();
+        List<Base> bases = new ArrayList<>();
         baseEnts = baseRepo.findAllBases();
         for (BaseEntity baseEnt : baseEnts) {
             Base base = baseEnt.getBase();
@@ -513,7 +513,7 @@ public class DatabaseImpl implements Database {
 
     public List<Dump> getDumpsByIds(List<Integer> ids) {
         List<DumpEntity> dumpEnts;
-        List<Dump> dumps = new Vector<Dump>();
+        List<Dump> dumps = new ArrayList<>();
         dumpEnts = dumpRepo.findDumpsByDumpIdIn(ids);
         for (DumpEntity dumpEnt : dumpEnts) {
             Dump dump = dumpEnt.getDump();
@@ -525,7 +525,7 @@ public class DatabaseImpl implements Database {
 
     public List<Base> getBasesByIds(List<Integer> ids) {
         List<BaseEntity> baseEnts;
-        List<Base> bases = new Vector<Base>();
+        List<Base> bases = new ArrayList<>();
         baseEnts = baseRepo.findBasesByBaseIdIn(ids);
         for (BaseEntity baseEnt : baseEnts) {
             Base base = baseEnt.getBase();
@@ -587,7 +587,7 @@ public class DatabaseImpl implements Database {
         query.where(pointIdPred, groupIdPred, dumpTypePred, creatorIdPred, isActivePred, maxSizePred);
 
         List<DumpEntity> dumpEntities = entityManager.createQuery(query).getResultList();
-        List<Dump> dumps = new Vector<Dump>();
+        List<Dump> dumps = new ArrayList<>();
         for (DumpEntity dumpEnt : dumpEntities) {
             Dump dump = dumpEnt.getDump();
             dumpEnt.getPoint().getPoint(dump);
@@ -640,7 +640,7 @@ public class DatabaseImpl implements Database {
         query.where(pointIdPred, groupIdPred, creatorIdPred, isActivePred);
 
         List<BaseEntity> baseEntities = entityManager.createQuery(query).getResultList();
-        List<Base> bases = new Vector<Base>();
+        List<Base> bases = new ArrayList<>();
         for (BaseEntity baseEnt : baseEntities) {
             Base base = baseEnt.getBase();
             baseEnt.getPoint().getPoint(base);
@@ -686,7 +686,7 @@ public class DatabaseImpl implements Database {
         query.where(routeIdPred, vesselIdPred, routeStatusPred);
 
         List<RouteEntity> routeEntities = entityManager.createQuery(query).getResultList();
-        List<Route> routes = new Vector<Route>();
+        List<Route> routes = new ArrayList<>();
         for (RouteEntity routeEnt : routeEntities) {
             Route route = routeEnt.getRoute();
             route.setRoutePoints(this.getRoutePointsByRouteId(route.getId()));
@@ -711,7 +711,7 @@ public class DatabaseImpl implements Database {
     public List<RoutePoint> getRoutePointsByPointId(Integer id) {
         List<RoutePointEntity> routePointEntities;
         routePointEntities = routePointRepo.findRoutePointsByPointPointId(id);
-        List<RoutePoint> routePoints = new Vector<>();
+        List<RoutePoint> routePoints = new ArrayList<>();
         for (RoutePointEntity routePointEntity : routePointEntities) {
             RoutePoint routePoint = routePointEntity.getRoutePoint();
             routePoint.setContainedPoint(routePointEntity.getPoint().getPoint());

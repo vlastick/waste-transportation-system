@@ -105,7 +105,7 @@ public class PointServiceImpl implements PointService {
 
     @Override
     public List<Base> getBases() {
-        List<Integer> baseIds = new Vector<Integer>();
+        List<Integer> baseIds = new ArrayList<>();
         List<Base> bases;
         if (baseIds.isEmpty() == true){
             bases = db.getAllBases();
@@ -139,7 +139,7 @@ public class PointServiceImpl implements PointService {
     public String getDumps(JsonNode filter) {
 
         // TODO: parse ids from json filter
-        List<Integer> dumpIds = new Vector<Integer>();
+        List<Integer> dumpIds = new ArrayList<>();
         List<Dump> dumps;
         if (dumpIds.isEmpty() == true){
             dumps = db.getAllDumps();
@@ -160,7 +160,7 @@ public class PointServiceImpl implements PointService {
     public String getBases(JsonNode filter) {
 
         // TODO: parse ids from json filter
-        List<Integer> baseIds = new Vector<Integer>();
+        List<Integer> baseIds = new ArrayList<>();
         List<Base> bases;
         if (baseIds.isEmpty() == true){
             bases = db.getAllBases();

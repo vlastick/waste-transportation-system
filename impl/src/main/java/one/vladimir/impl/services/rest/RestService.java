@@ -680,7 +680,7 @@ public class RestService {
                 } else {
                     pointFilter = new BaseFilter();
                 }
-                creatorsIdList = new Vector<>();
+                creatorsIdList = new ArrayList<>();
                 creatorsIdList.add(user.getUserId());
                 pointFilter.setCreatorsIdList(creatorsIdList);
                 pointFilter.setActive(true);
@@ -694,7 +694,7 @@ public class RestService {
                         status = HttpStatus.FORBIDDEN;
                         return new ResponseEntity<>(answerJSON, status);
                     }
-                    creatorsIdList = new Vector<>();
+                    creatorsIdList = new ArrayList<>();
                     creatorsIdList.add(user.getUserId());
                     pointFilter.setCreatorsIdList(creatorsIdList);
                     pointFilter.setActive(true);
@@ -744,7 +744,7 @@ public class RestService {
         switch (user.getRole()) {
             case CREWMAN:
                 routeFilter = new RouteFilter();
-                List<Integer> vesselIdList = new Vector<>();
+                List<Integer> vesselIdList = new ArrayList<>();
                 vesselIdList.add(transportService.getVesselByCrewmanId(user.getUserId()).getId());
                 routeFilter.setVesselIdList(vesselIdList);
                 List<String> routeStatusList = new ArrayList<>();
