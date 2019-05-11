@@ -25,8 +25,8 @@ public interface PointService {
     List <Base> getBasesByFilter(BaseFilter baseFilter);
 
 
-    // Get points
-    List <Base> getBases();
+
+   // List <Base> getBases();
 
     // Put point
     String updateDump(Dump dump, User updater);

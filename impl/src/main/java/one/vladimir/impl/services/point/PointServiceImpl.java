@@ -103,7 +103,7 @@ public class PointServiceImpl implements PointService {
         return  bases;
     }
 
-    @Override
+   /* @Override
     public List<Base> getBases() {
         List<Integer> baseIds = new ArrayList<>();
         List<Base> bases;
@@ -113,7 +113,7 @@ public class PointServiceImpl implements PointService {
             bases = db.getBasesByIds(baseIds);
         }
         return bases;
-    }
+    }*/
 
     @Override
     public String updateDump(Dump dump, User updater) {
@@ -136,7 +136,7 @@ public class PointServiceImpl implements PointService {
 
 
     // There is and example below. How to parse JsonNode you can see in RestImplementation
-    public String getDumps(JsonNode filter) {
+   /* public String getDumps(JsonNode filter) {
 
         // TODO: parse ids from json filter
         List<Integer> dumpIds = new ArrayList<>();
@@ -155,11 +155,10 @@ public class PointServiceImpl implements PointService {
             e.printStackTrace();
         }
         return answerJson;
-    }
+    }*/
 
-    public String getBases(JsonNode filter) {
+    /*public String getBases(JsonNode filter) {
 
-        // TODO: parse ids from json filter
         List<Integer> baseIds = new ArrayList<>();
         List<Base> bases;
         if (baseIds.isEmpty() == true){
@@ -176,7 +175,7 @@ public class PointServiceImpl implements PointService {
             e.printStackTrace();
         }
         return answerJson;
-    }
+    }*/
 
     @Override
     public String testGeo(String request) {
