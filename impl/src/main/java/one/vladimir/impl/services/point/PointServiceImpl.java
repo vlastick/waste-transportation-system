@@ -103,17 +103,6 @@ public class PointServiceImpl implements PointService {
         return  bases;
     }
 
-   /* @Override
-    public List<Base> getBases() {
-        List<Integer> baseIds = new ArrayList<>();
-        List<Base> bases;
-        if (baseIds.isEmpty() == true){
-            bases = db.getAllBases();
-        } else {
-            bases = db.getBasesByIds(baseIds);
-        }
-        return bases;
-    }*/
 
     @Override
     public String updateDump(Dump dump, User updater) {
@@ -133,92 +122,28 @@ public class PointServiceImpl implements PointService {
         return "Base was updated";
     }
 
-
-
-    // There is and example below. How to parse JsonNode you can see in RestImplementation
-   /* public String getDumps(JsonNode filter) {
-
-        // TODO: parse ids from json filter
-        List<Integer> dumpIds = new ArrayList<>();
-        List<Dump> dumps;
-        if (dumpIds.isEmpty() == true){
-            dumps = db.getAllDumps();
-        } else {
-            dumps = db.getDumpsByIds(dumpIds);
-        }
-
-        String answerJson = "Error";
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            answerJson = mapper.writeValueAsString(dumps);
-        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return answerJson;
-    }*/
-
-    /*public String getBases(JsonNode filter) {
-
-        List<Integer> baseIds = new ArrayList<>();
-        List<Base> bases;
-        if (baseIds.isEmpty() == true){
-            bases = db.getAllBases();
-        } else {
-            bases = db.getBasesByIds(baseIds);
-        }
-
-        String answerJson = "Error";
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            answerJson = mapper.writeValueAsString(bases);
-        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return answerJson;
-    }*/
-
     @Override
     public String testGeo(String request) {
         return geo.getResult(request);
     }
 
+    @Override
     public String addGroup(Group group){
         db.addGroup(group);
         return "Group added";
     }
 
+    @Override
     public String updateGroup(Group group){
         db.updateGroup(group);
         return "Group updated";
     }
 
+    @Override
     public Group getGroup(Integer id){
         Group group;
         group = db.getGroupById(id);
         return group;
     }
 
-
-
-    /*
-    public static PointEntity getPoint(String strId){
-
-        Integer id = Integer.valueOf(strId);
-        PointEntity point = db.getPointById(id);
-        return point;
-    }
-
-    public static String addPoint(String strCreatorId, String strGroupId){
-
-        Integer creatorId = Integer.valueOf(strCreatorId);
-        Integer groupId = Integer.valueOf(strGroupId);
-        UserEntity creator = db.getUserById(creatorId);
-        GroupEntity group = db.getGroupById(groupId);
-        PointEntity point = new PointEntity();
-        point.setGroup(group);
-        point.setCreatedBy(creator);
-        db.addPoint(point);
-        return "True";
-    }
-    */
 }
