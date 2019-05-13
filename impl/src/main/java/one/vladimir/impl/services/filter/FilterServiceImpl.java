@@ -52,12 +52,10 @@ public class FilterServiceImpl implements FilterService {
                 maxSize = maxSizeLong.intValue();
             }
 
-            Iterator iterator;
             if (pointIdsJson != null) {
-                iterator = pointIdsJson.iterator();
                 pointIdList = new ArrayList<>();
-                while (iterator.hasNext()) {
-                    JSONObject idJson = (JSONObject) iterator.next();
+                for (Object obj : pointIdsJson) {
+                    JSONObject idJson = (JSONObject) obj;
                     Integer id = ((Long) idJson.get("id")).intValue();
                     pointIdList.add(id);
                 }
@@ -66,10 +64,9 @@ public class FilterServiceImpl implements FilterService {
                 }
             }
             if (groupIdsJson != null) {
-                iterator = groupIdsJson.iterator();
                 groupIdList = new ArrayList<>();
-                while (iterator.hasNext()) {
-                    JSONObject idJson = (JSONObject) iterator.next();
+                for (Object obj : groupIdsJson) {
+                    JSONObject idJson = (JSONObject) obj;
                     Integer id = ((Long) idJson.get("id")).intValue();
                     groupIdList.add(id);
                 }
@@ -78,10 +75,9 @@ public class FilterServiceImpl implements FilterService {
                 }
             }
             if (dumpTypesJson != null) {
-                iterator = dumpTypesJson.iterator();
                 dumpTypeList = new ArrayList<>();
-                while (iterator.hasNext()) {
-                    JSONObject dumpTypeJson = (JSONObject) iterator.next();
+                for (Object obj : dumpTypesJson) {
+                    JSONObject dumpTypeJson = (JSONObject) obj;
                     String dumpType = (String) dumpTypeJson.get("dumpType");
                     dumpTypeList.add(dumpType);
                 }
@@ -128,12 +124,10 @@ public class FilterServiceImpl implements FilterService {
             JSONArray vesselIdsJson = (JSONArray) jsonObject.get("vesselIdList");
             JSONArray routeStatusesJson = (JSONArray) jsonObject.get("routeStatusList");
 
-            Iterator iterator;
             if (routeIdsJson != null) {
-                iterator = routeIdsJson.iterator();
                 routeIdList = new ArrayList<>();
-                while (iterator.hasNext()) {
-                    JSONObject idJson = (JSONObject) iterator.next();
+                for (Object obj : routeIdsJson) {
+                    JSONObject idJson = (JSONObject) obj;
                     Integer id = ((Long) idJson.get("id")).intValue();
                     routeIdList.add(id);
                 }
@@ -142,10 +136,9 @@ public class FilterServiceImpl implements FilterService {
                 }
             }
             if (vesselIdsJson != null) {
-                iterator = vesselIdsJson.iterator();
                 vesselIdList = new ArrayList<>();
-                while (iterator.hasNext()) {
-                    JSONObject idJson = (JSONObject) iterator.next();
+                for (Object obj : vesselIdsJson) {
+                    JSONObject idJson = (JSONObject) obj;
                     Integer id = ((Long) idJson.get("id")).intValue();
                     vesselIdList.add(id);
                 }
@@ -154,10 +147,9 @@ public class FilterServiceImpl implements FilterService {
                 }
             }
             if (routeStatusesJson != null) {
-                iterator = routeStatusesJson.iterator();
                 routeStatusList = new ArrayList<>();
-                while (iterator.hasNext()) {
-                    JSONObject routeStatusJson = (JSONObject) iterator.next();
+                for (Object obj : routeStatusesJson) {
+                    JSONObject routeStatusJson = (JSONObject) obj;
                     String routeStatus = (String) routeStatusJson.get("routeStatus");
                     routeStatusList.add(routeStatus);
                 }
@@ -193,12 +185,10 @@ public class FilterServiceImpl implements FilterService {
 
             isActive = (Boolean) jsonObject.get("isActive");
 
-            Iterator iterator;
             if (pointIdsJson != null) {
-                iterator = pointIdsJson.iterator();
                 pointIdList = new ArrayList<>();
-                while (iterator.hasNext()) {
-                    JSONObject idJson = (JSONObject) iterator.next();
+                for (Object obj : pointIdsJson) {
+                    JSONObject idJson = (JSONObject) obj;
                     Integer id = ((Long) idJson.get("id")).intValue();
                     pointIdList.add(id);
                 }
@@ -208,10 +198,9 @@ public class FilterServiceImpl implements FilterService {
             }
 
             if (groupIdsJson != null) {
-                iterator = groupIdsJson.iterator();
                 groupIdList = new ArrayList<>();
-                while (iterator.hasNext()) {
-                    JSONObject idJson = (JSONObject) iterator.next();
+                for (Object obj : groupIdsJson) {
+                    JSONObject idJson = (JSONObject) obj;
                     Integer id = ((Long) idJson.get("id")).intValue();
                     groupIdList.add(id);
                 }
