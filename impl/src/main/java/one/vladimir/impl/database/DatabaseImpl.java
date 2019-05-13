@@ -65,38 +65,8 @@ public class DatabaseImpl implements Database {
 
     //For DB testing
     @PostConstruct
-    public void testDBService() {
-        String message = "DB initialized";
-        log.info(message);
-
-//        System.out.println(vesselRepo.findVesselByCrewmansUserUserId(3));
-
-        /*BaseFilter df = new BaseFilter();
-        List<Integer> ids = new Vector<>();
-        ids.add(1);
-        df.setGroupidList(ids);
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this.getBasesByFilter(df)));
-        } catch (JsonProcessingException e) {
-        }*/
-
-
-        //Example of multicriterial query
-        /*CriteriaBuilder b = entityManager.getCriteriaBuilder();
-        CriteriaQuery<PointEntity> c = b.createQuery(PointEntity.class);
-        Root<PointEntity> root = c.from(PointEntity.class);
-        c.select(root);
-        List<Integer> i = new Vector<>();
-        i.add(3);
-        i.add(5);
-        Expression<Integer> idExpr = root.get("pointId");
-        Predicate idPred = idExpr.in(i);
-        c.where(idPred);
-        c.where(b.equal(root.get("pointId"), 5));
-        List<PointEntity> pl = entityManager.createQuery(c).getResultList();
-        System.out.println(pl.size());*/
-
+    public void postConstructLog() {
+        log.info("DB initialized");
     }
 
 
