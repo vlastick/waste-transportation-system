@@ -39,12 +39,12 @@ public class RouteServiceImpl implements RouteService {
         /*ObjectMapper mapper = new ObjectMapper();
         String testJSON = null;
         try {
-            testJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this.buildroute(1));
+            testJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this.buildRoute(1));
             System.out.println(testJSON);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        this.buildroute(1);*/
+        this.buildRoute(1);*/
         //System.out.println(this.updateRoutePointStatus(1, 1, RoutePointStatus.CANCELED));
     }
 
@@ -99,7 +99,7 @@ public class RouteServiceImpl implements RouteService {
 
 
     @Override
-    public Route buildroute(Integer vesselId) {
+    public Route buildRoute(Integer vesselId) {
 
         RouteFilter filter = new RouteFilter();
 

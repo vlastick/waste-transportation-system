@@ -11,19 +11,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
-import one.vladimir.impl.services.point.PointServiceImpl;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
@@ -31,10 +25,8 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Vector;
 
 import static com.fasterxml.jackson.databind.node.JsonNodeType.OBJECT;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -815,7 +807,7 @@ public class RestService {
         }
         Route route;
         try {
-            route = routeService.buildroute(transportService.getVesselByCrewmanId(user.getUserId()).getId());
+            route = routeService.buildRoute(transportService.getVesselByCrewmanId(user.getUserId()).getId());
         } catch (NoSuchElementException e) {
             status = HttpStatus.OK;
             answerJSON = "No dumps available";
