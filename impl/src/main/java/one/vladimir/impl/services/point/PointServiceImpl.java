@@ -31,7 +31,7 @@ public class PointServiceImpl implements PointService {
 
     @PostConstruct
     public void postConstructLog(){
-        System.out.println("pointService initialized");
+
     }
 
     @Override
@@ -66,7 +66,6 @@ public class PointServiceImpl implements PointService {
         Dump dump = db.getDumpById(id);
         if(dump == null){
            dump = new Dump();
-           System.out.println("Dump was empty");
         }
         return dump;
     }
@@ -76,7 +75,6 @@ public class PointServiceImpl implements PointService {
         Base base = db.getBaseById(id);
         if(base == null){
             base = new Base();
-            System.out.println("Base was empty");
         }
         return base;
     }

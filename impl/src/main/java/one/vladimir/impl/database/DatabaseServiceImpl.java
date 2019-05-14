@@ -87,7 +87,6 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     public User getUserByLogin(String login) {
-        System.out.println(login);
         UserEntity userEnt;
         userEnt = userRepo.findUserByLogin(login);
         User user = userEnt.getUser();

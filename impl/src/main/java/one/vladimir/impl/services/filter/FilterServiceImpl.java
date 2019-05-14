@@ -25,7 +25,7 @@ public class FilterServiceImpl implements FilterService {
 
     @PostConstruct
     public void postConstructLog() {
-        System.out.println("filterService initialized");
+//        System.out.println("filterService initialized");
     }
 
     @Override
@@ -100,7 +100,7 @@ public class FilterServiceImpl implements FilterService {
 
 
         } catch (ParseException e) {
-            System.out.println("Parsing exception");
+//            System.out.println("Parsing exception");
         }
 
         dumpFilter.setPointIdList(pointIdList);
@@ -162,7 +162,7 @@ public class FilterServiceImpl implements FilterService {
 
 
         } catch (ParseException e) {
-            System.out.println("Parsing exception");
+//            System.out.println("Parsing exception");
         }
 
         routeFilter.setRouteIdList(routeIdList);
@@ -226,7 +226,7 @@ public class FilterServiceImpl implements FilterService {
 
 
         } catch (ParseException e) {
-            System.out.println("Parsing exception");
+//            System.out.println("Parsing exception");
         }
 
         baseFilter.setPointIdList(pointIdList);

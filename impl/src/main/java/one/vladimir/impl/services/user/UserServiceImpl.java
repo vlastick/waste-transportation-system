@@ -19,7 +19,6 @@ public class UserServiceImpl implements UserService {
 
     @PostConstruct
     public void postConstructLog(){
-        System.out.println("userService initialized");
     }
 
     @Override

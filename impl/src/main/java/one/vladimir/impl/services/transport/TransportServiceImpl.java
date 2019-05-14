@@ -18,7 +18,6 @@ public class TransportServiceImpl implements TransportService {
 
     @PostConstruct
     public void postConstructLog() {
-        System.out.println("transportService initialized");
     }
 
     @Override

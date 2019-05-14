@@ -57,7 +57,6 @@ public class RestService {
 
     @PostConstruct
     public void postConstructLog() {
-        System.out.println("restService initialized");
     }
 
 
@@ -621,8 +620,6 @@ public class RestService {
 
         } catch (java.io.IOException e) {
 
-            System.out.println("Java IO Exception");
-            e.printStackTrace();
         } catch (NullPointerException e) {
             answerJSON = "Coordinates are not in reserve";
             status = HttpStatus.BAD_REQUEST;
@@ -882,7 +879,6 @@ public class RestService {
             String latStr, lonStr;
             latStr = (String) jsonObject.get("latitude");
             lonStr = (String) jsonObject.get("longitude") ;
-            System.out.println(latStr + " " + lonStr);
             latitude = Double.parseDouble(latStr);
             longitude = Double.parseDouble(lonStr);
             transportService.updateCoordinates(vessel.getId(), latitude, longitude);

@@ -36,8 +36,7 @@ public class GeoServiceImpl implements GeoService {
 
     @PostConstruct
     public void postConstructLog() {
-        System.out.println("geoService initialized");
-        this.isLand("123");
+
     }
 
     public static String toString(Document doc) {
@@ -60,13 +59,9 @@ public class GeoServiceImpl implements GeoService {
 
     public String getResult(String query) {
 
-        System.out.println(query);
-
         String hostname = OVERPASS_API;
         String queryString  = "is_in(61.2246,30.05194);out;";
         String resultString = "";
-
-        System.out.println("There is an input for geo: " + queryString);
 
         try {
             URL osm = new URL(hostname);
@@ -1145,9 +1140,9 @@ public class GeoServiceImpl implements GeoService {
             InputSource is = new InputSource(new StringReader(testStr));
             Document document = documentBuilder.parse(is);
             Node root =  document.getDocumentElement();
-            System.out.println(root.getFirstChild());
-            System.out.println(root.getBaseURI());
-            System.out.println(root.getChildNodes());
+//            System.out.println(root.getFirstChild());
+//            System.out.println(root.getBaseURI());
+//            System.out.println(root.getChildNodes());
 
         } catch (ParserConfigurationException ex) {
             ex.printStackTrace(System.out);

@@ -222,7 +222,6 @@ public class RouteServiceImpl implements RouteService {
     @Override
     public String updateRoutePointStatus(Integer routePointId, Integer vesselId, RoutePointStatus status) {
 
-        System.out.println(routePointId);
         Vessel vessel = transportService.getVessel(vesselId);
 
         if (vessel.getCurrRoute() == null) {
