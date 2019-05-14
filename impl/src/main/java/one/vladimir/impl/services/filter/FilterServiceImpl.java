@@ -104,7 +104,7 @@ public class FilterServiceImpl implements FilterService {
 
 
         } catch (ParseException e) {
-//            System.out.println("Parsing exception");
+            log.error("Invalid JSON. Got ParseException");
         }
 
         dumpFilter.setPointIdList(pointIdList);
@@ -166,7 +166,7 @@ public class FilterServiceImpl implements FilterService {
 
 
         } catch (ParseException e) {
-//            System.out.println("Parsing exception");
+            log.error("Invalid JSON. Got ParseException");
         }
 
         routeFilter.setRouteIdList(routeIdList);
@@ -230,7 +230,7 @@ public class FilterServiceImpl implements FilterService {
 
 
         } catch (ParseException e) {
-//            System.out.println("Parsing exception");
+            log.error("Invalid JSON. Got ParseException");
         }
 
         baseFilter.setPointIdList(pointIdList);

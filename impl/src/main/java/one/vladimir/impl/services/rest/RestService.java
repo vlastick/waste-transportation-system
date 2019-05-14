@@ -581,6 +581,10 @@ public class RestService {
 
         String answerJSON = "";
         HttpStatus status = HttpStatus.BAD_REQUEST;
+        User user = userService.getAuthenticatedUser();
+        log.info("Received POST /point/ request from " + user.getRole().toString() +
+                " with id " + user.getUserId() +
+                " with body " + configJSON);
 
         try {
 
@@ -641,8 +645,6 @@ public class RestService {
             @RequestParam(name = "type", defaultValue = "not given") String type,
             @RequestBody String configJSON) {
 
-
-
         String answerJSON;
         HttpStatus status = HttpStatus.BAD_REQUEST;
         PointFilter pointFilter;
@@ -653,19 +655,10 @@ public class RestService {
             pointFilter = filterService.createBaseFilterFromJson(configJSON);
         }
 
-        /*ObjectMapper mapper1 = new ObjectMapper();
-        try {
-            System.out.println(mapper1.writerWithDefaultPrettyPrinter().writeValueAsString(pointFilter));
-            if (pointFilter instanceof DumpFilter) {
-                System.out.println("1");
-            } else if (pointFilter instanceof BaseFilter){
-                System.out.println("0");
-            }
-        } catch (JsonProcessingException e) {
-        }*/
-
-
         User user = userService.getAuthenticatedUser();
+        log.info("Received POST /points/ request from " + user.getRole().toString() +
+                " with id " + user.getUserId() +
+                " with body " + configJSON);
         List<Integer> creatorsIdList;
         switch (user.getRole()) {
             case TOURIST:
@@ -735,6 +728,10 @@ public class RestService {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         RouteFilter routeFilter = filterService.createRouteFilterFromJson(configJSON);
         User user = userService.getAuthenticatedUser();
+        log.info("Received POST /routes/ request from " + user.getRole().toString() +
+                " with id " + user.getUserId() +
+                " with body " + configJSON);
+
         switch (user.getRole()) {
             case CREWMAN:
                 routeFilter = new RouteFilter();
@@ -757,7 +754,6 @@ public class RestService {
             ObjectMapper mapper = new ObjectMapper();
             answerJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(routes);
             status = HttpStatus.OK;
-            //System.out.println(answerJSON);
         } catch (JsonProcessingException e) {
             answerJSON = "Can't parse class to JSON";
         }
@@ -773,9 +769,14 @@ public class RestService {
         HttpStatus status = HttpStatus.BAD_REQUEST;
 
         User user = userService.getAuthenticatedUser();
+        log.info("Received PUT /routepoint/ request from " + user.getRole().toString() +
+                " with id " + user.getUserId() +
+                " with body " + configJSON);
+
         if (user.getRole() != UserRole.CREWMAN) {
             answerJSON = "access denied";
             status = HttpStatus.FORBIDDEN;
+            log.warn("Access denied for " + user.getRole().toString() + " with id " + user.getUserId());
             return new ResponseEntity<>(answerJSON, status);
         }
 
@@ -802,8 +803,12 @@ public class RestService {
         String answerJSON;
         HttpStatus status = HttpStatus.BAD_REQUEST;
         User user = userService.getAuthenticatedUser();
+        log.info("Received GET /route/ request from " + user.getRole().toString() +
+                " with id " + user.getUserId());
+
         if (user.getRole() != UserRole.CREWMAN) {
             answerJSON = "access denied";
+            log.warn("Access denied for " + user.getRole().toString() + " with id " + user.getUserId());
             status = HttpStatus.FORBIDDEN;
             return new ResponseEntity<>(answerJSON, status);
         }
@@ -836,8 +841,13 @@ public class RestService {
         String answerJSON;
         HttpStatus status;
         User user = userService.getAuthenticatedUser();
+        log.info("Received PUT /route/ request from " + user.getRole().toString() +
+                " with id " + user.getUserId() +
+                " with body " + configJSON);
+
         if (user.getRole() != UserRole.CREWMAN) {
             answerJSON = "access denied";
+            log.warn("Access denied for " + user.getRole().toString() + " with id " + user.getUserId());
             status = HttpStatus.FORBIDDEN;
             return new ResponseEntity<>(answerJSON, status);
         }
@@ -868,9 +878,14 @@ public class RestService {
         String answerJSON;
         HttpStatus status = HttpStatus.BAD_REQUEST;
         User user = userService.getAuthenticatedUser();
+        log.info("Received PUT /vessel/ request from " + user.getRole().toString() +
+                " with id " + user.getUserId() +
+                " with body " + configJSON);
+
         if (user.getRole() != UserRole.CREWMAN) {
             answerJSON = "Access denied";
             status = HttpStatus.FORBIDDEN;
+            log.warn("Access denied for " + user.getRole().toString() + " with id " + user.getUserId());
             return new ResponseEntity<>(answerJSON, status);
         }
 
@@ -915,7 +930,11 @@ public class RestService {
         String answerJSON;
         HttpStatus status = HttpStatus.BAD_REQUEST;
         User user = userService.getAuthenticatedUser();
+        log.info("Received GET /vessel/ request from " + user.getRole().toString() +
+                " with id " + user.getUserId());
+
         if (user.getRole() != UserRole.CREWMAN) {
+            log.warn("Access denied for " + user.getRole().toString() + " with id " + user.getUserId());
             answerJSON = "Access denied";
             status = HttpStatus.FORBIDDEN;
             return new ResponseEntity<>(answerJSON, status);
