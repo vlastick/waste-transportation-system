@@ -35,7 +35,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 
 @RestController
-public class RestService {
+public class RestServiceImpl {
 
     @Autowired
     @Qualifier("pointService")
