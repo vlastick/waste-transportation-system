@@ -6,9 +6,8 @@ public interface UserService {
 
 
     /**
-     * get current user, that works with system
-     *
-     * @return user pojo
+     * gets User who is currently working with system.
+     * @return initialized User object.
      */
     User getAuthenticatedUser();
 
