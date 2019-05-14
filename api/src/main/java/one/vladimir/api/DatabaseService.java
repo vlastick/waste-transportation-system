@@ -5,7 +5,7 @@ import one.vladimir.api.pojo.*;
 import java.util.List;
 import java.util.Set;
 
-public interface Database {
+public interface DatabaseService {
 
     //add requests
 
@@ -51,12 +51,6 @@ public interface Database {
 
     Vessel getVesselByCrewmanId(Integer id);
 
-
-    /**
-     * get group that contains point with coordinates
-     *
-     * @return group pojo
-     */
     Group getGroupByCoordinates(Double latitude, Double longitude);
 
     List<Dump> getAllDumps();

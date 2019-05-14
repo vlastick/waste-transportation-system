@@ -1,35 +1,24 @@
 package one.vladimir.impl.database;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import javassist.expr.Instanceof;
-import one.vladimir.api.Database;
-import one.vladimir.api.enums.DumpType;
+import one.vladimir.api.DatabaseService;
 import one.vladimir.api.enums.RouteStatus;
 import one.vladimir.api.pojo.*;
 import one.vladimir.impl.database.entities.*;
 import one.vladimir.impl.database.repositories.*;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContexts;
 import javax.persistence.criteria.*;
-import javax.persistence.metamodel.EntityType;
 import java.util.*;
 import java.util.List;
 
 @Service("database")
-public class DatabaseImpl implements Database {
+public class DatabaseServiceImpl implements DatabaseService {
 
     @Autowired
     private PointRepository pointRepo;
@@ -61,7 +50,7 @@ public class DatabaseImpl implements Database {
     @PersistenceContext
     EntityManager entityManager;
 
-    private static final Logger log = Logger.getLogger(DatabaseImpl.class);
+    private static final Logger log = Logger.getLogger(DatabaseServiceImpl.class);
 
     //For DB testing
     @PostConstruct

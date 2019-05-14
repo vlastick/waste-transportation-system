@@ -1,6 +1,6 @@
 package one.vladimir.impl.geo;
 
-import one.vladimir.api.Geo;
+import one.vladimir.api.GeoService;
 import one.vladimir.api.pojo.Point;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -28,7 +28,7 @@ import java.net.URLEncoder;
 import java.util.List;
 
 @Service("geo")
-public class GeoImpl implements Geo {
+public class GeoServiceImpl implements GeoService {
 
     // overpass-api.de is blocked by roskomnadzor - check other services or solutions.
     private final String OVERPASS_API = "http://www.overpass-api.de/api/interpreter";

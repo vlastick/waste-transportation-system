@@ -4,7 +4,7 @@ import one.vladimir.api.pojo.Point;
 
 import java.util.List;
 
-public interface Geo {
+public interface GeoService {
 
     String getIslandName(Point point);
     Integer getIslandID (Point point);

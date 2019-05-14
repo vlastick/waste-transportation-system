@@ -1,6 +1,6 @@
 package one.vladimir.impl.services.user;
 
-import one.vladimir.api.Database;
+import one.vladimir.api.DatabaseService;
 import one.vladimir.api.UserService;
 import one.vladimir.api.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import javax.annotation.PostConstruct;
 public class UserServiceImpl implements UserService {
     @Autowired
     @Qualifier("database")
-    private Database db;
+    private DatabaseService db;
 
     @PostConstruct
     public void postConstructLog(){

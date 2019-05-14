@@ -1,7 +1,5 @@
 package one.vladimir.impl.services.route;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import one.vladimir.api.*;
 
 import one.vladimir.api.enums.RoutePointStatus;
@@ -13,14 +11,13 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
-import java.util.logging.Filter;
 
 @Service("routeService")
 public class RouteServiceImpl implements RouteService {
 
     @Autowired
     @Qualifier("database")
-    private Database db;
+    private DatabaseService db;
 
     @Autowired
     @Qualifier("pointService")

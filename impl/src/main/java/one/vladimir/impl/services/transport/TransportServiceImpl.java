@@ -1,6 +1,6 @@
 package one.vladimir.impl.services.transport;
 
-import one.vladimir.api.Database;
+import one.vladimir.api.DatabaseService;
 import one.vladimir.api.TransportService;
 import one.vladimir.api.pojo.Vessel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ public class TransportServiceImpl implements TransportService {
 
     @Autowired
     @Qualifier("database")
-    private Database db;
+    private DatabaseService db;
 
     @PostConstruct
     public void postConstructLog() {
