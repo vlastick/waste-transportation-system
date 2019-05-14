@@ -3,6 +3,8 @@ package one.vladimir.impl.services.user;
 import one.vladimir.api.DatabaseService;
 import one.vladimir.api.UserService;
 import one.vladimir.api.pojo.User;
+import one.vladimir.impl.database.DatabaseServiceImpl;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,8 +19,11 @@ public class UserServiceImpl implements UserService {
     @Qualifier("database")
     private DatabaseService db;
 
+    private static final Logger log = Logger.getLogger(DatabaseServiceImpl.class);
+
     @PostConstruct
     public void postConstructLog(){
+        log.info("userService initialized");
     }
 
     @Override

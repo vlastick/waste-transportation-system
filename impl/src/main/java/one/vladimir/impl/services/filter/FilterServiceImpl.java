@@ -7,6 +7,8 @@ import one.vladimir.api.pojo.BaseFilter;
 import one.vladimir.api.pojo.DumpFilter;
 import one.vladimir.api.pojo.RouteFilter;
 import one.vladimir.api.pojo.User;
+import one.vladimir.impl.database.DatabaseServiceImpl;
+import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -23,9 +25,11 @@ import java.util.Vector;
 @Service("filterService")
 public class FilterServiceImpl implements FilterService {
 
+    private static final Logger log = Logger.getLogger(DatabaseServiceImpl.class);
+
     @PostConstruct
     public void postConstructLog() {
-//        System.out.println("filterService initialized");
+        log.info("filterService initialized");
     }
 
     @Override

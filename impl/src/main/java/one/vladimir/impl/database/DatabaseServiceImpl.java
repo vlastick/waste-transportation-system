@@ -55,7 +55,7 @@ public class DatabaseServiceImpl implements DatabaseService {
     //For DB testing
     @PostConstruct
     public void postConstructLog() {
-        log.info("DB initialized");
+        log.info("databaseService initialized");
     }
 
 

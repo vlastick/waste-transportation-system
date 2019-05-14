@@ -5,7 +5,9 @@ import one.vladimir.api.GeoService;
 import one.vladimir.api.PointService;
 import one.vladimir.api.pojo.*;
 
+import one.vladimir.impl.database.DatabaseServiceImpl;
 import one.vladimir.impl.services.user.UserServiceImpl;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -29,9 +31,11 @@ public class PointServiceImpl implements PointService {
     @Qualifier("userService")
     private UserServiceImpl userService;
 
+    private static final Logger log = Logger.getLogger(DatabaseServiceImpl.class);
+
     @PostConstruct
     public void postConstructLog(){
-
+        log.info("pointService initialized");
     }
 
     @Override

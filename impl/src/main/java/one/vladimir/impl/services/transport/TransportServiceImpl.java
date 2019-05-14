@@ -3,6 +3,8 @@ package one.vladimir.impl.services.transport;
 import one.vladimir.api.DatabaseService;
 import one.vladimir.api.TransportService;
 import one.vladimir.api.pojo.Vessel;
+import one.vladimir.impl.database.DatabaseServiceImpl;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -16,8 +18,11 @@ public class TransportServiceImpl implements TransportService {
     @Qualifier("database")
     private DatabaseService db;
 
+    private static final Logger log = Logger.getLogger(DatabaseServiceImpl.class);
+
     @PostConstruct
     public void postConstructLog() {
+        log.info("transportService initialized");
     }
 
     @Override

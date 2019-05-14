@@ -2,6 +2,8 @@ package one.vladimir.impl.geo;
 
 import one.vladimir.api.GeoService;
 import one.vladimir.api.pojo.Point;
+import one.vladimir.impl.database.DatabaseServiceImpl;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -33,10 +35,11 @@ public class GeoServiceImpl implements GeoService {
     // overpass-api.de is blocked by roskomnadzor - check other services or solutions.
     private final String OVERPASS_API = "http://www.overpass-api.de/api/interpreter";
     private final String OPENSTREETMAP_API_06 = "http://www.openstreetmap.org/api/0.6/";
+    private static final Logger log = Logger.getLogger(DatabaseServiceImpl.class);
 
     @PostConstruct
     public void postConstructLog() {
-
+        log.info("geoService initialized");
     }
 
     public static String toString(Document doc) {

@@ -5,6 +5,8 @@ import one.vladimir.api.*;
 import one.vladimir.api.enums.RoutePointStatus;
 import one.vladimir.api.enums.RouteStatus;
 import one.vladimir.api.pojo.*;
+import one.vladimir.impl.database.DatabaseServiceImpl;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -31,18 +33,11 @@ public class RouteServiceImpl implements RouteService {
     @Qualifier("userService")
     private UserService userService;
 
+    private static final Logger log = Logger.getLogger(DatabaseServiceImpl.class);
+
     @PostConstruct
     public void postConstructLog() {
-        /*ObjectMapper mapper = new ObjectMapper();
-        String testJSON = null;
-        try {
-            testJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this.buildRoute(1));
-            System.out.println(testJSON);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        this.buildRoute(1);*/
-        //System.out.println(this.updateRoutePointStatus(1, 1, RoutePointStatus.CANCELED));
+        log.info("routeService initialized");
     }
 
     private Integer numberOfRoutePoints = 2;
