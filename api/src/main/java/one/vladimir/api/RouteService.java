@@ -55,7 +55,4 @@ public interface RouteService {
     String updateRoute(Route route);
 
     Route getRoute(Integer id);
-
-    Route createRoute(Integer vesselId);
-
 }

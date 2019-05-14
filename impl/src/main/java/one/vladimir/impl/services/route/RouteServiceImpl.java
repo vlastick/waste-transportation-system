@@ -62,32 +62,7 @@ public class RouteServiceImpl implements RouteService {
         return new Route();
     }
 
-
     @Override
-    public Route createRoute(Integer vesselId) {
-        Route route = new Route();
-        Vessel vessel = new Vessel();
-        route.setStatus(RouteStatus.IN_PROGRESS);
-        vessel.setId(vesselId);
-        route.setId(db.addRoute(route, vessel));
-        List<Dump> dumps = db.getAllDumps();
-        Set<RoutePoint> routePoints = new HashSet<RoutePoint>();
-        Integer counter = 1;
-        RoutePoint currRoutePoint;
-
-        for (Dump dump : dumps) {
-            currRoutePoint = new RoutePoint();
-            currRoutePoint.setStatus(RoutePointStatus.AWAITING);
-            currRoutePoint.setNumber(counter);
-            currRoutePoint.setContainedPoint(dump);
-            currRoutePoint.setId(db.addRoutePoint(currRoutePoint, route));
-            routePoints.add(currRoutePoint);
-            counter++;
-        }
-        route.setRoutePoints(routePoints);
-        return route;
-    }
-
     public List<Route> getRoutesByFilter(RouteFilter routeFilter) {
         List<Route> routes;
         routes = db.getRoutesByFilter(routeFilter);
@@ -244,6 +219,7 @@ public class RouteServiceImpl implements RouteService {
         return currentRoute;
     }
 
+    @Override
     public String updateRoutePointStatus(Integer routePointId, Integer vesselId, RoutePointStatus status) {
 
         System.out.println(routePointId);
@@ -360,6 +336,7 @@ public class RouteServiceImpl implements RouteService {
         return "RoutePoint updated";
     }
 
+    @Override
     public Route finishRoute(Integer vesselId) {
         RouteFilter filter = new RouteFilter();
 

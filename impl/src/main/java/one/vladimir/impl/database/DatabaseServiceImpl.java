@@ -446,54 +446,6 @@ public class DatabaseServiceImpl implements DatabaseService {
         return group;
     }
 
-    public List<Dump> getAllDumps() {
-        List<DumpEntity> dumpEnts;
-        List<Dump> dumps = new ArrayList<>();
-        dumpEnts = dumpRepo.findAllDumps();
-        for (DumpEntity dumpEnt : dumpEnts) {
-            Dump dump = dumpEnt.getDump();
-            dumpEnt.getPoint().getPoint(dump);
-            dumps.add(dump);
-        }
-        return dumps;
-    }
-
-    public List<Base> getAllBases() {
-        List<BaseEntity> baseEnts;
-        List<Base> bases = new ArrayList<>();
-        baseEnts = baseRepo.findAllBases();
-        for (BaseEntity baseEnt : baseEnts) {
-            Base base = baseEnt.getBase();
-            baseEnt.getPoint().getPoint(base);
-            bases.add(base);
-        }
-        return bases;
-    }
-
-    public List<Dump> getDumpsByIds(List<Integer> ids) {
-        List<DumpEntity> dumpEnts;
-        List<Dump> dumps = new ArrayList<>();
-        dumpEnts = dumpRepo.findDumpsByDumpIdIn(ids);
-        for (DumpEntity dumpEnt : dumpEnts) {
-            Dump dump = dumpEnt.getDump();
-            dumpEnt.getPoint().getPoint(dump);
-            dumps.add(dump);
-        }
-        return dumps;
-    }
-
-    public List<Base> getBasesByIds(List<Integer> ids) {
-        List<BaseEntity> baseEnts;
-        List<Base> bases = new ArrayList<>();
-        baseEnts = baseRepo.findBasesByBaseIdIn(ids);
-        for (BaseEntity baseEnt : baseEnts) {
-            Base base = baseEnt.getBase();
-            baseEnt.getPoint().getPoint(base);
-            bases.add(base);
-        }
-        return bases;
-    }
-
     public List<Dump> getDumpsByFilter(DumpFilter dumpFilter) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<DumpEntity> query = builder.createQuery(DumpEntity.class);
