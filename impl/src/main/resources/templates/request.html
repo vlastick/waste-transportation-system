@@ -18,8 +18,8 @@
 </head>
 <body>
 
-<div class="brand"><font color="#6495ed">Waste transportation system</font></div>
-<div class="address-bar"><font color="#6495ed">Rest slow and clean</font></div>
+<div class="brand"><font color="#6495ed">Waste transportation service</font></div>
+<div class="address-bar"><font color="#6495ed">A cleaning today keeps the landfills away</font></div>
 <nav class="navbar navbar-default" role="navigation">
     <div class="container">
         <div class="navbar-header">
@@ -281,6 +281,7 @@
 
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
+                        alert('Could not get dumps. See error in log.');
                         printAnswer('Get dumps error: ' +
                             jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
                     }
@@ -325,6 +326,7 @@
 
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
+                    alert('Cannot post dump. See error in log.');
                     printAnswer('Post dump error: ' +
                         jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
                 }
@@ -348,12 +350,12 @@
                 obj.forEach(function (item, index, array) {
 
                     markers[item.pointId] = L.marker([item.latitude, item.longitude]).addTo(markerGroup)
-                        .bindPopup("<b>Dump point</b><br/>Status: "
-                            + item.status + "<br/>Type: " + item.type).openPopup()
+                        .bindPopup("<b>Dump point</b><br/>Type: " + item.type).openPopup()
                         .on('click', selectMarker);
                 });
             },
             error: function (jqXHR, textStatus, errorThrown) {
+                alert('Could not get dumps. See error in log.');
                 printAnswer('Get dumps error: ' +
                     jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
             }

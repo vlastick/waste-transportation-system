@@ -18,8 +18,8 @@
 </head>
 <body>
 
-<div class="brand"><font color="#6495ed">Waste transportation system</font></div>
-<div class="address-bar"><font color="#6495ed">Rest slow and clean</font></div>
+<div class="brand"><font color="#6495ed">Waste transportation service</font></div>
+<div class="address-bar"><font color="#6495ed">A cleaning today keeps the landfills away</font></div>
 <nav class="navbar navbar-default" role="navigation">
     <div class="container">
         <div class="navbar-header">
@@ -75,112 +75,6 @@
                     <div id="map" style="height: 400px;"></div>
                 </div>
 
-                <!--<div class="col-sm-4" id="controlLayer">
-                    <h4 class="intro-text text-center">Dump filter</h4>
-
-                    <div class="form-group row">
-                        <label class="col-sm-5">Creator ID</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control" id="dumpCreatorId" placeholder="none">
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label class="col-sm-5">Point ID</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control" id="dumpPointId" placeholder="none">
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label class="col-sm-6">Is dump active</label>
-                        <input type="checkbox" class="form-check-input" id="dumpActive">
-                    </div>
-
-                    <div class="form-group row">
-                        <label class="col-sm-5">Dump type</label>
-                        <div class="col-sm-7">
-                            <select id="dumpType" class="form-control">
-                                <option selected>LIQUID</option>
-                                <option>SOLID</option>
-                                <option>ORGANIC</option>
-                                <option>MIXED</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label class="col-sm-5">Max dump size</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control" id="dumpMaxSize" placeholder="none">
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label class="col-sm-5">Group ID</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control" id="dumpGroupId" placeholder="none">
-                        </div>
-                    </div>
-
-                    <br>
-
-                    <h4 class="intro-text text-center">Base filter</h4>
-
-                    <div class="form-group row">
-                        <label class="col-sm-5">Point ID</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control" id="basePointId" placeholder="none">
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label class="col-sm-5">Group ID</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control" id="baseGroupId" placeholder="none">
-                        </div>
-                    </div>
-
-
-                    <h4 class="intro-text text-center">Route filter</h4>
-
-                    <div class="form-group row">
-                        <label class="col-sm-5">Route ID</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control" id="routeId" placeholder="none">
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label class="col-sm-5">Vessel ID</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control" id="routeVesselId" placeholder="none">
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label class="col-sm-5">Status</label>
-                        <div class="col-sm-7">
-                            <select id="routeStatus" class="form-control">
-                                <option selected>IN_PROGRESS</option>
-                                <option>CANCELED</option>
-                                <option>COMPLETED</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group row text-center">
-                        <button type="button" class="btn btn-primary mb-3" onclick="onGetDumps()">Get dumps
-                        </button>
-                        <button type="button" class="btn btn-primary mb-3" onclick="onGetBases()">Get bases
-                        </button>
-                        <button type="button" class="btn btn-primary mb-3" onclick="onGetRoutes()">Get routes
-                        </button>
-                        <button type="button" class="btn btn-primary mb-3" onclick="onClear()">Clear
-                        </button>
-
-                    </div>
-                </div>-->
                 <div class="container col-sm-4" style="margin-top: 25px">
                     <ul class="nav nav-tabs">
 
@@ -322,10 +216,6 @@
                         </div>
                     </div>
                 </div>
-
-
-
-
             </div>
         </form>
     </div>
@@ -356,6 +246,17 @@
     var routeStatus = document.getElementById('routeStatus');
     var routeVesselId = document.getElementById('routeVesselId');
     var routeId = document.getElementById('routeId');
+
+    // Save all markers to provide it's id
+    var markersArray = {};
+    var objectTypeArray = {};   // Object type - dump, base, boat
+    var objectSizeArray = {};   // Dump - size in package, boat - capacity
+    var objectDescriptionArray = {}; // Some object description
+    var objectStatusArray = {}; // Dump subtype - liquid, organic, etc.
+    var dumpTypeArray = {}; // Dump subtype - liquid, organic, etc.
+
+    // Needs for update point status
+    var current_point_id = 0;
 
 
     // Create map

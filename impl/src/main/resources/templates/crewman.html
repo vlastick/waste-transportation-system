@@ -18,8 +18,8 @@
 </head>
 <body>
 
-<div class="brand"><font color="#6495ed">Waste transportation system</font></div>
-<div class="address-bar"><font color="#6495ed">Rest slow and clean</font></div>
+<div class="brand"><font color="#6495ed">Waste transportation service</font></div>
+<div class="address-bar"><font color="#6495ed">A cleaning today keeps the landfills away</font></div>
 <nav class="navbar navbar-default" role="navigation">
     <div class="container">
         <div class="navbar-header">
@@ -189,6 +189,7 @@
         answer.scrollTop = answer.scrollHeight;
     }
 
+
     function setDefaulValues() {
         latitude.value = 'Object is not selected';
         longitude.value = 'Object is not selected';
@@ -263,6 +264,7 @@
             error: function (jqXHR, textStatus, errorThrown) {
                 printAnswer('Vessel information was not updated. Error: ' +
                     jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+                alert('Vessel information was not updated. See error in log.');
 
                 routeCounter = routeCounter + 1;
                 if (routeCounter == routeSize) {
@@ -313,6 +315,7 @@
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
+                alert('Vessel route was not updated. See error in log.');
                 printAnswer('Vessel route was not updated. Error: ' +
                     jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
             }
@@ -469,6 +472,7 @@
                                         error: function (jqXHR, textStatus, errorThrown) {
                                             printAnswer('Get base error: ' +
                                                 jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+                                            alert('Could not get base. See error in log.');
 
                                             // It could be the last point. Let's check this case and draw lines
                                             routeCounter = routeCounter + 1;
@@ -480,6 +484,7 @@
                                 }
                             },
                             error: function (jqXHR, textStatus, errorThrown) {
+                                alert('Could not get dumps. See error in log.');
                                 printAnswer('Get dumps error: ' +
                                     jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
 
@@ -499,6 +504,7 @@
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
+                alert('Could not get route. See error in log.');
                 printAnswer('Vessel route was not updated. Error: ' +
                     jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
                 acceptButton.disabled = true;
@@ -554,6 +560,7 @@
                 drawRoute();
             },
             error: function (jqXHR, textStatus, errorThrown) {
+                alert('Route was not updated. See error in log.');
                 printAnswer('Put route was not update. Error: ' +
                     jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
             }
@@ -577,6 +584,7 @@
                 drawRoute();
             },
             error: function (jqXHR, textStatus, errorThrown) {
+                alert('Vessel point was not updated. See error in log.');
                 printAnswer('Vessel point was not updated. Error: ' +
                     jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
             }
@@ -671,6 +679,7 @@
                         }
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
+                        alert('Could not get dumps. See error in log.');
                         printAnswer('Get dumps error: ' +
                             jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
                     }
@@ -730,6 +739,7 @@
                 enableInterface(true);
             },
             error: function (jqXHR, textStatus, errorThrown) {
+                alert('Vessel coordinates were not updated. See error in log.');
                 printAnswer('Vessel coordinates were not updated. Error: ' +
                     jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
             }
