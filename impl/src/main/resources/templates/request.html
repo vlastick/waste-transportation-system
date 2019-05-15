@@ -97,12 +97,6 @@
                         <label for="size">Dump size in packages</label>
                         <input type="text" class="form-control" id="size" placeholder="1" value="1">
                     </div>
-                    <br>
-                    <div class="row">
-                        <label for="description">Dump description</label>
-                        <textarea class="form-control rounded-0" id="description" rows="5"
-                                  placeholder="Write your own description. E.g: Camp landmark, time, skerries and seafloor features."></textarea>
-                    </div>
                 </div>
             </div>
         </form>
@@ -140,7 +134,6 @@
     var latitude = document.getElementById('latitude');
     var dumpType = document.getElementById('type');
     var dumpSize = document.getElementById('size');
-    var dumpDescription = document.getElementById('description');
     var submitButton = document.getElementById('submit');
     var cancelButton = document.getElementById('cancel');
     var answer = document.getElementById('answer');
@@ -151,13 +144,11 @@
         if (status == true) {
             dumpSize.disabled = false;
             dumpType.disabled = false;
-            dumpDescription.disabled = false;
             submitButton.disabled = false;
             cancelButton.disabled = false;
         } else {
             dumpSize.disabled = true;
             dumpType.disabled = true;
-            dumpDescription.disabled = true;
             submitButton.disabled = true;
             cancelButton.disabled = true;
         }
@@ -202,7 +193,6 @@
     function setDefaulValues() {
         latitude.value = 'Latitude';
         longitude.value = 'Longitude';
-        dumpDescription.value = '';
         dumpType.value = 'LIQUID';
         dumpSize.value = '1';
     }
@@ -274,7 +264,6 @@
 
                             latitude.value = item.latitude;
                             longitude.value = item.longitude; // TODO - Write answer description
-                            dumpDescription.value = 'New description ';
                             dumpType.value = item.type;
                             dumpSize.value = item.size;
                         });
