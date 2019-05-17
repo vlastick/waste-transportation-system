@@ -649,11 +649,15 @@ public class RestServiceImpl {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         PointFilter pointFilter;
 
+//        System.out.println(configJSON);
+
         if (type.equals("dump") || type.equals("not given")) {
             pointFilter = filterService.createDumpFilterFromJson(configJSON);
         } else {
             pointFilter = filterService.createBaseFilterFromJson(configJSON);
         }
+
+        ObjectMapper mapper = new ObjectMapper();
 
         User user = userService.getAuthenticatedUser();
         log.info("Received POST /points/ request from " + user.getRole().toString() +
@@ -662,7 +666,7 @@ public class RestServiceImpl {
         List<Integer> creatorsIdList;
         switch (user.getRole()) {
             case TOURIST:
-                if (type.equals("dump") || type.equals("not given")) {
+                /*if (type.equals("dump") || type.equals("not given")) {
                     pointFilter = new DumpFilter();
                 } else {
                     pointFilter = new BaseFilter();
@@ -671,7 +675,28 @@ public class RestServiceImpl {
                 creatorsIdList.add(user.getUserId());
                 pointFilter.setCreatorsIdList(creatorsIdList);
                 pointFilter.setActive(true);
-                break;
+                break;*/
+                if (pointFilter.getPointIdList() == null || pointFilter.getPointIdList().size() != 1) {
+                    if (type.equals("dump") || type.equals("not given")) {
+                        pointFilter = new DumpFilter();
+                    } else {
+                        answerJSON = "access denied";
+                        status = HttpStatus.FORBIDDEN;
+                        return new ResponseEntity<>(answerJSON, status);
+                    }
+                    creatorsIdList = new ArrayList<>();
+                    creatorsIdList.add(user.getUserId());
+                    pointFilter.setCreatorsIdList(creatorsIdList);
+                    pointFilter.setActive(true);
+                    break;
+                }
+                pointFilter.setGroupidList(null);
+                pointFilter.setActive(null);
+                pointFilter.setCreatorsIdList(null);
+                if (type.equals("dump") || type.equals("not given")) {
+                    ((DumpFilter)pointFilter).setMaxSize(null);
+                    ((DumpFilter)pointFilter).setDumpTypeList(null);
+                }
             case CREWMAN:
                 if (pointFilter.getPointIdList() == null || pointFilter.getPointIdList().size() != 1) {
                     if (type.equals("dump") || type.equals("not given")) {
@@ -698,11 +723,14 @@ public class RestServiceImpl {
                 break;
         }
 
-
+//        try {
+//            System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(pointFilter));
+//        } catch (JsonProcessingException e) {
+//        }
 
 
         try {
-            ObjectMapper mapper = new ObjectMapper();
+
             if (type.equals("dump") || type.equals("not given")) {
                 List<Dump> points = pointService.getDumpsByFilter((DumpFilter) pointFilter);
                 answerJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(points);
@@ -714,6 +742,11 @@ public class RestServiceImpl {
         } catch (JsonProcessingException e) {
             answerJSON = "Can't parse class to JSON";
         }
+
+//        try {
+//            System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(answerJSON));
+//        } catch (JsonProcessingException e) {
+//        }
 
         return new ResponseEntity<>(answerJSON, status);
     }
