@@ -80,25 +80,25 @@
 
                         <li class="active col-sm-4 nav-item">
                             <div class="nav-link">
-                            <a class="text-left" data-toggle="tab" href="#panel1">
-                                Dump Filter
-                            </a>
+                                <a class="text-left" data-toggle="tab" href="#panel1">
+                                    Dump Filter
+                                </a>
                             </div>
                         </li>
 
                         <li class="col-sm-4 nav-item">
                             <div class="nav-link">
-                            <a class="text-left" data-toggle="tab" href="#panel2">
-                                Base Filter
-                            </a>
+                                <a class="text-left" data-toggle="tab" href="#panel2">
+                                    Base Filter
+                                </a>
                             </div>
                         </li>
 
                         <li class="col-sm-4 nav-item">
                             <div class="nav-link">
-                            <a class="text-left" data-toggle="tab" href="#panel3">
-                                Route Filter
-                            </a>
+                                <a class="text-left" data-toggle="tab" href="#panel3">
+                                    Route Filter
+                                </a>
                             </div>
                         </li>
 
@@ -130,7 +130,8 @@
                                 <label class="col-sm-5">Dump type</label>
                                 <div class="col-sm-7">
                                     <select id="dumpType" class="form-control">
-                                        <option selected>LIQUID</option>
+                                        <option selected>ALL</option>
+                                        <option>LIQUID</option>
                                         <option>SOLID</option>
                                         <option>ORGANIC</option>
                                         <option>MIXED</option>
@@ -247,16 +248,7 @@
     var routeVesselId = document.getElementById('routeVesselId');
     var routeId = document.getElementById('routeId');
 
-    // Save all markers to provide it's id
-    var markersArray = {};
-    var objectTypeArray = {};   // Object type - dump, base, boat
-    var objectSizeArray = {};   // Dump - size in package, boat - capacity
-    var objectDescriptionArray = {}; // Some object description
-    var objectStatusArray = {}; // Dump subtype - liquid, organic, etc.
-    var dumpTypeArray = {}; // Dump subtype - liquid, organic, etc.
-
-    // Needs for update point status
-    var current_point_id = 0;
+    var lineColors = ["red", "orange", "yellow", "green", "blue", "indigo", "violent"];
 
 
     // Create map
@@ -276,25 +268,25 @@
     var onGetDumps = function () {
         var strRequest = "{";
 
-        if(dumpPointId.value!=''){
-            strRequest +="\"pointIdList\": [{\"id\": " + dumpPointId.value + "}],";
+        if (dumpPointId.value != '') {
+            strRequest += "\"pointIdList\": [{\"id\": " + dumpPointId.value + "}],";
         }
-        if(dumpGroupId.value!=''){
-            strRequest +="\"groupIdList\": [{\"id\": " + dumpGroupId.value + "}],";
+        if (dumpGroupId.value != '') {
+            strRequest += "\"groupIdList\": [{\"id\": " + dumpGroupId.value + "}],";
         }
-        if(dumpCreatorId.value!=''){
-            strRequest +="\"creatorsIdList\": [{\"id\": " + dumpCreatorId.value + "}],";
+        if (dumpCreatorId.value != '') {
+            strRequest += "\"creatorsIdList\": [{\"id\": " + dumpCreatorId.value + "}],";
         }
-        if(dumpType.value!=''){
-            strRequest +="\"dumpTypeList\": [{\"dumpType\": \"" + dumpType.value + "\"}],";
+        if (dumpType.value != 'ALL') {
+            strRequest += "\"dumpTypeList\": [{\"dumpType\": \"" + dumpType.value + "\"}],";
         }
-        if(dumpActive.value!=''){
-            strRequest +="\"isActive\": " + dumpActive.checked + ",";
+        if (dumpActive.value != '') {
+            strRequest += "\"isActive\": " + dumpActive.checked + ",";
         }
-        if(dumpMaxSize.value!=''){
-            strRequest +="\"maxSize\": " + dumpMaxSize.value + ",";
+        if (dumpMaxSize.value != '') {
+            strRequest += "\"maxSize\": " + dumpMaxSize.value + ",";
         }
-        if(strRequest != "{"){
+        if (strRequest != "{") {
             strRequest = strRequest.substring(0, strRequest.length - 1);
         }
         strRequest += "}";
@@ -308,15 +300,20 @@
             contentType: "application/json",
             async: true,
             success: function (result) {
-                console.log(result);
-                /*if (result != '' && result != '[ ]') {
-                    var obj = JSON.parse(result);
-                    obj.forEach(function (item, index, array) {
 
-                        console.log(obj);
-                        printAnswer('Base was read');
-                    });
-                }*/
+                onClear();
+                var obj = JSON.parse(result);
+                obj.forEach(function (item, index, array) {
+
+                    markers[item.pointId] = L.marker([item.latitude, item.longitude]).addTo(markerGroup)
+                        .bindPopup("<b>Dump point</b><br/>" +
+                            "Type: " + item.type + "<br/>" +
+                            "Size: " + item.size + "<br/>" +
+                            "Point ID: " + item.id + "<br/>" +
+                            "Creator: " + item.updatedBy.login + "<br/>" +
+                            "<br/>").openPopup();
+
+                });
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 printAnswer('Get dump error: ' +
@@ -329,13 +326,13 @@
 
         var strRequest = "{";
 
-        if(basePointId.value!=''){
-            strRequest +="\"pointIdList\": [{\"id\": " + basePointId.value + "}],";
+        if (basePointId.value != '') {
+            strRequest += "\"pointIdList\": [{\"id\": " + basePointId.value + "}],";
         }
-        if(baseGroupId.value!=''){
-            strRequest +="\"groupIdList\": [{\"id\": " + baseGroupId.value + "}],";
+        if (baseGroupId.value != '') {
+            strRequest += "\"groupIdList\": [{\"id\": " + baseGroupId.value + "}],";
         }
-        if(strRequest != "{"){
+        if (strRequest != "{") {
             strRequest = strRequest.substring(0, strRequest.length - 1);
         }
         strRequest += "}";
@@ -347,15 +344,15 @@
             contentType: "application/json",
             async: true,
             success: function (result) {
-                console.log(result);
-                /*if (result != '' && result != '[ ]') {
-                    var obj = JSON.parse(result);
-                    obj.forEach(function (item, index, array) {
 
-                        console.log(obj);
-                        printAnswer('Base was read');
-                    });
-                }*/
+                onClear();
+
+                var obj = JSON.parse(result);
+                obj.forEach(function (item, index, array) {
+
+                    markers[item.pointId] = L.marker([item.latitude, item.longitude]).addTo(markerGroup)
+                        .bindPopup("<b>Base point " + item.pointId + "</b>").openPopup();
+                });
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 printAnswer('Get base error: ' +
@@ -368,16 +365,16 @@
     var onGetRoutes = function () {
 
         var strRequest = "{";
-        if(routeId.value!=''){
-            strRequest +="\"routeIdList\": [{\"id\": " + routeId.value + "}],";
+        if (routeId.value != '') {
+            strRequest += "\"routeIdList\": [{\"id\": " + routeId.value + "}],";
         }
-        if(routeVesselId.value!=''){
-            strRequest +="\"vesselIdList\": [{\"id\": " + routeVesselId.value + "}],";
+        if (routeVesselId.value != '') {
+            strRequest += "\"vesselIdList\": [{\"id\": " + routeVesselId.value + "}],";
         }
-        if(routeStatus.value!=''){
-            strRequest +="\"routeStatusList\": [{\"routeStatus\": \"" + routeStatus.value + "\"}],";
+        if (routeStatus.value != '') {
+            strRequest += "\"routeStatusList\": [{\"routeStatus\": \"" + routeStatus.value + "\"}],";
         }
-        if(strRequest != "{"){
+        if (strRequest != "{") {
             strRequest = strRequest.substring(0, strRequest.length - 1);
         }
         strRequest += "}";
@@ -391,15 +388,61 @@
             contentType: "application/json",
             async: true,
             success: function (result) {
-                console.log(result);
-                /*if (result != '' && result != '[ ]') {
-                    var obj = JSON.parse(result);
-                    obj.forEach(function (item, index, array) {
 
-                        console.log(obj);
-                        printAnswer('Base was read');
-                    });
-                }*/
+                onClear();
+
+                var pointCounter = 0;
+                var obj = JSON.parse(result);
+
+                // Let's draw all routes (ignore vessels)
+
+                for (var i = 0; i < obj.length; i++) {
+
+                    console.log(obj[i]);
+
+                    // Drawing route points
+                    var sortedMarkers = [];
+                    for (var p = 0; p < obj[i].routePoints.length; p++) {
+                        sortedMarkers[obj[i].routePoints[p].number] = obj[i].routePoints[p];
+                    }
+
+                    // Lets draw them
+                    var prevlat;
+                    var prevlong;
+                    for (var p = 1; p < sortedMarkers.length; p++){
+
+                        var item = sortedMarkers[p];
+
+                        markers[pointCounter] = L.marker([
+                            item.containedPoint.latitude,
+                            item.containedPoint.longitude]).addTo(markerGroup)
+
+                            .bindPopup("<b>Route point " + p + "</b><br/>" +
+                            "Status: " + item.status
+                            ).openPopup();
+
+                        // Let's color the point according to status
+                        if ((item.status == "AWAITING") || (item.status == "IN_PROGRESS")) {
+                            markers[pointCounter]._icon.style.backgroundColor = 'green';
+                        } else if (item.status == "CANCELED") {
+                            markers[pointCounter]._icon.style.backgroundColor = 'black';
+                        } else if (item.status == "COMPLETED") {
+                            markers[pointCounter]._icon.style.backgroundColor = 'gray';
+                        }
+
+                        // Draw line
+                        if(p != 1){
+                            var points = [
+                                [prevLat, prevLong],
+                                [item.containedPoint.latitude, item.containedPoint.longitude]
+                            ];
+                            L.polyline(points, {color: lineColors[i%7], weight: 2}).addTo(linesGroup);
+                        }
+                        prevLat = item.containedPoint.latitude;
+                        prevLong = item.containedPoint.longitude;
+                    }
+                    pointCounter = pointCounter + 1;
+                }
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 printAnswer('Get routes error: ' +
@@ -408,11 +451,18 @@
         });
     };
 
-    var onClear = function () {
 
-    };
+    var onClear = function () {
+        markerGroup.clearLayers();
+        linesGroup.clearLayers();
+        markers = []
+    }
+
 
 </script>
 
+
 </body>
 </html>
+
+
