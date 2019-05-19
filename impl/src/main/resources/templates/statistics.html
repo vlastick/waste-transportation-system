@@ -248,6 +248,9 @@
     var routeVesselId = document.getElementById('routeVesselId');
     var routeId = document.getElementById('routeId');
 
+    var latitudeField = document.getElementById('latitude');
+    var longitudeField = document.getElementById('longitude');
+
     var lineColors = ["red", "orange", "yellow", "green", "blue", "indigo", "violent"];
 
 
@@ -311,7 +314,8 @@
                             "Size: " + item.size + "<br/>" +
                             "Point ID: " + item.id + "<br/>" +
                             "Creator: " + item.updatedBy.login + "<br/>" +
-                            "<br/>").openPopup();
+                            "<br/>").openPopup()
+                            .on('click', onClick);
 
                 });
             },
@@ -351,7 +355,8 @@
                 obj.forEach(function (item, index, array) {
 
                     markers[item.pointId] = L.marker([item.latitude, item.longitude]).addTo(markerGroup)
-                        .bindPopup("<b>Base point " + item.pointId + "</b>").openPopup();
+                        .bindPopup("<b>Base point " + item.pointId + "</b>").openPopup()
+                        .on('click', onClick);
                 });
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -419,7 +424,8 @@
 
                             .bindPopup("<b>Route point " + p + "</b><br/>" +
                             "Status: " + item.status
-                            ).openPopup();
+                            ).openPopup()
+                            .on('click', onClick);
 
                         // Let's color the point according to status
                         if ((item.status == "AWAITING") || (item.status == "IN_PROGRESS")) {
@@ -450,6 +456,12 @@
             }
         });
     };
+
+    function onClick(e) {
+
+        latitudeField.value = this.getLatLng().lat;
+        longitudeField.value = this.getLatLng().lng;
+    }
 
 
     var onClear = function () {
