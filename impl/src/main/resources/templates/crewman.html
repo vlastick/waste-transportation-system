@@ -36,19 +36,18 @@
         </div>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                <li>
-                    <a href="index">About us</a>
+                <li hidden="true">
+                    <a href="index" id="menu_about" style="visibility: hidden">About us</a>
                 </li>
                 <li>
-                    <a href="request">Make request</a>
+                    <a href="request" id="menu_request" style="visibility: hidden">Make request</a>
                 </li>
                 <li>
-                    <a href="crewman">Boat page</a>
+                    <a href="crewman" id="menu_crewman" style="visibility: hidden">Boat page</a>
                 </li>
                 <li>
-                    <a href="statistics">Statistics page</a>
+                    <a href="statistics" id="menu_statistics" style="visibility: hidden">Statistics page</a>
                 </li>
-
                 <li>
                     <form th:action="@{/logout}" method="post">
                         <br/>
@@ -84,7 +83,8 @@
                 <div class="col-sm-4" id="controlLayer">
 
                     <div class="form-group row">
-                        <button type="button" class="btn btn-primary mb-3" id="getRoute" onclick="onGetRoute()">Create route
+                        <button type="button" class="btn btn-primary mb-3" id="getRoute" onclick="onGetRoute()">Create
+                            route
                         </button>
                         <button type="button" class="btn btn-primary mb-3" id="closeRoute" onclick="onCloseRoute()">
                             Close route
@@ -497,8 +497,7 @@
                         });
 
                     });
-                }
-                else{
+                } else {
                     getRouteButton.innerHTML = "Create route";
                     closeRouteButton.disabled = true;
                 }
@@ -804,6 +803,55 @@
     }
 
     drawRoute();
+
+
+    var menu_about = document.getElementById('menu_about');
+    var menu_request = document.getElementById('menu_request');
+    var menu_crewman = document.getElementById('menu_crewman');
+    var menu_statistics = document.getElementById('menu_statistics');
+
+    var menuManagement = function () {
+        $.ajax({
+            type: 'GET',
+            url: 'user_role/',
+            contentType: "application/json",
+            async: true,
+            success: function (result) {
+                role = result;
+                console.log(role);
+                if (role == 'TOURIST') {
+                    menu_about.style.visibility = "visible";
+                    menu_request.style.visibility = "visible";
+                    menu_crewman.style.visibility = "hidden";
+                    menu_statistics.style.visibility = "hidden";
+                } else if (role == 'CREWMAN') {
+                    menu_about.style.visibility = "visible";
+                    menu_request.style.visibility = "visible";
+                    menu_crewman.style.visibility = "visible";
+                    menu_statistics.style.visibility = "hidden";
+                } else if (role == 'ADMIN') {
+                    menu_about.style.visibility = "visible";
+                    // change link to align them
+                    menu_request.href = "statistics";
+                    menu_request.text = "statistics page";
+                    menu_request.style.visibility = "visible";
+                    menu_crewman.style.visibility = "hidden";
+                    menu_statistics.style.visibility = "hidden";
+                } else {
+                    menu_about.style.visibility = "visible";
+                    menu_request.style.visibility = "hidden";
+                    menu_crewman.style.visibility = "hidden";
+                    menu_statistics.style.visibility = "hidden";
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log('Get sushi role error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+    };
+
+    menuManagement();
 
 </script>
 

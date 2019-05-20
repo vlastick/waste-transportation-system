@@ -694,8 +694,8 @@ public class RestServiceImpl {
                 pointFilter.setActive(null);
                 pointFilter.setCreatorsIdList(null);
                 if (type.equals("dump") || type.equals("not given")) {
-                    ((DumpFilter)pointFilter).setMaxSize(null);
-                    ((DumpFilter)pointFilter).setDumpTypeList(null);
+                    ((DumpFilter) pointFilter).setMaxSize(null);
+                    ((DumpFilter) pointFilter).setDumpTypeList(null);
                 }
             case CREWMAN:
                 if (pointFilter.getPointIdList() == null || pointFilter.getPointIdList().size() != 1) {
@@ -716,8 +716,8 @@ public class RestServiceImpl {
                 pointFilter.setActive(null);
                 pointFilter.setCreatorsIdList(null);
                 if (type.equals("dump") || type.equals("not given")) {
-                    ((DumpFilter)pointFilter).setMaxSize(null);
-                    ((DumpFilter)pointFilter).setDumpTypeList(null);
+                    ((DumpFilter) pointFilter).setMaxSize(null);
+                    ((DumpFilter) pointFilter).setDumpTypeList(null);
                 }
 
                 break;
@@ -820,7 +820,7 @@ public class RestServiceImpl {
             Object object = jsonParser.parse(configJSON);
             JSONObject jsonObject = (JSONObject) object;
             routePointStatus = RoutePointStatus.valueOf((String) jsonObject.get("status"));
-            routePointId = ((Long) jsonObject.get("id")).intValue() ;
+            routePointId = ((Long) jsonObject.get("id")).intValue();
         } catch (ParseException e) {
             answerJSON = "Invalid body";
             return new ResponseEntity<>(answerJSON, status);
@@ -931,7 +931,7 @@ public class RestServiceImpl {
             JSONObject jsonObject = (JSONObject) object;
             String latStr, lonStr;
             latStr = (String) jsonObject.get("latitude");
-            lonStr = (String) jsonObject.get("longitude") ;
+            lonStr = (String) jsonObject.get("longitude");
             latitude = Double.parseDouble(latStr);
             longitude = Double.parseDouble(lonStr);
             transportService.updateCoordinates(vessel.getId(), latitude, longitude);
@@ -989,18 +989,11 @@ public class RestServiceImpl {
     public ResponseEntity<String> getCurrentUser() {
 
         String answerJSON;
-        HttpStatus status = HttpStatus.BAD_REQUEST;
+        HttpStatus status = OK;
         User user = userService.getAuthenticatedUser();
         log.info("Received GET /user_role/ request from " + user.getRole().toString() +
                 " with id " + user.getUserId());
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            answerJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(user.getRole());
-            status = OK;
-        } catch (JsonProcessingException e) {
-            answerJSON = "Can't parse class to JSON";
-        }
-
+        answerJSON = user.getRole().toString();
         return new ResponseEntity<>(answerJSON, status);
     }
 
