@@ -19,7 +19,7 @@
         <form th:action="@{/login}" method="post" class="text-center">
             <label> User Name : <input type="text" name="username"/> </label>
             <label> Password: <input type="password" name="password"/> </label>
-            <input type="submit" value="Sign In"/>
+            <input type="submit" class="btn btn-primary" value="Sign In"/>
         </form>
         <div th:if="${param.error}" class="text-center">
             Invalid username and password.
