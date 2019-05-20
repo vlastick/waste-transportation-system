@@ -984,5 +984,25 @@ public class RestServiceImpl {
         return new ResponseEntity<>(answerJSON, status);
     }
 
+    @RequestMapping(method = GET, value = "/user_role/")
+    @ResponseBody
+    public ResponseEntity<String> getCurrentUser() {
+
+        String answerJSON;
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        User user = userService.getAuthenticatedUser();
+        log.info("Received GET /user_role/ request from " + user.getRole().toString() +
+                " with id " + user.getUserId());
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            answerJSON = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(user.getRole());
+            status = OK;
+        } catch (JsonProcessingException e) {
+            answerJSON = "Can't parse class to JSON";
+        }
+
+        return new ResponseEntity<>(answerJSON, status);
+    }
+
 
 }
