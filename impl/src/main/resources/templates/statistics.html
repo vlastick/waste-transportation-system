@@ -15,6 +15,19 @@
             integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
             crossorigin=""></script>
 
+    <style>
+        table, th, td {
+            border: solid 1px #DDD;
+            border-collapse: collapse;
+            padding: 2px 3px;
+            text-align: center;
+        }
+
+        th {
+            font-weight: bold;
+        }
+    </style>
+
 </head>
 <body>
 
@@ -208,7 +221,8 @@
                                 </div>
                             </div>
                             <div class="form-group row text-center">
-                                <button type="button" class="btn btn-primary mb-3" onclick="onGetRoutes()">Get routes
+                                <button type="button" class="btn btn-primary mb-3" onclick="onGetRoutes()">Get
+                                    routes
                                 </button>
                                 <button type="button" class="btn btn-primary mb-3" onclick="onClear()">Clear
                                 </button>
@@ -223,7 +237,9 @@
 </div>
 
 <div class="container">
+
     <div class="box">
+        <p id="showData" class="table"></p>
         <textarea readonly class="form-control rounded-0" id="answer" rows="5"
                   placeholder="Answer information"></textarea>
         <button type="button" class="btn btn-primary mb-2" id="clearLog" onclick="onClearLog()">Clear</button>
@@ -305,9 +321,11 @@
             success: function (result) {
 
                 onClear();
-                var obj = JSON.parse(result);
-                obj.forEach(function (item, index, array) {
 
+                var obj = JSON.parse(result);
+                var tableObj = new Array();
+
+                obj.forEach(function (item, index, array) {
                     markers[item.pointId] = L.marker([item.latitude, item.longitude]).addTo(markerGroup)
                         .bindPopup("<b>Dump point</b><br/>" +
                             "Type: " + item.type + "<br/>" +
@@ -315,9 +333,22 @@
                             "Point ID: " + item.pointId + "<br/>" +
                             "Creator: " + item.createdBy.login + "<br/>" +
                             "<br/>").openPopup()
-                            .on('click', onClick);
+                        .on('click', onClick);
+
+                    var tempTableObj = new Object();
+                    tempTableObj.pointId = item.pointId;
+                    tempTableObj.type = item.type;
+                    tempTableObj.size = item.size;
+                    tempTableObj.creatorId = item.createdBy.userId;
+                    tempTableObj.creator = item.createdBy.login + "   ";
+                    tempTableObj.lat = item.latitude;
+                    tempTableObj.lng = item.longitude;
+
+                    tableObj[index] = tempTableObj;
 
                 });
+
+                CreateTableFromJSON(tableObj);
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 printAnswer('Get dump error: ' +
@@ -352,12 +383,23 @@
                 onClear();
 
                 var obj = JSON.parse(result);
+                var tableObj = new Array();
+
                 obj.forEach(function (item, index, array) {
 
                     markers[item.pointId] = L.marker([item.latitude, item.longitude]).addTo(markerGroup)
                         .bindPopup("<b>Base point " + item.pointId + "</b>").openPopup()
                         .on('click', onClick);
+
+                    var tempTableObj = new Object();
+                    tempTableObj.pointId = item.pointId;
+                    tempTableObj.name = "Base point";
+                    tempTableObj.lat = item.latitude;
+                    tempTableObj.lng = item.longitude;
+                    tableObj[index] = tempTableObj;
                 });
+
+                CreateTableFromJSON(tableObj);
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 printAnswer('Get base error: ' +
@@ -399,11 +441,11 @@
                 var pointCounter = 0;
                 var obj = JSON.parse(result);
 
+                var tableObj = new Array();
+                var tablePoint = 0;
                 // Let's draw all routes (ignore vessels)
 
                 for (var i = 0; i < obj.length; i++) {
-
-                    console.log(obj[i]);
 
                     // Drawing route points
                     var sortedMarkers = [];
@@ -414,7 +456,9 @@
                     // Lets draw them
                     var prevlat;
                     var prevlong;
-                    for (var p = 1; p < sortedMarkers.length; p++){
+
+
+                    for (var p = 1; p < sortedMarkers.length; p++) {
 
                         var item = sortedMarkers[p];
 
@@ -423,7 +467,7 @@
                             item.containedPoint.longitude]).addTo(markerGroup)
 
                             .bindPopup("<b>Route point " + p + "</b><br/>" +
-                            "Status: " + item.status
+                                "Status: " + item.status
                             ).openPopup()
                             .on('click', onClick);
 
@@ -437,18 +481,33 @@
                         }
 
                         // Draw line
-                        if(p != 1){
+                        if (p != 1) {
                             var points = [
                                 [prevLat, prevLong],
                                 [item.containedPoint.latitude, item.containedPoint.longitude]
                             ];
-                            L.polyline(points, {color: lineColors[i%7], weight: 2}).addTo(linesGroup);
+                            L.polyline(points, {color: lineColors[i % 7], weight: 2}).addTo(linesGroup);
                         }
                         prevLat = item.containedPoint.latitude;
                         prevLong = item.containedPoint.longitude;
+
+
+                        console.log(item.containedPoint);
+
+                        var tempTableObj = new Object();
+                        tempTableObj.route = i+1;
+                        tempTableObj.pointId = item.containedPoint.pointId;
+                        tempTableObj.pointNumber = p;
+                        tempTableObj.status = item.status;
+                        tempTableObj.lat = item.containedPoint.latitude;
+                        tempTableObj.lng = item.containedPoint.longitude;
+
+                        tableObj[tablePoint] = tempTableObj;
+                        tablePoint = tablePoint + 1;
                     }
                     pointCounter = pointCounter + 1;
                 }
+                CreateTableFromJSON(tableObj);
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 printAnswer('Get routes error: ' +
@@ -468,6 +527,50 @@
         markerGroup.clearLayers();
         linesGroup.clearLayers();
         markers = []
+        CreateTableFromJSON("");
+    }
+
+    function CreateTableFromJSON(myJson) {
+
+        // EXTRACT VALUE FOR HTML HEADER.
+        // ('Book ID', 'Book Name', 'Category' and 'Price')
+        var col = [];
+        for (var i = 0; i < myJson.length; i++) {
+            for (var key in myJson[i]) {
+                if (col.indexOf(key) === -1) {
+                    col.push(key);
+                }
+            }
+        }
+
+        // CREATE DYNAMIC TABLE.
+        var table = document.createElement("table");
+
+        // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
+
+        var tr = table.insertRow(-1);                   // TABLE ROW.
+
+        for (var i = 0; i < col.length; i++) {
+            var th = document.createElement("th");      // TABLE HEADER.
+            th.innerHTML = col[i];
+            tr.appendChild(th);
+        }
+
+        // ADD JSON DATA TO THE TABLE AS ROWS.
+        for (var i = 0; i < myJson.length; i++) {
+
+            tr = table.insertRow(-1);
+
+            for (var j = 0; j < col.length; j++) {
+                var tabCell = tr.insertCell(-1);
+                tabCell.innerHTML = myJson[i][col[j]];
+            }
+        }
+
+        // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
+        var divContainer = document.getElementById("showData");
+        divContainer.innerHTML = "";
+        divContainer.appendChild(table);
     }
 
 
@@ -476,5 +579,3 @@
 
 </body>
 </html>
-
-
