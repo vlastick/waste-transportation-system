@@ -8,11 +8,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class MvcConfig implements WebMvcConfigurer {
 
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/login").setViewName("login");
-        registry.addViewController("/index").setViewName("index");
-        registry.addViewController("/").setViewName("index");
-        registry.addViewController("/request").setViewName("request");
-        registry.addViewController("/crewman").setViewName("crewman");
-        registry.addViewController("/statistics").setViewName("statistics");
+        registry.addViewController("/login").setViewName("login_pres");
+        registry.addViewController("/index").setViewName("index_pres");
+        registry.addViewController("/").setViewName("index_pres");
+        registry.addViewController("/request").setViewName("request_pres");
+        registry.addViewController("/crewman").setViewName("crewman_pres");
+        registry.addViewController("/statistics").setViewName("statistics_pres");
     }
 }

@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Waste transportation system</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/business-casual.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+          integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+            integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+            crossorigin=""></script>
+
+    <style>
+        table, th, td {
+            border: solid 1px #DDD;
+            border-collapse: collapse;
+            padding: 2px 3px;
+            text-align: center;
+        }
+
+        th {
+            font-weight: bold;
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="brand"><font color="#6495ed">Waste transportation service</font></div>
+<div class="address-bar"><font color="#6495ed">A cleaning today keeps the landfills away</font></div>
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">WTS. Request</a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li hidden="true">
+                    <a href="index" id="menu_about" style="visibility: hidden">About us</a>
+                </li>
+                <li>
+                    <a href="request" id="menu_request" style="visibility: hidden">Make request</a>
+                </li>
+                <li>
+                    <a href="crewman" id="menu_crewman" style="visibility: hidden">Boat page</a>
+                </li>
+                <li>
+                    <a href="statistics" id="menu_statistics" style="visibility: hidden">Statistics page</a>
+                </li>
+                <li>
+                    <form th:action="@{/logout}" method="post">
+                        <br/>
+                        <input type="submit" class="btn btn-primary" value="Sign Out"/>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="box">
+        <form>
+            <div class="form-group col">
+                <h3 class="intro-text text-center">Statistics
+                </h3>
+                <br>
+                <div class="col-sm-7 text-center">
+                    <div class="form-group col">
+                        <input type="text" readonly class="form-control-plaintext" id="latitude" value="Latitude">
+                        <input type="text" readonly class="form-control-plaintext" id="longitude" value="Longitude">
+                    </div>
+                    <br/>
+                    <div id="map" style="height: 400px;"></div>
+                </div>
+
+                <div class="container col-sm-4" style="margin-top: 25px">
+                    <ul class="nav nav-tabs">
+
+                        <li class="active col-sm-4 nav-item">
+                            <div class="nav-link">
+                                <a class="text-left" data-toggle="tab" href="#panel1">
+                                    Dump Filter
+                                </a>
+                            </div>
+                        </li>
+
+                        <li class="col-sm-4 nav-item">
+                            <div class="nav-link">
+                                <a class="text-left" data-toggle="tab" href="#panel2">
+                                    Base Filter
+                                </a>
+                            </div>
+                        </li>
+
+                        <li class="col-sm-4 nav-item">
+                            <div class="nav-link">
+                                <a class="text-left" data-toggle="tab" href="#panel3">
+                                    Route Filter
+                                </a>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                    <div class="tab-content">
+                        <div id="panel1" class="tab-pane fade in active" style="margin-top: 25px">
+
+                            <div class="form-group row">
+                                <label class="col-sm-5">Creator ID</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="dumpCreatorId" placeholder="none">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-5">Point ID</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="dumpPointId" placeholder="none">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-6">Is dump active</label>
+                                <input type="checkbox" class="form-check-input" id="dumpActive">
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-5">Dump type</label>
+                                <div class="col-sm-7">
+                                    <select id="dumpType" class="form-control">
+                                        <option selected>ALL</option>
+                                        <option>LIQUID</option>
+                                        <option>SOLID</option>
+                                        <option>ORGANIC</option>
+                                        <option>MIXED</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-5">Max dump size</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="dumpMaxSize" placeholder="none">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-5">Group ID</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="dumpGroupId" placeholder="none">
+                                </div>
+                            </div>
+                            <div class="form-group row text-center">
+                                <button type="button" class="btn btn-primary mb-3" onclick="onGetDumps()">Get dumps
+                                </button>
+                                <button type="button" class="btn btn-primary mb-3" onclick="onClear()">Clear
+                                </button>
+                            </div>
+                        </div>
+                        <div id="panel2" class="tab-pane fade" style="margin-top: 25px">
+
+                            <div class="form-group row">
+                                <label class="col-sm-5">Point ID</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="basePointId" placeholder="none">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-5">Group ID</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="baseGroupId" placeholder="none">
+                                </div>
+                            </div>
+                            <div class="form-group row text-center">
+                                <button type="button" class="btn btn-primary mb-3" onclick="onGetBases()">Get bases
+                                </button>
+                                <button type="button" class="btn btn-primary mb-3" onclick="onClear()">Clear
+                                </button>
+                            </div>
+                        </div>
+                        <div id="panel3" class="tab-pane fade" style="margin-top: 25px">
+
+                            <div class="form-group row">
+                                <label class="col-sm-5">Route ID</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="routeId" placeholder="none">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-5">Vessel ID</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="routeVesselId" placeholder="none">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-5">Status</label>
+                                <div class="col-sm-7">
+                                    <select id="routeStatus" class="form-control">
+                                        <option selected>IN_PROGRESS</option>
+                                        <option>CANCELED</option>
+                                        <option>COMPLETED</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row text-center">
+                                <button type="button" class="btn btn-primary mb-3" onclick="onGetRoutes()">Get
+                                    routes
+                                </button>
+                                <button type="button" class="btn btn-primary mb-3" onclick="onClear()">Clear
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="box">
+        <p id="showData" class="table"></p>
+        <textarea readonly class="form-control rounded-0" id="answer" rows="5"
+                  placeholder="Answer information"></textarea>
+        <button type="button" class="btn btn-primary mb-2" id="clearLog" onclick="onClearLog()">Clear</button>
+    </div>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script type="text/javascript">
+
+    var dumpCreatorId = document.getElementById('dumpCreatorId');
+    var dumpPointId = document.getElementById('dumpPointId');
+    var dumpActive = document.getElementById('dumpActive');
+    var dumpType = document.getElementById('dumpType');
+    var dumpMaxSize = document.getElementById('dumpMaxSize');
+    var dumpGroupId = document.getElementById('dumpGroupId');
+
+    var basePointId = document.getElementById('basePointId');
+    var baseGroupId = document.getElementById('baseGroupId');
+
+    var routeStatus = document.getElementById('routeStatus');
+    var routeVesselId = document.getElementById('routeVesselId');
+    var routeId = document.getElementById('routeId');
+
+    var latitudeField = document.getElementById('latitude');
+    var longitudeField = document.getElementById('longitude');
+
+    var lineColors = ["red", "orange", "yellow", "green", "blue", "indigo", "violent"];
+
+    // Create map
+    var map = L.map('map').setView([61.2302, 30.0495], 13);
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Create layer group to draw markers
+    var markerGroup = L.layerGroup().addTo(map);
+    // Create layer group to draw lines
+    var linesGroup = L.layerGroup().addTo(map);
+
+    // Save all markers to provide it's id
+    var markers = {};
+
+    var onGetDumps = function () {
+        var strRequest = "{";
+
+        if (dumpPointId.value != '') {
+            strRequest += "\"pointIdList\": [{\"id\": " + dumpPointId.value + "}],";
+        }
+        if (dumpGroupId.value != '') {
+            strRequest += "\"groupIdList\": [{\"id\": " + dumpGroupId.value + "}],";
+        }
+        if (dumpCreatorId.value != '') {
+            strRequest += "\"creatorsIdList\": [{\"id\": " + dumpCreatorId.value + "}],";
+        }
+        if (dumpType.value != 'ALL') {
+            strRequest += "\"dumpTypeList\": [{\"dumpType\": \"" + dumpType.value + "\"}],";
+        }
+        if (dumpActive.value != '') {
+            strRequest += "\"isActive\": " + dumpActive.checked + ",";
+        }
+        if (dumpMaxSize.value != '') {
+            strRequest += "\"maxSize\": " + dumpMaxSize.value + ",";
+        }
+        if (strRequest != "{") {
+            strRequest = strRequest.substring(0, strRequest.length - 1);
+        }
+        strRequest += "}";
+
+        console.log(strRequest);
+
+        $.ajax({
+            type: 'POST',
+            url: 'points/?type=dump',
+            data: strRequest,
+            contentType: "application/json",
+            async: true,
+            success: function (result) {
+
+                onClear();
+
+                var obj = JSON.parse(result);
+                var tableObj = new Array();
+
+                obj.forEach(function (item, index, array) {
+                    markers[item.pointId] = L.marker([item.latitude, item.longitude]).addTo(markerGroup)
+                        .bindPopup("<b>Dump point</b><br/>" +
+                            "Type: " + item.type + "<br/>" +
+                            "Size: " + item.size + "<br/>" +
+                            "Point ID: " + item.pointId + "<br/>" +
+                            "Creator: " + item.createdBy.login + "<br/>" +
+                            "<br/>").openPopup()
+                        .on('click', onClick);
+
+                    var tempTableObj = new Object();
+                    tempTableObj.pointId = item.pointId;
+                    tempTableObj.type = item.type;
+                    tempTableObj.size = item.size;
+                    tempTableObj.creatorId = item.createdBy.userId;
+                    tempTableObj.creator = item.createdBy.login + "   ";
+                    tempTableObj.lat = item.latitude;
+                    tempTableObj.lng = item.longitude;
+
+                    tableObj[index] = tempTableObj;
+
+                });
+
+                CreateTableFromJSON(tableObj);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                printAnswer('Get dump error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+    };
+
+    var onGetBases = function () {
+
+        var strRequest = "{";
+
+        if (basePointId.value != '') {
+            strRequest += "\"pointIdList\": [{\"id\": " + basePointId.value + "}],";
+        }
+        if (baseGroupId.value != '') {
+            strRequest += "\"groupIdList\": [{\"id\": " + baseGroupId.value + "}],";
+        }
+        if (strRequest != "{") {
+            strRequest = strRequest.substring(0, strRequest.length - 1);
+        }
+        strRequest += "}";
+
+        $.ajax({
+            type: 'POST',
+            url: 'points/?type=base',
+            data: strRequest,
+            contentType: "application/json",
+            async: true,
+            success: function (result) {
+
+                onClear();
+
+                var obj = JSON.parse(result);
+                var tableObj = new Array();
+
+                obj.forEach(function (item, index, array) {
+
+                    markers[item.pointId] = L.marker([item.latitude, item.longitude]).addTo(markerGroup)
+                        .bindPopup("<b>Base point " + item.pointId + "</b>").openPopup()
+                        .on('click', onClick);
+
+                    var tempTableObj = new Object();
+                    tempTableObj.pointId = item.pointId;
+                    tempTableObj.name = "Base point";
+                    tempTableObj.lat = item.latitude;
+                    tempTableObj.lng = item.longitude;
+                    tableObj[index] = tempTableObj;
+                });
+
+                CreateTableFromJSON(tableObj);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                printAnswer('Get base error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+
+    };
+
+    var onGetRoutes = function () {
+
+        var strRequest = "{";
+        if (routeId.value != '') {
+            strRequest += "\"routeIdList\": [{\"id\": " + routeId.value + "}],";
+        }
+        if (routeVesselId.value != '') {
+            strRequest += "\"vesselIdList\": [{\"id\": " + routeVesselId.value + "}],";
+        }
+        if (routeStatus.value != '') {
+            strRequest += "\"routeStatusList\": [{\"routeStatus\": \"" + routeStatus.value + "\"}],";
+        }
+        if (strRequest != "{") {
+            strRequest = strRequest.substring(0, strRequest.length - 1);
+        }
+        strRequest += "}";
+
+        console.log(strRequest);
+
+        $.ajax({
+            type: 'POST',
+            url: 'routes/',
+            data: strRequest,
+            contentType: "application/json",
+            async: true,
+            success: function (result) {
+
+                onClear();
+
+                var pointCounter = 0;
+                var obj = JSON.parse(result);
+
+                var tableObj = new Array();
+                var tablePoint = 0;
+                // Let's draw all routes (ignore vessels)
+
+                for (var i = 0; i < obj.length; i++) {
+
+                    // Drawing route points
+                    var sortedMarkers = [];
+                    for (var p = 0; p < obj[i].routePoints.length; p++) {
+                        sortedMarkers[obj[i].routePoints[p].number] = obj[i].routePoints[p];
+                    }
+
+                    // Lets draw them
+                    var prevlat;
+                    var prevlong;
+
+
+                    for (var p = 1; p < sortedMarkers.length; p++) {
+
+                        var item = sortedMarkers[p];
+
+                        markers[pointCounter] = L.marker([
+                            item.containedPoint.latitude,
+                            item.containedPoint.longitude]).addTo(markerGroup)
+
+                            .bindPopup("<b>Route point " + p + "</b><br/>" +
+                                "Status: " + item.status
+                            ).openPopup()
+                            .on('click', onClick);
+
+                        // Let's color the point according to status
+                        if ((item.status == "AWAITING") || (item.status == "IN_PROGRESS")) {
+                            markers[pointCounter]._icon.style.backgroundColor = 'green';
+                        } else if (item.status == "CANCELED") {
+                            markers[pointCounter]._icon.style.backgroundColor = 'black';
+                        } else if (item.status == "COMPLETED") {
+                            markers[pointCounter]._icon.style.backgroundColor = 'gray';
+                        }
+
+                        // Draw line
+                        if (p != 1) {
+                            var points = [
+                                [prevLat, prevLong],
+                                [item.containedPoint.latitude, item.containedPoint.longitude]
+                            ];
+                            L.polyline(points, {color: lineColors[i % 7], weight: 2}).addTo(linesGroup);
+                        }
+                        prevLat = item.containedPoint.latitude;
+                        prevLong = item.containedPoint.longitude;
+
+
+                        console.log(item.containedPoint);
+
+                        var tempTableObj = new Object();
+                        tempTableObj.route = i + 1;
+                        tempTableObj.pointId = item.containedPoint.pointId;
+                        tempTableObj.pointNumber = p;
+                        tempTableObj.status = item.status;
+                        tempTableObj.lat = item.containedPoint.latitude;
+                        tempTableObj.lng = item.containedPoint.longitude;
+
+                        tableObj[tablePoint] = tempTableObj;
+                        tablePoint = tablePoint + 1;
+                    }
+                    pointCounter = pointCounter + 1;
+                }
+                CreateTableFromJSON(tableObj);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                printAnswer('Get routes error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+    };
+
+    function onClick(e) {
+
+        latitudeField.value = this.getLatLng().lat;
+        longitudeField.value = this.getLatLng().lng;
+    }
+
+
+    var onClear = function () {
+        markerGroup.clearLayers();
+        linesGroup.clearLayers();
+        markers = []
+        CreateTableFromJSON("");
+    }
+
+    function CreateTableFromJSON(myJson) {
+
+        // EXTRACT VALUE FOR HTML HEADER.
+        // ('Book ID', 'Book Name', 'Category' and 'Price')
+        var col = [];
+        for (var i = 0; i < myJson.length; i++) {
+            for (var key in myJson[i]) {
+                if (col.indexOf(key) === -1) {
+                    col.push(key);
+                }
+            }
+        }
+
+        // CREATE DYNAMIC TABLE.
+        var table = document.createElement("table");
+
+        // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
+
+        var tr = table.insertRow(-1);                   // TABLE ROW.
+
+        for (var i = 0; i < col.length; i++) {
+            var th = document.createElement("th");      // TABLE HEADER.
+            th.innerHTML = col[i];
+            tr.appendChild(th);
+        }
+
+        // ADD JSON DATA TO THE TABLE AS ROWS.
+        for (var i = 0; i < myJson.length; i++) {
+
+            tr = table.insertRow(-1);
+
+            for (var j = 0; j < col.length; j++) {
+                var tabCell = tr.insertCell(-1);
+                tabCell.innerHTML = myJson[i][col[j]];
+            }
+        }
+
+        // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
+        var divContainer = document.getElementById("showData");
+        divContainer.innerHTML = "";
+        divContainer.appendChild(table);
+    }
+
+    var menu_about = document.getElementById('menu_about');
+    var menu_request = document.getElementById('menu_request');
+    var menu_crewman = document.getElementById('menu_crewman');
+    var menu_statistics = document.getElementById('menu_statistics');
+
+    var menuManagement = function () {
+        $.ajax({
+            type: 'GET',
+            url: 'user_role/',
+            contentType: "application/json",
+            async: true,
+            success: function (result) {
+                role = result;
+                console.log(role);
+                if (role == 'TOURIST') {
+                    menu_about.style.visibility = "visible";
+                    menu_request.style.visibility = "visible";
+                    menu_crewman.style.visibility = "hidden";
+                    menu_statistics.style.visibility = "hidden";
+                } else if (role == 'CREWMAN') {
+                    menu_about.style.visibility = "visible";
+                    menu_request.style.visibility = "visible";
+                    menu_crewman.style.visibility = "visible";
+                    menu_statistics.style.visibility = "hidden";
+                } else if (role == 'ADMIN') {
+                    menu_about.style.visibility = "visible";
+                    // change link to align them
+                    menu_request.href = "statistics";
+                    menu_request.text = "statistics page";
+                    menu_request.style.visibility = "visible";
+                    menu_crewman.style.visibility = "hidden";
+                    menu_statistics.style.visibility = "hidden";
+                } else {
+                    menu_about.style.visibility = "visible";
+                    menu_request.style.visibility = "hidden";
+                    menu_crewman.style.visibility = "hidden";
+                    menu_statistics.style.visibility = "hidden";
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log('Get sushi role error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+    };
+
+    menuManagement();
+
+
+</script>
+
+
+</body>
+</html>

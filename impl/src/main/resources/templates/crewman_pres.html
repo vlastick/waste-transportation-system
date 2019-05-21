@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Waste transportation system</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/business-casual.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+          integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+            integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+            crossorigin=""></script>
+
+</head>
+<body>
+
+<div class="brand"><font color="#6495ed">Waste transportation service</font></div>
+<div class="address-bar"><font color="#6495ed">A cleaning today keeps the landfills away</font></div>
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">WTS. Request</a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li hidden="true">
+                    <a href="index" id="menu_about" style="visibility: hidden">About us</a>
+                </li>
+                <li>
+                    <a href="request" id="menu_request" style="visibility: hidden">Make request</a>
+                </li>
+                <li>
+                    <a href="crewman" id="menu_crewman" style="visibility: hidden">Boat page</a>
+                </li>
+                <li>
+                    <a href="statistics" id="menu_statistics" style="visibility: hidden">Statistics page</a>
+                </li>
+                <li>
+                    <form th:action="@{/logout}" method="post">
+                        <br/>
+                        <input type="submit" class="btn-lg btn-primary" value="Sign Out"/>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid" style="font-size: 150%";>
+    <div class="box">
+        <form>
+            <div class="form-group col">
+                <h3 class="intro-text text-center" id="vesselInfo">Vessel was not loaded
+                </h3>
+                <br>
+                <div class="col-sm-7 text-center">
+                    <div class="form-group col">
+                        <input type="text" readonly class="form-control-plaintext" id="latitude" value="Latitude">
+                        <input type="text" readonly class="form-control-plaintext" id="longitude" value="Longitude">
+                        <button type="button" class="btn-lg btn-primary mb-2" id="cancel" onclick="onCancel()">Cancel
+                        </button>
+                        <button type="button" class="btn-lg btn-primary mb-2" id="setCoordinates"
+                                onclick="onSetCoordinates()">Set boat coordinates
+                        </button>
+                    </div>
+
+                    <div id="map" style="height: 400px;"></div>
+                </div>
+
+                <div class="col-sm-4" id="controlLayer">
+
+                    <div class="form-group row">
+                        <button type="button" class="btn-lg btn-primary mb-3" id="getRoute" onclick="onGetRoute()">Create
+                            route
+                        </button>
+                        <button type="button" class="btn-lg btn-primary mb-3" id="closeRoute" onclick="onCloseRoute()">
+                            Close route
+                        </button>
+                    </div>
+                    <br/>
+                    <div class="form-group row">
+                        <label class="col-sm-5">Status</label>
+                        <div class="col-sm-5">
+                            <select id="dumpStatus" class="form-control input-lg">
+                                <option selected>COMPLETED</option>
+                                <option>CANCELED</option>
+                            </select>
+                        </div>
+                        <button type="button" class="btn-lg btn-primary mb-3" id="acceptButton" onclick="onAccept()">Accept
+                        </button>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-5">Object type</label>
+                        <div class="col-sm-7">
+                            <input type="text" readonly class="form-control input-lg" id="obj_type" value="dump, LIQUID">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-5">Object size</label>
+                        <div class="col-sm-7">
+                            <input type="text" readonly class="form-control input-lg" id="obj_size" placeholder="1">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                    <label class="col-sm-5">Object description</label>
+                    <div class="col-sm-13">
+                            <textarea readonly class="form-control input-lg rounded-0" id="obj_description" rows="5"
+                                      placeholder="Dump description."></textarea>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="box">
+        <textarea readonly class="form-control rounded-0" id="answer" rows="5"
+                  placeholder="Answer information"></textarea>
+        <button type="button" class="btn btn-primary mb-2" id="clearLog" onclick="onClearLog()">Clear</button>
+    </div>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript">
+
+    // Create map
+    var map = L.map('map').setView([61.2302, 30.0495], 13);
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Create layer group to draw markers
+    var markerGroup = L.layerGroup().addTo(map);
+    // Create layer group to draw lines
+    var linesGroup = L.layerGroup().addTo(map);
+
+    // Save all markers to provide it's id
+    var markersArray = {};
+    var objectTypeArray = {};   // Object type - dump, base, boat
+    var objectSizeArray = {};   // Dump - size in package, boat - capacity
+    var objectRoutePointId = {};
+    var objectDescriptionArray = {}; // Some object description
+    var objectStatusArray = {}; // Dump subtype - liquid, organic, etc.
+    var dumpTypeArray = {}; // Dump subtype - liquid, organic, etc.
+
+    // Needs for update point status
+    var current_point_id = 0;
+
+    var vesselInfo = document.getElementById('vesselInfo');
+    var longitude = document.getElementById('longitude');
+    var latitude = document.getElementById('latitude');
+    var objectType = document.getElementById('obj_type');
+    var objectSize = document.getElementById('obj_size');
+    var objectDescription = document.getElementById('obj_description');
+    var answer = document.getElementById('answer');
+    var setCoordinateButton = document.getElementById('setCoordinates');
+    var acceptButton = document.getElementById('acceptButton');
+    var dumpStatus = document.getElementById('dumpStatus');
+    var getRouteButton = document.getElementById('getRoute');
+    var closeRouteButton = document.getElementById('closeRoute');
+    var cancelButton = document.getElementById('cancel');
+
+    var boatLatitude = '';
+    var boatLongitude = '';
+    var boatLoad = 0;
+    var boatCapacity = 0;
+    var boatName = '';
+
+    var blockMarkers = false;
+
+    function printAnswer(value) {
+        answer.value = answer.value + '\n' + value;
+        answer.scrollTop = answer.scrollHeight;
+    }
+
+
+    function setDefaulValues() {
+        latitude.value = 'Object is not selected';
+        longitude.value = 'Object is not selected';
+        objectDescription.value = 'Object is not selected';
+        objectType.value = 'Object is not selected';
+        objectSize.value = '0';
+
+        setCoordinateButton.disabled = true;
+        cancelButton.disabled = true;
+        acceptButton.disabled = true;
+        dumpStatus.disabled = true;
+    }
+
+    function clearArrData() {
+        markersArray = [];
+        objectTypeArray = [];   // Object type - dump, base, boat
+        objectSizeArray = [];   // Dump - size in package, boat - capacity
+        objectDescriptionArray = []; // Some object description
+        dumpTypeArray = []; // Dump subtype - liquid, organic, etc.
+        objectStatusArray = [];
+        objectRoutePointId = [];
+    }
+
+    function onClearLog() {
+        answer.value = '';
+        answer.scrollTop = answer.scrollHeight;
+    }
+
+    var getVesselInfo = function () {
+        $.ajax({
+            type: 'GET',
+            url: 'vessel/',
+            contentType: 'application/json',
+            async: true,
+
+            success: function (result) {
+
+                var obj = JSON.parse(result);
+
+                boatLongitude = obj.longitude;
+                boatLatitude = obj.latitude;
+                latitude.value = boatLatitude;
+                longitude.value = boatLongitude;
+                boatLoad = obj.currentLoad;
+                boatCapacity = obj.capacity;
+                boatName = obj.name;
+
+                vesselInfo.innerText = obj.name + ', load (' + obj.currentLoad + '/' + obj.capacity + ') packets';
+
+                printAnswer('Vessel information was updated longitude '
+                    + longitude.value + ' and latitude ' + latitude.value + ' coordinates');
+
+                objectTypeArray['0'] = 'Boat';   // Object type - dump, base, boat
+                objectSizeArray['0'] = 'Capacity: ' + boatCapacity + ', Load ' + boatLoad;   // Dump - size in package, boat - capacity
+                objectDescriptionArray['0'] = 'This is your boat'; // Some object description
+                objectStatusArray['0'] = 'IN PROGRESS'; // Needs to draw lines
+
+                console.log('get vessel info lat ' + boatLatitude);
+                console.log('get vessel info long ' + boatLatitude);
+
+                markersArray['0'] = L.marker([boatLatitude, boatLongitude]).addTo(markerGroup)
+                    .bindPopup('<b>Boat ' + boatName + '</b><br/>Now you are here!').openPopup()
+                    .on('click', selectMarker);
+                markersArray['0']._icon.style.backgroundColor = 'brown';
+
+                routeCounter = routeCounter + 1;
+                if (routeCounter == routeSize) {
+                    drawLines();
+                }
+
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                printAnswer('Vessel information was not updated. Error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+                alert('Vessel information was not updated. See error in log.');
+
+                routeCounter = routeCounter + 1;
+                if (routeCounter == routeSize) {
+                    drawLines();
+                }
+            }
+        });
+    };
+
+    function onMapClick(e) {
+
+        if (!blockMarkers) {
+
+            enableInterface(false);
+
+            var tempMarker = L.marker(e.latlng).addTo(markerGroup)
+                .bindPopup('<b>New boat coordinate</b><br />Apply one to save your own coordinate').openPopup()
+                .on('click', selectMarker);
+
+            longitude.value = e.latlng.lng;
+            latitude.value = e.latlng.lat;
+
+            printAnswer('Marker with boat coordinate was added with latitude = '
+                + latitude.value + ' and longitude ' + longitude.value + ' coordinate');
+
+        } else {
+            alert('Please apply or cancel your location before select a new marker');
+            printAnswer('Please apply or cancel your location before select a new marker');
+        }
+    }
+
+    var onGetRoute = function () {
+
+        $.ajax({
+            type: 'get',
+            url: 'route/',
+            contentType: 'application/json',
+            async: true,
+
+            success: function (result) {
+
+                // We will draw the route if we have one
+                if (result != 'No dumps available') {
+                    drawRoute();
+                } else {
+                    alert('Now there are not points to get the route');
+                    printAnswer('Now there are not points to get the route');
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Vessel route was not updated. See error in log.');
+                printAnswer('Vessel route was not updated. Error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+    };
+
+    var routeSize = 0;
+    var routeCounter = 0;
+
+    var drawRoute = function () {
+
+        $.ajax({
+            type: 'post',
+            url: 'routes/',
+            contentType: 'application/json',
+            data: '{}',
+            async: true,
+
+            success: function (result) {
+
+                // Clear layers and points to draw new markers and lines
+                clearArrData();
+                setDefaulValues();
+                markerGroup.clearLayers();
+                linesGroup.clearLayers();
+
+                // At first get vessel info and draw she's point
+                getVesselInfo();
+
+                // Get route points
+                var obj = JSON.parse(result);
+
+                // We will draw route if we get one
+                if ((obj[0] != undefined) && (obj[0].routePoints != undefined)) {
+
+                    getRouteButton.innerHTML = "Update route";
+                    closeRouteButton.disabled = false;
+
+                    // Get route size to draw lines when we get all points
+                    routeSize = obj[0].routePoints.length + 1; // +1 includes vessel
+                    // To understand that we got all points we use the counter which increases on a getting point event
+                    routeCounter = 0;
+
+                    // Let's use a point list to request information about all points
+                    obj[0].routePoints.forEach(function (routePointItem, index, array) {
+
+                        // We suppose that we have dump point and we make a request to get one.
+                        // In case if there isn't a dump point we make the second request to get another point type - this is base
+                        $.ajax({
+                            type: 'POST',
+                            url: 'points/?type=dump',
+                            data: JSON.stringify({
+                                "pointIdList": [
+                                    {
+                                        "id": routePointItem.containedPoint.pointId
+                                    }]
+                            }),
+                            contentType: "application/json",
+                            async: true,
+                            success: function (result) {
+
+                                // The not empty result means that we have gotten a dump point to draw
+                                if (result != '[ ]') {
+
+                                    // Let's parse it and draw this dump point
+                                    var obj = JSON.parse(result);
+                                    obj.forEach(function (item, index, array) {
+
+                                        // Saving the information about the dump
+                                        objectTypeArray[routePointItem.containedPoint.pointId] = 'dump';
+                                        dumpTypeArray[routePointItem.containedPoint.pointId] = item.type;
+                                        objectSizeArray[routePointItem.containedPoint.pointId] = item.size;
+                                        objectStatusArray[routePointItem.containedPoint.pointId] = routePointItem.status;
+                                        objectDescriptionArray[routePointItem.containedPoint.pointId] = 'This is dump';
+                                        objectRoutePointId[routePointItem.containedPoint.pointId] = routePointItem.number;
+
+                                        // Drawing marker point
+                                        markersArray[routePointItem.containedPoint.pointId] = L.marker([routePointItem.containedPoint.latitude,
+                                            routePointItem.containedPoint.longitude]).addTo(markerGroup)
+                                            .bindPopup("<b>" + routePointItem.number + " Dump " +
+                                                "</b><br/>Status: " + objectStatusArray[routePointItem.containedPoint.pointId] +
+                                                "<br/>Type: " + dumpTypeArray[routePointItem.containedPoint.pointId] +
+                                                "<br/>Size: " + objectSizeArray[routePointItem.containedPoint.pointId]).openPopup()
+                                            .on('click', selectMarker);
+
+                                        // Let's color the point according to status
+                                        if ((routePointItem.status == "AWAITING") || (routePointItem.status == "IN_PROGRESS")) {
+                                            markersArray[routePointItem.containedPoint.pointId]._icon.style.backgroundColor = 'green';
+                                        } else if (routePointItem.status == "CANCELED") {
+                                            markersArray[routePointItem.containedPoint.pointId]._icon.style.backgroundColor = 'black';
+                                        } else if (routePointItem.status == "COMPLETED") {
+                                            markersArray[routePointItem.containedPoint.pointId]._icon.style.backgroundColor = 'gray';
+                                        }
+
+                                        // It could be the last point. Let's check this case and draw lines
+                                        routeCounter = routeCounter + 1;
+                                        if (routeCounter == routeSize) {
+                                            drawLines();
+                                        }
+
+                                        printAnswer('Dump was read');
+                                    });
+                                } else { // No answer means that this is base and we will get the second request to get the point
+
+                                    $.ajax({
+                                        type: 'POST',
+                                        url: 'points/?type=base',
+                                        data: JSON.stringify({
+                                            "pointIdList": [
+                                                {
+                                                    "id": routePointItem.containedPoint.pointId
+                                                }]
+                                        }),
+                                        contentType: "application/json",
+                                        async: true,
+                                        success: function (result) {
+                                            // We can not get the null answer but we will check one.
+                                            // Also, we can get the null answer if we create a new point type in the future
+                                            if (result != '' && result != '[ ]') {
+
+                                                var obj = JSON.parse(result);
+
+                                                // Let's parse it and draw this base point
+                                                obj.forEach(function (item, index, array) {
+
+                                                    // Saving the information about the base
+                                                    // We also create a base status for function draw lines
+                                                    objectTypeArray[routePointItem.containedPoint.pointId] = 'base';
+                                                    objectDescriptionArray[routePointItem.containedPoint.pointId] = 'This is base';
+                                                    objectStatusArray[routePointItem.containedPoint.pointId] = 'IN PROGRESS';
+                                                    objectRoutePointId[routePointItem.containedPoint.pointId] = routePointItem.number;
+
+                                                    // Let's color the base
+                                                    markersArray[routePointItem.containedPoint.pointId] = L.marker([routePointItem.containedPoint.latitude,
+                                                        routePointItem.containedPoint.longitude]).addTo(markerGroup)
+                                                        .bindPopup("<b>" + routePointItem.number + " Base " +
+                                                            "</b>This is route pase").openPopup()
+                                                        .on('click', selectMarker);
+
+                                                    // Set white color for base
+                                                    markersArray[routePointItem.containedPoint.pointId]._icon.style.backgroundColor = 'white';
+
+                                                    // It could be the last point. Let's check this case and draw lines
+                                                    routeCounter = routeCounter + 1;
+                                                    if (routeCounter == routeSize) {
+                                                        drawLines();
+                                                    }
+
+                                                    printAnswer('Base was read');
+                                                });
+                                            }
+
+                                        },
+                                        error: function (jqXHR, textStatus, errorThrown) {
+                                            printAnswer('Get base error: ' +
+                                                jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+                                            alert('Could not get base. See error in log.');
+
+                                            // It could be the last point. Let's check this case and draw lines
+                                            routeCounter = routeCounter + 1;
+                                            if (routeCounter == routeSize) {
+                                                drawLines();
+                                            }
+                                        }
+                                    });
+                                }
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                alert('Could not get dumps. See error in log.');
+                                printAnswer('Get dumps error: ' +
+                                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+
+                                // It could be the last point. Let's check this case and draw lines
+                                routeCounter = routeCounter + 1;
+                                if (routeCounter == routeSize) {
+                                    drawLines();
+                                }
+                            }
+                        });
+
+                    });
+                } else {
+                    getRouteButton.innerHTML = "Create route";
+                    closeRouteButton.disabled = true;
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Could not get route. See error in log.');
+                printAnswer('Vessel route was not updated. Error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+                acceptButton.disabled = true;
+                dumpStatus.disabled = true;
+            }
+        });
+
+    };
+
+    var drawLines = function () {
+        var prevLat = '';
+        var prevLong = '';
+
+        // To draw lines in correct order we use sequence which generates order according to route number
+        var mySequence = [];
+        mySequence[0] = 0;
+        objectRoutePointId.forEach(function (item, index, array) {
+            mySequence[item] = index;
+        });
+
+        mySequence.forEach(function (item, index, array) {
+
+                if ((objectStatusArray[item] != 'COMPLETED') && (objectStatusArray[item] != 'CANCELED')) {
+                    if (item != '0') {
+                        var points = [
+                            [prevLat, prevLong],
+                            [markersArray[item]._latlng.lat, markersArray[item]._latlng.lng]
+                        ];
+                        L.polyline(points, {color: 'red', weight: 2}).addTo(linesGroup);
+                    }
+                    prevLat = markersArray[item]._latlng.lat;
+                    prevLong = markersArray[item]._latlng.lng;
+                }
+            }
+        );
+    };
+
+
+    var onCloseRoute = function () {
+        console.log('close route click');
+        markersArray = [];  //clear markers structure
+        acceptButton.disabled = true;
+        dumpStatus.disabled = true;
+
+        $.ajax({
+            type: 'put',
+            url: 'route/',
+            contentType: 'application/json',
+            async: true,
+            data: JSON.stringify('[]'),
+            success: function (result) {
+                printAnswer('Put route: ' + result);
+                drawRoute();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Route was not updated. See error in log.');
+                printAnswer('Put route was not update. Error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+
+        drawRoute();
+    };
+
+    var onAccept = function () {
+        $.ajax({
+            type: 'put',
+            url: 'routepoint/',
+            contentType: 'application/json',
+            async: true,
+            data: JSON.stringify({
+                "id": current_point_id,
+                "status": dumpStatus.value
+            }),
+            success: function (result) {
+                printAnswer('Point status was changed: ' + result);
+                drawRoute();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Vessel point was not updated. See error in log.');
+                printAnswer('Vessel point was not updated. Error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+    };
+
+    map.on('click', onMapClick);
+
+
+    function selectMarker(e) {
+
+        if (!blockMarkers) {
+
+            console.log("Marker was selected");
+            var markerTempId = this._leaflet_id;
+            var objectId = -1;
+            markersArray.forEach(function (item, index, array) {
+                if (markerTempId == markersArray[index]._leaflet_id) {
+                    objectId = index;
+                    console.log(objectId);
+                }
+            });
+            if (objectId > 0) {
+
+                // Trying to get dump point
+                $.ajax({
+                    type: 'POST',
+                    url: 'points/?type=dump',
+                    data: JSON.stringify({
+                        "pointIdList": [
+                            {
+                                "id": objectId
+                            }]
+                    }),
+                    contentType: "application/json",
+                    async: true,
+                    success: function (result) {
+
+                        if (result != '[ ]') { // We got the dump point
+
+                            var obj = JSON.parse(result);
+                            obj.forEach(function (item, index, array) {
+                                current_point_id = item.pointId;
+                                latitude.value = item.latitude;
+                                longitude.value = item.longitude; // TODO - Write answer description
+                                objectDescription.value = 'Dump point';
+                                //dumpStatus.value = item.status;
+                                objectType.value = item.type;
+                                objectSize.value = item.size;
+                                dumpStatus.disabled = false;
+                                acceptButton.disabled = false;
+                                printAnswer('Dump was selected');
+                            });
+                        } else { // We have no answer, so we can try to get base point in the nested query
+                            $.ajax({
+                                type: 'POST',
+                                url: 'points/?type=base',
+                                data: JSON.stringify({
+                                    "pointIdList": [
+                                        {
+                                            "id": objectId
+                                        }]
+                                }),
+                                contentType: "application/json",
+                                async: true,
+                                success: function (result) {
+
+                                    if (result != '' && result != '[ ]') {
+                                        var obj = JSON.parse(result);
+                                        obj.forEach(function (item, index, array) {
+
+                                            current_point_id = item.pointId;
+                                            latitude.value = item.latitude;
+                                            longitude.value = item.longitude; // TODO - Write answer description
+                                            objectDescription.value = 'This is base to deliver boat garbage';
+                                            objectType.value = 'This is Base';
+                                            objectSize.value = 'Base';
+                                            dumpStatus.disabled = true;
+                                            dumpStatus.value = "COMPLETED";
+                                            acceptButton.disabled = false;
+                                            printAnswer('Base was selected');
+                                        });
+                                    }
+
+                                },
+                                error: function (jqXHR, textStatus, errorThrown) {
+                                    printAnswer('Get bases error: ' +
+                                        jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+                                }
+                            });
+
+                            // The end
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert('Could not get dumps. See error in log.');
+                        printAnswer('Get dumps error: ' +
+                            jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+                    }
+                });
+            } else if (objectId == 0) {
+                latitude.value = boatLatitude;
+                longitude.value = boatLongitude; // TODO - Write answer description
+                objectDescription.value = 'Pol, you are here now';
+                objectType.value = 'This is your ship';
+                objectSize.value = 'One person';
+                dumpStatus.disabled = true;
+                acceptButton.disabled = true;
+                printAnswer('Ship was found');
+
+            } else {
+                objectDescription.value = 'Marker not found';
+                objectType.value = 'Marker not found';
+                objectSize.value = 'Marker not found';
+                dumpStatus.disabled = true;
+                acceptButton.disabled = true;
+                printAnswer('Nothing was found');
+            }
+        } else {
+            alert('Please apply or cancel your location before select a new marker');
+            printAnswer('Please apply or cancel your location before select a new marker');
+        }
+    }
+
+    var onSetCoordinates = function () {
+        $.ajax({
+            type: 'PUT',
+            url: 'vessel/',
+            data: JSON.stringify({
+                'name': 'VesselName',
+                'capacity': 130,
+                'currentLoad': 0,
+                'longitude': longitude.value,
+                'latitude': latitude.value
+            }),
+            contentType: 'application/json',
+            async: true,
+
+            success: function (result) {
+
+                boatLatitude = latitude.value;
+                boatLongitude = longitude.value;
+                printAnswer('Vessel coordinates were updated '
+                    + longitude.value + ' and latitude ' + latitude.value + ' coordinates');
+
+
+                L.marker([boatLatitude, boatLongitude]).addTo(markerGroup)
+                    .bindPopup('<b>Current boat coordinate</b><br />Now you are here!').openPopup()
+                    .on('click', selectMarker);
+
+                drawRoute();
+
+                enableInterface(true);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Vessel coordinates were not updated. See error in log.');
+                printAnswer('Vessel coordinates were not updated. Error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+    };
+
+    // Function to lock/unlock map
+    function enableInterface(status) {
+        if (status == true) {
+
+            blockMarkers = false;
+
+            map.dragging.enable();
+            map.touchZoom.enable();
+            map.doubleClickZoom.enable();
+            map.scrollWheelZoom.enable();
+            map.boxZoom.enable();
+            map.keyboard.enable();
+            enableTap = true;
+
+            latitude.disabled = false;
+            longitude.disabled = false;
+
+            dumpStatus.disabled = false;
+            acceptButton.disabled = false;
+
+            closeRouteButton.disabled = false;
+            getRouteButton.disabled = false;
+
+            cancelButton.disabled = true;
+            setCoordinateButton.disabled = true;
+        } else {
+
+            blockMarkers = true;
+
+            map.dragging.disable();
+            map.touchZoom.disable();
+            map.doubleClickZoom.disable();
+            map.scrollWheelZoom.disable();
+            map.boxZoom.disable();
+            map.keyboard.disable();
+            enableTap = false;
+
+            latitude.disabled = true;
+            longitude.disabled = true;
+
+            dumpStatus.disabled = true;
+            acceptButton.disabled = true;
+
+            closeRouteButton.disabled = true;
+            getRouteButton.disabled = true;
+
+            cancelButton.disabled = false;
+            setCoordinateButton.disabled = false;
+        }
+    }
+
+    function onCancel() {
+        enableInterface(true);
+        drawRoute();
+    }
+
+    drawRoute();
+
+
+    var menu_about = document.getElementById('menu_about');
+    var menu_request = document.getElementById('menu_request');
+    var menu_crewman = document.getElementById('menu_crewman');
+    var menu_statistics = document.getElementById('menu_statistics');
+
+    var menuManagement = function () {
+        $.ajax({
+            type: 'GET',
+            url: 'user_role/',
+            contentType: "application/json",
+            async: true,
+            success: function (result) {
+                role = result;
+                console.log(role);
+                if (role == 'TOURIST') {
+                    menu_about.style.visibility = "visible";
+                    menu_request.style.visibility = "visible";
+                    menu_crewman.style.visibility = "hidden";
+                    menu_statistics.style.visibility = "hidden";
+                } else if (role == 'CREWMAN') {
+                    menu_about.style.visibility = "visible";
+                    menu_request.style.visibility = "visible";
+                    menu_crewman.style.visibility = "visible";
+                    menu_statistics.style.visibility = "hidden";
+                } else if (role == 'ADMIN') {
+                    menu_about.style.visibility = "visible";
+                    // change link to align them
+                    menu_request.href = "statistics";
+                    menu_request.text = "statistics page";
+                    menu_request.style.visibility = "visible";
+                    menu_crewman.style.visibility = "hidden";
+                    menu_statistics.style.visibility = "hidden";
+                } else {
+                    menu_about.style.visibility = "visible";
+                    menu_request.style.visibility = "hidden";
+                    menu_crewman.style.visibility = "hidden";
+                    menu_statistics.style.visibility = "hidden";
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log('Get sushi role error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+    };
+
+    menuManagement();
+
+</script>
+
+</body>
+</html>

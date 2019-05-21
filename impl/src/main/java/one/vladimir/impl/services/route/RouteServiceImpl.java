@@ -176,8 +176,8 @@ public class RouteServiceImpl implements RouteService {
                 routePoint.setStatus(RoutePointStatus.AWAITING);
                 routePoint.setNumber(lastPointNumber + 1);
 
-                Dump nearestDump = avaliableDumps.get(0);
 
+                Dump nearestDump = avaliableDumps.get(0);
                 for (Dump candidateDump : avaliableDumps) {
                     Double currentDistance =
                             Math.sqrt(
@@ -194,6 +194,7 @@ public class RouteServiceImpl implements RouteService {
                         noMoreAvailableDumps = false;
                     }
                 }
+
                 if (noMoreAvailableDumps) {
                     break;
                 }
