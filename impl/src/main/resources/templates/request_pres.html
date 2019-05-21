@@ -51,7 +51,7 @@
                 <li>
                     <form th:action="@{/logout}" method="post">
                         <br/>
-                        <input type="submit" class="btn btn-primary" value="Sign Out"/>
+                        <input type="submit" class="btn-lg btn-primary" value="Sign Out"/>
                     </form>
                 </li>
             </ul>
@@ -59,7 +59,7 @@
     </div>
 </nav>
 
-<div class="container">
+<div class="container-fluid" style="font-size: 150%">
     <div class="box">
         <form>
             <div class="form-group row">
@@ -77,15 +77,15 @@
 
                 <div class="col-sm-4 text-left" id="controlLayer">
                     <div class="row">
-                        <button type="button" class="btn btn-primary mb-2" id="submit" onclick="postPoint()">Submit
+                        <button type="button" class="btn-lg btn-primary mb-2" id="submit" onclick="postPoint()">Submit
                         </button>
-                        <button type="button" class="btn btn-primary mb-2" id="cancel" onclick="onCancel()">Cancel
+                        <button type="button" class="btn-lg btn-primary mb-2" id="cancel" onclick="onCancel()">Cancel
                         </button>
                     </div>
                     <br/>
                     <div class="row">
                         <label for="type">Dump type</label>
-                        <select id="type" class="form-control">
+                        <select id="type" class="form-control input-lg">
                             <option selected>LIQUID</option>
                             <option>SOLID</option>
                             <option>ORGANIC</option>
@@ -95,7 +95,7 @@
                     <br>
                     <div class="row">
                         <label for="size">Dump size in packages</label>
-                        <input type="text" class="form-control" id="size" placeholder="1" value="1">
+                        <input type="text" class="form-control input-lg" id="size" placeholder="1" value="1">
                     </div>
                 </div>
             </div>
@@ -103,7 +103,7 @@
     </div>
 </div>
 
-<div class="container">
+<div class="container-fluid">
     <div class="box">
         <textarea readonly class="form-control rounded-0" id="answer" rows="5"
                   placeholder="Answer information"></textarea>

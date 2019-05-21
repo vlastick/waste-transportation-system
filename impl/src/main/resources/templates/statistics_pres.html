@@ -64,7 +64,7 @@
                 <li>
                     <form th:action="@{/logout}" method="post">
                         <br/>
-                        <input type="submit" class="btn btn-primary" value="Sign Out"/>
+                        <input type="submit" class="btn-lg btn-primary" value="Sign Out"/>
                     </form>
                 </li>
             </ul>
@@ -72,7 +72,7 @@
     </div>
 </nav>
 
-<div class="container">
+<div class="container-fluid" style="font-size: 150%">
     <div class="box">
         <form>
             <div class="form-group col">
@@ -123,26 +123,26 @@
                             <div class="form-group row">
                                 <label class="col-sm-5">Creator ID</label>
                                 <div class="col-sm-7">
-                                    <input type="text" class="form-control" id="dumpCreatorId" placeholder="none">
+                                    <input type="text" class="form-control input-lg" id="dumpCreatorId" placeholder="none">
                                 </div>
                             </div>
 
                             <div class="form-group row">
                                 <label class="col-sm-5">Point ID</label>
                                 <div class="col-sm-7">
-                                    <input type="text" class="form-control" id="dumpPointId" placeholder="none">
+                                    <input type="text" class="form-control input-lg" id="dumpPointId" placeholder="none">
                                 </div>
                             </div>
 
                             <div class="form-group row">
                                 <label class="col-sm-6">Is dump active</label>
-                                <input type="checkbox" class="form-check-input" id="dumpActive">
+                                <input type="checkbox" class="form-check-input input-lg" id="dumpActive">
                             </div>
 
                             <div class="form-group row">
                                 <label class="col-sm-5">Dump type</label>
                                 <div class="col-sm-7">
-                                    <select id="dumpType" class="form-control">
+                                    <select id="dumpType" class="form-control input-lg">
                                         <option selected>ALL</option>
                                         <option>LIQUID</option>
                                         <option>SOLID</option>
@@ -155,20 +155,20 @@
                             <div class="form-group row">
                                 <label class="col-sm-5">Max dump size</label>
                                 <div class="col-sm-7">
-                                    <input type="text" class="form-control" id="dumpMaxSize" placeholder="none">
+                                    <input type="text" class="form-control input-lg" id="dumpMaxSize" placeholder="none">
                                 </div>
                             </div>
 
                             <div class="form-group row">
                                 <label class="col-sm-5">Group ID</label>
                                 <div class="col-sm-7">
-                                    <input type="text" class="form-control" id="dumpGroupId" placeholder="none">
+                                    <input type="text" class="form-control input-lg" id="dumpGroupId" placeholder="none">
                                 </div>
                             </div>
                             <div class="form-group row text-center">
-                                <button type="button" class="btn btn-primary mb-3" onclick="onGetDumps()">Get dumps
+                                <button type="button" class="btn-lg btn-primary mb-3" onclick="onGetDumps()">Get dumps
                                 </button>
-                                <button type="button" class="btn btn-primary mb-3" onclick="onClear()">Clear
+                                <button type="button" class="btn-lg btn-primary mb-3" onclick="onClear()">Clear
                                 </button>
                             </div>
                         </div>
@@ -177,20 +177,20 @@
                             <div class="form-group row">
                                 <label class="col-sm-5">Point ID</label>
                                 <div class="col-sm-7">
-                                    <input type="text" class="form-control" id="basePointId" placeholder="none">
+                                    <input type="text" class="form-control input-lg" id="basePointId" placeholder="none">
                                 </div>
                             </div>
 
                             <div class="form-group row">
                                 <label class="col-sm-5">Group ID</label>
                                 <div class="col-sm-7">
-                                    <input type="text" class="form-control" id="baseGroupId" placeholder="none">
+                                    <input type="text" class="form-control input-lg" id="baseGroupId" placeholder="none">
                                 </div>
                             </div>
                             <div class="form-group row text-center">
-                                <button type="button" class="btn btn-primary mb-3" onclick="onGetBases()">Get bases
+                                <button type="button" class="btn-lg btn-primary mb-3" onclick="onGetBases()">Get bases
                                 </button>
-                                <button type="button" class="btn btn-primary mb-3" onclick="onClear()">Clear
+                                <button type="button" class="btn-lg btn-primary mb-3" onclick="onClear()">Clear
                                 </button>
                             </div>
                         </div>
@@ -199,21 +199,21 @@
                             <div class="form-group row">
                                 <label class="col-sm-5">Route ID</label>
                                 <div class="col-sm-7">
-                                    <input type="text" class="form-control" id="routeId" placeholder="none">
+                                    <input type="text" class="form-control input-lg" id="routeId" placeholder="none">
                                 </div>
                             </div>
 
                             <div class="form-group row">
                                 <label class="col-sm-5">Vessel ID</label>
                                 <div class="col-sm-7">
-                                    <input type="text" class="form-control" id="routeVesselId" placeholder="none">
+                                    <input type="text" class="form-control input-lg" id="routeVesselId" placeholder="none">
                                 </div>
                             </div>
 
                             <div class="form-group row">
                                 <label class="col-sm-5">Status</label>
                                 <div class="col-sm-7">
-                                    <select id="routeStatus" class="form-control">
+                                    <select id="routeStatus" class="form-control input-lg">
                                         <option selected>IN_PROGRESS</option>
                                         <option>CANCELED</option>
                                         <option>COMPLETED</option>
@@ -221,10 +221,10 @@
                                 </div>
                             </div>
                             <div class="form-group row text-center">
-                                <button type="button" class="btn btn-primary mb-3" onclick="onGetRoutes()">Get
+                                <button type="button" class="btn-lg btn-primary mb-3" onclick="onGetRoutes()">Get
                                     routes
                                 </button>
-                                <button type="button" class="btn btn-primary mb-3" onclick="onClear()">Clear
+                                <button type="button" class="btn-lg btn-primary mb-3" onclick="onClear()">Clear
                                 </button>
 
                             </div>
@@ -236,7 +236,7 @@
     </div>
 </div>
 
-<div class="container">
+<div class="container-fluid" style="font-size: 150%">
 
     <div class="box">
         <p id="showData" class="table"></p>
