@@ -466,7 +466,8 @@
                             item.containedPoint.longitude]).addTo(markerGroup)
 
                             .bindPopup("<b>Route point " + p + "</b><br/>" +
-                                "Status: " + item.status
+                                "Status: " + item.status + "<br/>" +
+                                "Point ID: " + item.containedPoint.pointId
                             ).openPopup()
                             .on('click', onClick);
 
