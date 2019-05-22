@@ -1,4 +1,4 @@
-package one.vladimir.impl.services.web;
+package one.vladimir.impl.web;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;

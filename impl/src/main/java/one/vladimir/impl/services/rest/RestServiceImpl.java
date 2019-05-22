@@ -124,7 +124,7 @@ public class RestServiceImpl {
             answerJSON = "JSON init exception." +
                     "JSON body contains values which don't exist in type=" + type + " class.";
         } catch (java.io.IOException e) {
-            answerJSON = "JSON parsing caused IOException"
+            answerJSON = "JSON parsing caused IOException";
         } catch (NullPointerException e) {
             answerJSON = "Coordinates are not in reserve";
             status = HttpStatus.BAD_REQUEST;
