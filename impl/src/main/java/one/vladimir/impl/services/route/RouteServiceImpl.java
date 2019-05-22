@@ -131,7 +131,7 @@ public class RouteServiceImpl implements RouteService {
             List<Integer> groupIdList = new ArrayList<>();
             groupIdList.add(db.getGroupByCoordinates(latitude, longitude).getId());
 
-            dumpFilter.setGroupidList(groupIdList); // TODO - write group correctly
+            dumpFilter.setGroupidList(groupIdList);
 
             List<Dump> avaliableDumps = pointService.getDumpsByFilter(dumpFilter);
             List<Dump> usedDumps = new ArrayList<>();
